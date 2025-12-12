@@ -4,16 +4,16 @@ public class Archer : Person
 {
     protected override void OnDestroy()
     {
-        throw new System.NotImplementedException();
+
     }
 
     protected override void Start()
     {
-        throw new System.NotImplementedException();
+
     }
 
     protected override void Update()
     {
-        throw new System.NotImplementedException();
+        transform.position += Vector3.back * 0.025f * moveSpeed * Time.deltaTime;
     }
 }

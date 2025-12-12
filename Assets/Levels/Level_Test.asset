@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Level_Test
   m_EditorClassIdentifier: 
   giantAmount: 5
-  vikingAmount: 5
-  scoutAmount: 5
-  wizardAmount: 5
-  archerAmount: 5
+  vikingAmount: 15
+  scoutAmount: 12
+  wizardAmount: 3
+  archerAmount: 10

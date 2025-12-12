@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,50 +15,72 @@ public class GameManager : Singleton<GameManager>
     private const string archerTag = "Archer";
 
     public Transform enemySpawnPos;
+    public WaveConfig testWaveConfig;
+
+    [Header("Spawn Settings")]
+    public float spawnInterval = 1f;
 
     protected override void OnAwake()
     {
         playersTeam = new List<Person>();
         enemyTeam = new List<Person>();
+        StartCoroutine(SpawnEnemyWaveCoroutine(testWaveConfig));
     }
 
     public void SpawnEnemyWave(WaveConfig config)
     {
-        if (config == null) return;
-
-        int total = config.giantAmount + config.vikingAmount + config.scoutAmount + config.wizardAmount + config.archerAmount;
-        if (total == 0) return;
-
-        List<Person> spawned = new List<Person>();
-        float spacing = 2f;
-        float startX = -(total - 1) * spacing / 2f;
-        Vector3 basePos = enemySpawnPos.position;
-
-        int index = 0;
-        SpawnMultiple(giantTag, config.giantAmount, ref index, startX, spacing, basePos, spawned);
-        SpawnMultiple(vikingTag, config.vikingAmount, ref index, startX, spacing, basePos, spawned);
-        SpawnMultiple(scoutTag, config.scoutAmount, ref index, startX, spacing, basePos, spawned);
-        SpawnMultiple(wizardTag, config.wizardAmount, ref index, startX, spacing, basePos, spawned);
-        SpawnMultiple(archerTag, config.archerAmount, ref index, startX, spacing, basePos, spawned);
-
-        enemyTeam.AddRange(spawned);
+        StartCoroutine(SpawnEnemyWaveCoroutine(config));
     }
 
-    private void SpawnMultiple(string tag, int count, ref int index, float startX, float spacing, Vector3 basePos, List<Person> spawnedList)
+    private IEnumerator SpawnEnemyWaveCoroutine(WaveConfig config)
+    {
+        if (config == null) yield break;
+
+        int total = config.giantAmount + config.vikingAmount + config.scoutAmount +
+                    config.wizardAmount + config.archerAmount;
+        if (total == 0) yield break;
+
+        float spacing = 2f;
+        Vector3 basePos = enemySpawnPos.position;
+        if (config.giantAmount > 0)
+        {
+            SpawnUnitTypeInLine(giantTag, config.giantAmount, spacing, basePos);
+            yield return new WaitForSeconds(spawnInterval);
+        }
+        if (config.vikingAmount > 0)
+        {
+            SpawnUnitTypeInLine(vikingTag, config.vikingAmount, spacing, basePos);
+            yield return new WaitForSeconds(spawnInterval);
+        }
+        if (config.scoutAmount > 0)
+        {
+            SpawnUnitTypeInLine(scoutTag, config.scoutAmount, spacing, basePos);
+            yield return new WaitForSeconds(spawnInterval);
+        }
+        if (config.wizardAmount > 0)
+        {
+            SpawnUnitTypeInLine(wizardTag, config.wizardAmount, spacing, basePos);
+            yield return new WaitForSeconds(spawnInterval);
+        }
+        if (config.archerAmount > 0)
+        {
+            SpawnUnitTypeInLine(archerTag, config.archerAmount, spacing, basePos);
+        }
+    }
+
+    private void SpawnUnitTypeInLine(string tag, int count, float spacing, Vector3 basePos)
     {
         if (count == 0 || string.IsNullOrEmpty(tag)) return;
+        float startX = -(count - 1) * spacing / 2f;
 
         for (int i = 0; i < count; i++)
         {
-            Vector3 pos = basePos + new Vector3(startX + index * spacing, 0, 0);
+            Vector3 pos = basePos + new Vector3(startX + i * spacing, 0, 0);
             GameObject instance = ObjectPooler.Instance.SpawnFromPool(tag, pos, Quaternion.identity);
             if (instance == null) continue;
             Person person = instance.GetComponent<Person>();
             if (person != null)
-            {
-                spawnedList.Add(person);
-            }
-            index++;
+                enemyTeam.Add(person);
         }
     }
 }
