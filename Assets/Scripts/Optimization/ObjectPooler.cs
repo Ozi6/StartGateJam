@@ -12,11 +12,9 @@ public class ObjectPooler : Singleton<ObjectPooler>
     {
         poolDictionary = new Dictionary<string, Queue<PooledObjectWrapper>>();
         poolDefinitions = new Dictionary<string, Pool>();
-
         foreach (Pool pool in pools)
         {
             poolDefinitions.Add(pool.tag, pool);
-
             Queue<PooledObjectWrapper> objectPool = new Queue<PooledObjectWrapper>();
             for (int i = 0; i < pool.size; i++)
             {
@@ -41,8 +39,6 @@ public class ObjectPooler : Singleton<ObjectPooler>
         else
             return null;
     }
-
-
 
     public GameObject SpawnFromPool(string tag, Vector3 position, Quaternion rotation)
     {
