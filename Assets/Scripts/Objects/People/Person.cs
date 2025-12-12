@@ -1,16 +1,17 @@
 using UnityEngine;
 
-public class Person : MonoBehaviour
+public abstract class Person : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    [SerializeField] protected int health;
+    [SerializeField] protected float moveSpeed;
+    [SerializeField] protected float damage;
+    [SerializeField] protected float attackRange;
+    [SerializeField] protected float attackSpeed;
+    [SerializeField] protected int aggroVal;
+    [SerializeField] protected bool isFriendly;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    protected abstract void Start();
+    protected abstract void Update();
+    protected abstract void OnDestroy();
+
 }
