@@ -32,6 +32,16 @@ public abstract class Person : MonoBehaviour
 
     public Person TargetEntity;
 
+    public void OnObjectSpawn()
+    {
+        UnitRegistrar.RegisterUnit(this);
+    }
+
+    public void OnObjectReturn()
+    {
+        UnitRegistrar.UnregisterUnit(this);
+    }
+
     protected abstract void Start();
     protected abstract void Update();
     protected abstract void OnDestroy();

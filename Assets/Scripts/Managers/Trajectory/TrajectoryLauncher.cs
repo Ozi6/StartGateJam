@@ -20,6 +20,9 @@ public class TrajectoryLauncher : MonoBehaviour
     [SerializeField] private float timeStep = 0.1f;
 
     [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private Transform followObject;
+
+    private Vector3 followOriginalPos;
 
     private int yawDirection = 1;
 
@@ -35,6 +38,8 @@ public class TrajectoryLauncher : MonoBehaviour
         lineRenderer = GetComponent<LineRenderer>();
         lineRenderer.useWorldSpace = true;
         lineRenderer.enabled = false;
+        if (followObject != null)
+            followOriginalPos = followObject.position;
     }
 
     private void Update()
@@ -107,6 +112,11 @@ public class TrajectoryLauncher : MonoBehaviour
                 lineRenderer.positionCount = i + 1;
                 points[i] = hit.point;
                 lineRenderer.SetPositions(points);
+                if (followObject != null)
+                {
+                    Vector3 endPoint = points[lineRenderer.positionCount - 1];
+                    followObject.position = endPoint;
+                }
                 return;
             }
             points[i] = nextPoint;
@@ -114,8 +124,12 @@ public class TrajectoryLauncher : MonoBehaviour
         }
         lineRenderer.positionCount = linePoints;
         lineRenderer.SetPositions(points);
+        if (followObject != null)
+        {
+            Vector3 endPoint = points[lineRenderer.positionCount - 1];
+            followObject.position = endPoint;
+        }
     }
-
 
     private void ThrowObject(float force)
     {
@@ -157,5 +171,7 @@ public class TrajectoryLauncher : MonoBehaviour
         isCharging = false;
         currentChargeTime = 0f;
         lineRenderer.enabled = false;
+        if (followObject != null)
+            followObject.position = followOriginalPos;
     }
 }
