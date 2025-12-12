@@ -17,6 +17,20 @@ public abstract class Person : MonoBehaviour
     public float AggroVal => aggroVal;
 
     public bool IsFriendly => isFriendly;
+    public int Health => health;
+    public float MoveSpeed => moveSpeed;
+    public float Damage => damage;
+    public float AttackRange => attackRange;
+    public float AttackSpeed => attackSpeed;
+
+    public float DamageArea => damageArea;
+
+    public float GivenXP => givenXP;
+
+    public float GivenGold => givenGold;
+
+    public bool[] PowerUpList => powerUpList;
+
 
     public Person TargetEntity;
 
