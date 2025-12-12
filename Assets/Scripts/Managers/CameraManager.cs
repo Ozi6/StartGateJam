@@ -6,7 +6,6 @@ public class CameraManager : Singleton<CameraManager>
 
     [SerializeField] private Camera _camera;
     [SerializeField] private Transform gameCam;
-    [SerializeField] private Transform typeCam;
 
     protected override void OnAwake()
     {
