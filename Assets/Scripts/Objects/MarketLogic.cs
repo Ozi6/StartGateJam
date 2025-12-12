@@ -6,21 +6,21 @@ public class MarketLogic
 
     public Dictionary<string, int> marketPrices = new Dictionary<string, int>() {
 
-        {"Crook", 10 },
-        {"Archer", 20 },
-        {"Knight", 30 },
-        {"Giant", 40 },
-        {"Scout", 50 },
+        {"Archer", 10 },
+        {"Viking", 5 },
+        {"Giant", 20},
+        {"Scout", 15},
+        {"Wizard", 50 }
     } ;
 
     public bool buyUnit()
     {
         return false;
     }
-
+    
     public bool sellUnit(Person person)
     {
-        //player.gold += person.GivenGold;
+        //player.gold += person.Give;
         return true;
     }
 }
