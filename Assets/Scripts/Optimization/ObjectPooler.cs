@@ -5,7 +5,7 @@ public class ObjectPooler : Singleton<ObjectPooler>
 {
     [Header("Pools")]
     [SerializeField] private List<Pool> pools = new List<Pool>();
-    private Dictionary<string, Queue<PooledObjectWrapper>> poolDictionary;,
+    private Dictionary<string, Queue<PooledObjectWrapper>> poolDictionary;
     private Dictionary<string, Pool> poolDefinitions;
 
     protected override void OnAwake()

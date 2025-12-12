@@ -39,7 +39,7 @@ public class AudioManager : Singleton<AudioManager>
             sfxSource.playOnAwake = false;
         }
         foreach (var clip in sfxClips)
-            if (clip != null && !sfxDictionary.ContainsKey(clip.name)
+            if (clip != null && !sfxDictionary.ContainsKey(clip.name))
                 sfxDictionary.Add(clip.name, clip);
         UpdateVolumes();
     }
