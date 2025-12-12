@@ -71,7 +71,7 @@ public class GameManager : Singleton<GameManager>
                 if (speechBubbleInstance == null)
                 {
                     speechBubbleInstance = Instantiate(speechBubblePrefab, canvas.transform);
-                    bubbleText = speechBubbleInstance.GetComponentInChildren<TextMeshPro>();
+                    bubbleText = speechBubbleInstance.GetComponentInChildren<TMP_Text>();
                 }
                 speechBubbleInstance.SetActive(true);
                 currentBubbleText += char.ToLower(c);
@@ -95,7 +95,6 @@ public class GameManager : Singleton<GameManager>
                     }
                     else
                     {
-                        // Check if pair matches
                         if (database.HasPair(heldKeyword, matched))
                         {
                             GameObject prefab = database.GetPrefab(heldKeyword, matched);
@@ -103,14 +102,12 @@ public class GameManager : Singleton<GameManager>
                             {
                                 currentThrowableHeld = Instantiate(prefab, Vector3.zero, Quaternion.identity);
                             }
-                            // Show second keyword briefly
                             if (secondKeywordText != null)
                             {
                                 secondKeywordText.text = matched;
                                 secondKeywordText.gameObject.SetActive(true);
                                 StartCoroutine(HideSecondUI(0.5f));
                             }
-                            // Clear held keyword and hide first UI
                             heldKeyword = "";
                             if (firstKeywordText != null)
                             {
@@ -119,7 +116,6 @@ public class GameManager : Singleton<GameManager>
                         }
                         else
                         {
-                            // If not a valid pair, replace the held keyword with this new one
                             heldKeyword = matched;
                             if (firstKeywordText != null)
                             {
