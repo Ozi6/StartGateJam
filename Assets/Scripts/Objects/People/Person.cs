@@ -10,7 +10,9 @@ public abstract class Person : MonoBehaviour
     [SerializeField] protected float aggroVal;
     [SerializeField] protected float damageArea;
     [SerializeField] protected bool isFriendly;
-    [SerializeField] protected bool[] powerUpList = new bool[5]; // [strength, speed, shield, -, -]
+    [SerializeField] protected float givenXP;
+    [SerializeField] protected int givenGold;
+    [SerializeField] protected bool[] powerUpList = new bool[5]; // isFriendly = true: [strength, speed, shield, -, -] else: [goldIncrease, fatique, -, -, -]
 
     public float AggroVal => aggroVal;
 
