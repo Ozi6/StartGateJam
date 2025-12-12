@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public abstract class Person : MonoBehaviour
@@ -12,25 +13,19 @@ public abstract class Person : MonoBehaviour
     [SerializeField] protected float givenXP;
     [SerializeField] protected int givenGold;
     [SerializeField] protected bool[] powerUpList = new bool[5]; // isFriendly = true: [strength, speed, shield, -, -] else: [goldIncrease, fatique, -, -, -]
-
-
     public bool IsFriendly => isFriendly;
     public int Health => health;
     public float MoveSpeed => moveSpeed;
     public float Damage => damage;
     public float AttackRange => attackRange;
     public float AttackSpeed => attackSpeed;
-
     public float DamageArea => damageArea;
-
     public float GivenXP => givenXP;
-
     public float GivenGold => givenGold;
-
     public bool[] PowerUpList => powerUpList;
-
-
     public Person TargetEntity;
+    public Vector3 targetPosition;
+    protected bool isWaiting = false;
 
     public void OnObjectSpawn()
     {
@@ -43,6 +38,36 @@ public abstract class Person : MonoBehaviour
     }
 
     protected abstract void Start();
-    protected abstract void Update();
+
+    protected virtual void Update()
+    {
+        if (isWaiting && Vector3.Distance(transform.position, targetPosition) > 0.01f)
+            GoToPoint(targetPosition);
+    }
+
     protected abstract void OnDestroy();
+
+    protected void GoToPoint(Vector3 point)
+    {
+        transform.position = Vector3.MoveTowards(
+            transform.position,
+            point,
+            moveSpeed * Time.deltaTime
+        );
+    }
+
+    public void BeginDeployment(Vector3 designated)
+    {
+        StartCoroutine(MoveToDesignated(designated));
+    }
+
+    protected IEnumerator MoveToDesignated(Vector3 designated)
+    {
+        while (Vector3.Distance(transform.position, designated) > 0.01f)
+        {
+            GoToPoint(designated);
+            yield return null;
+        }
+        isWaiting = true;
+    }
 }
