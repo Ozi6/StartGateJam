@@ -655,6 +655,7 @@ MonoBehaviour:
   enemyTeam: []
   currentThrowableHeld: {fileID: 0}
   enemySpawnPos: {fileID: 1664867791}
+  testWaveConfig: {fileID: 11400000, guid: 9b4f94f58c8919244937782a971dad0c, type: 2}
 --- !u!4 &971262073
 Transform:
   m_ObjectHideFlags: 0
