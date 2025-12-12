@@ -16,6 +16,8 @@ public abstract class Person : MonoBehaviour
 
     public bool IsFriendly => isFriendly;
 
+    public Person TargetEntity;
+
     protected abstract void Start();
     protected abstract void Update();
     protected abstract void OnDestroy();
