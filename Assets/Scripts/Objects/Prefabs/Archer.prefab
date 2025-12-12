@@ -44,15 +44,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13b9789c6b2f6944f8f7dda595443877, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 0
-  moveSpeed: 0
-  damage: 0
-  attackRange: 0
-  attackSpeed: 0
-  aggroVal: 0
+  health: 15
+  moveSpeed: 50
+  damage: 25
+  attackRange: 100
+  attackSpeed: 0.9
   damageArea: 0
   isFriendly: 0
   givenXP: 0
-  givenGold: 0
+  givenGold: 5
   powerUpList: 0000000000
   TargetEntity: {fileID: 0}
