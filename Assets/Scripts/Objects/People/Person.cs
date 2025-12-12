@@ -12,6 +12,8 @@ public abstract class Person : MonoBehaviour
     [SerializeField] protected bool isFriendly;
     [SerializeField] protected bool[] powerUpList = new bool[5]; // [strength, speed, shield, -, -]
 
+    public int AggroVal => aggroVal;
+
     public bool IsFriendly => isFriendly;
 
     protected abstract void Start();
