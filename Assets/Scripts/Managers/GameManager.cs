@@ -109,10 +109,6 @@ public class GameManager : Singleton<GameManager>
                                 StartCoroutine(HideSecondUI(0.5f));
                             }
                             heldKeyword = "";
-                            if (firstKeywordText != null)
-                            {
-                                firstKeywordText.gameObject.SetActive(false);
-                            }
                         }
                         else
                         {
@@ -169,6 +165,8 @@ public class GameManager : Singleton<GameManager>
         {
             secondKeywordText.text = "";
             secondKeywordText.gameObject.SetActive(false);
+            firstKeywordText.text = "";
+            firstKeywordText.gameObject.SetActive(false);
         }
     }
 
