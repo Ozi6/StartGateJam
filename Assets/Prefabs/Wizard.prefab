@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3090613242343192151}
-  - component: {fileID: 8650197877396544849}
+  - component: {fileID: 1458698323873854622}
   m_Layer: 0
-  m_Name: Giant
+  m_Name: Wizard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -32,7 +32,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8650197877396544849
+--- !u!114 &1458698323873854622
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,17 +41,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 8461961940972001279}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd77704215d11e54e9022261e7aadb6c, type: 3}
+  m_Script: {fileID: 11500000, guid: a27a62b509b069b4e916b78432e462ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 400
-  moveSpeed: 20
-  damage: 15
-  attackRange: 15
-  attackSpeed: 0.2
+  health: 30
+  moveSpeed: 70
+  damage: 80
+  attackRange: 70
+  attackSpeed: 0.3
   damageArea: 0
   isFriendly: 0
-  givenXP: 20
-  givenGold: 8
+  givenXP: 30
+  givenGold: 50
   powerUpList: 0000000000
   TargetEntity: {fileID: 0}

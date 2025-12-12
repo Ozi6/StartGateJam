@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3090613242343192151}
-  - component: {fileID: 9923003308001750}
+  - component: {fileID: -2245352563537117719}
   m_Layer: 0
-  m_Name: Knight
+  m_Name: Scout
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -32,7 +32,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &9923003308001750
+--- !u!114 &-2245352563537117719
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,18 +41,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 8461961940972001279}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0da6f052403110b42a02fc4a07cb836b, type: 3}
+  m_Script: {fileID: 11500000, guid: 7589850f51d8dfc448a7b63bd83c3e85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 0
-  moveSpeed: 0
-  damage: 0
-  attackRange: 0
-  attackSpeed: 0
-  aggroVal: 0
+  health: 150
+  moveSpeed: 90
+  damage: 40
+  attackRange: 20
+  attackSpeed: 0.4
   damageArea: 0
   isFriendly: 0
-  givenXP: 0
-  givenGold: 0
+  givenXP: 2
+  givenGold: 10
   powerUpList: 0000000000
   TargetEntity: {fileID: 0}

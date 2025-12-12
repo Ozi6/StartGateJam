@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3090613242343192151}
-  - component: {fileID: 8650197877396544849}
+  - component: {fileID: 6357819917593295461}
   m_Layer: 0
-  m_Name: Giant
+  m_Name: Viking
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -32,7 +32,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8650197877396544849
+--- !u!114 &6357819917593295461
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,17 +41,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 8461961940972001279}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd77704215d11e54e9022261e7aadb6c, type: 3}
+  m_Script: {fileID: 11500000, guid: b9ad7cbef1ba0f44683b5c30dd1cf16d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 400
-  moveSpeed: 20
-  damage: 15
-  attackRange: 15
-  attackSpeed: 0.2
+  health: 100
+  moveSpeed: 70
+  damage: 20
+  attackRange: 10
+  attackSpeed: 0.6
   damageArea: 0
   isFriendly: 0
-  givenXP: 20
-  givenGold: 8
+  givenXP: 5
+  givenGold: 1
   powerUpList: 0000000000
   TargetEntity: {fileID: 0}
