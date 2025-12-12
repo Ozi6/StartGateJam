@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class TeamTargetManager : MonoBehaviour
 {
-    public Dictionary<Person, int> playersTargetDictionary = new Dictionary<Person, int>();
-    public Dictionary<Person, int> enemiesTargetDictionary = new Dictionary<Person, int>();
+    public Dictionary<Person, float> playersTargetDictionary = new Dictionary<Person, float>();
+    public Dictionary<Person, float> enemiesTargetDictionary = new Dictionary<Person, float>();
     [SerializeField] private bool playerSide;
 
     void Start()
@@ -13,7 +13,7 @@ public class TeamTargetManager : MonoBehaviour
         InitializeTargetDictionary(enemiesTargetDictionary, false);
     }
 
-    public void InitializeTargetDictionary(Dictionary<Person, int> dict, bool player)
+    public void InitializeTargetDictionary(Dictionary<Person, float> dict, bool player)
     {
         dict.Clear();
         List<Person> enemies = player ? GameManager.Instance.enemyTeam : GameManager.Instance.playersTeam;
