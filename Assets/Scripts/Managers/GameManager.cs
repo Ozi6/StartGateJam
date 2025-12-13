@@ -69,15 +69,14 @@ public class GameManager : Singleton<GameManager>
                     // Optionally set to a Win state or something
                 }
             }
-            else if (playersTeam.Count == 0)
+            if (enemyTeam.Count == 0)
             {
-                // Restore team even on defeat
                 RestoreTeamFromSnapshot();
 
-                // Handle lose condition
-                Debug.Log("Player team defeated! Game over.");
-                // Optionally set to a Lose state
+                // Move to augmentation instead of shopping
+                SetState(GameState.Augmentation);
             }
+
         }
     }
 
@@ -109,6 +108,11 @@ public class GameManager : Singleton<GameManager>
             case GameState.Upgrade:
                 //uiManager.ShowUpgradeUI(false);
                 break;
+            case GameState.Augmentation:
+                uiManager.ShowShopUI(false);
+                //uiManager.ShowAugmentSelection();
+                break;
+
         }
     }
 
@@ -122,7 +126,6 @@ public class GameManager : Singleton<GameManager>
             case GameState.Deployment:
                 break;
             case GameState.Combat:
-                RestoreTeamFromSnapshot();
                 break;
             case GameState.Upgrade:
                 //uiManager.ShowUpgradeUI(false);
