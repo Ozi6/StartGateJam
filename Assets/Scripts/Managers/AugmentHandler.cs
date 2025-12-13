@@ -29,7 +29,6 @@ public class AugmentHandler : Singleton<AugmentHandler>
 
     protected override void OnAwake()
     {
-        base.Awake();
         ResetAugments();
     }
 
