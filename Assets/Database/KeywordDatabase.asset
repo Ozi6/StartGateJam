@@ -13,23 +13,50 @@ MonoBehaviour:
   m_Name: KeywordDatabase
   m_EditorClassIdentifier: 
   validKeywords:
+  - aegis
+  - statua
+  - impetus
+  - velox
+  - furor
+  - celer
+  - cruor
+  - bellum
+  - lucrum
+  - mortis
+  - orbis
+  - exitium
+  - vita
+  - furto
+  - pontis
+  - alkazam
   - abra
-  - cadabra
-  - alakazam
-  - ozan
-  - nurcan
-  - semih
-  - "\xE7elik"
+  - kadabra
   pairs:
-  - first: abra
-    second: cadabra
+  - first: aegis
+    second: statua
     prefab: {fileID: 2122588547838145858, guid: 207a8394fb2243947b8a28e5ebbc4df1, type: 3}
     powerUpType: 0
-  - first: semih
-    second: "\xE7elik"
+  - first: impetus
+    second: velox
     prefab: {fileID: 2122588547838145858, guid: 207a8394fb2243947b8a28e5ebbc4df1, type: 3}
     powerUpType: 1
-  - first: ozan
-    second: nurcan
+  - first: furor
+    second: celer
     prefab: {fileID: 2122588547838145858, guid: 207a8394fb2243947b8a28e5ebbc4df1, type: 3}
     powerUpType: 2
+  - first: cruor
+    second: bellum
+    prefab: {fileID: 2122588547838145858, guid: 207a8394fb2243947b8a28e5ebbc4df1, type: 3}
+    powerUpType: 3
+  - first: lucrum
+    second: mortis
+    prefab: {fileID: 2122588547838145858, guid: 207a8394fb2243947b8a28e5ebbc4df1, type: 3}
+    powerUpType: 4
+  - first: orbis
+    second: exitium
+    prefab: {fileID: 2122588547838145858, guid: 207a8394fb2243947b8a28e5ebbc4df1, type: 3}
+    powerUpType: 5
+  - first: orbis
+    second: exitium
+    prefab: {fileID: 2122588547838145858, guid: 207a8394fb2243947b8a28e5ebbc4df1, type: 3}
+    powerUpType: 5
