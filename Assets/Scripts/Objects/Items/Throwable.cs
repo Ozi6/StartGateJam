@@ -42,9 +42,6 @@ public class Throwable : MonoBehaviour
             Person person = hit.GetComponentInParent<Person>();
             if (person == null) continue;
 
-            // Example: only friendly units
-            if (!person.IsFriendly) continue;
-
             Debug.Log($"PowerUp hit {person.name}");
 
             PowerUpEffectProcessor.Apply(powerUpType, person);

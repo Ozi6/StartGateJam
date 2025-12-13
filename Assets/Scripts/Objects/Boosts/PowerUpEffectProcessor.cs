@@ -6,16 +6,26 @@ public static class PowerUpEffectProcessor
 {
     public static void Apply(PowerUpType type, Person person)
     {
-        if (AugmentHandler.Instance.allAugments[0].purchased == 1)
+        if (person.IsFriendly)
         {
-            float x = person.MaxHealth * 0.1f;
-            person.TakeDamage(-x);
+            if (AugmentHandler.Instance.allAugments[0].purchased == 1)
+            {
+                float x = person.MaxHealth * 0.1f;
+                person.TakeDamage(-x);
+            }
+            Debug.Log(
+                $"[PowerUp APPLY] Type: {type}, " +
+                $"Target: {person.name}, " +
+                $"IsFriendly: {person.IsFriendly}"
+            );
         }
-        Debug.Log(
-            $"[PowerUp APPLY] Type: {type}, " +
-            $"Target: {person.name}, " +
-            $"IsFriendly: {person.IsFriendly}"
-        );
+        else
+        {
+            if(type == PowerUpType.EnemyGold && person.isEnemyGolded == 0)
+            {
+                person.isEnemyGolded = 1;
+            }
+        }
     }
 
 }
