@@ -5,48 +5,57 @@ public class ShopUI : MonoBehaviour
 {
     [SerializeField] private RectTransform shopPanel;
     [SerializeField] private float animationSpeed = 5f;
+    [SerializeField] private float hiddenOffset = 500f;
 
     private Vector2 hiddenPos;
     private Vector2 visiblePos;
-    private bool isAnimating = false;
+    private Coroutine currentRoutine;
 
-    void Awake()
+    private void Awake()
     {
         visiblePos = shopPanel.anchoredPosition;
-        hiddenPos = new Vector2(visiblePos.x, -visiblePos.y - 500f);
+        hiddenPos = visiblePos + Vector2.down * hiddenOffset;
+
         shopPanel.anchoredPosition = hiddenPos;
     }
 
     public void ToggleShop(bool show)
     {
-        StopAllCoroutines();
-        if (show) StartCoroutine(ShowRoutine());
-        else StartCoroutine(HideRoutine());
+        if (!gameObject.activeInHierarchy)
+            return;
+
+        if (currentRoutine != null)
+            StopCoroutine(currentRoutine);
+
+        currentRoutine = StartCoroutine(show ? ShowRoutine() : HideRoutine());
     }
 
     private IEnumerator ShowRoutine()
     {
-        // "Go up, then a bit down when appearing"
-        Vector2 peakPos = visiblePos + new Vector2(0, 30f);
-        yield return MoveTo(peakPos);
         yield return MoveTo(visiblePos);
+        currentRoutine = null;
     }
 
     private IEnumerator HideRoutine()
     {
-        // "Go up a bit then go down when disappearing"
-        Vector2 bumpPos = shopPanel.anchoredPosition + new Vector2(0, 30f);
-        yield return MoveTo(bumpPos);
         yield return MoveTo(hiddenPos);
+        currentRoutine = null;
     }
 
     private IEnumerator MoveTo(Vector2 target)
     {
-        while (Vector2.Distance(shopPanel.anchoredPosition, target) > 0.1f)
+        while (Vector2.Distance(shopPanel.anchoredPosition, target) > 0.5f)
         {
-            shopPanel.anchoredPosition = Vector2.Lerp(shopPanel.anchoredPosition, target, Time.deltaTime * animationSpeed);
+            shopPanel.anchoredPosition = Vector2.Lerp(
+                shopPanel.anchoredPosition,
+                target,
+                Time.deltaTime * animationSpeed
+            );
+
             yield return null;
         }
+
+        shopPanel.anchoredPosition = target;
     }
 
     public void OnDeploymentButtonClicked()

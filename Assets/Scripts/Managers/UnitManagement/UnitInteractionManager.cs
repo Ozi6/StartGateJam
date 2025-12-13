@@ -82,6 +82,8 @@ public class UnitInteractionManager : MonoBehaviour
 
     private void HandleClick()
     {
+        if (GameManager.Instance.CurrentState != GameState.Shopping)
+            return;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit, 100f, unitLayer))
         {
