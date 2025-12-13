@@ -105,12 +105,9 @@ public class GameManager : Singleton<GameManager>
                 TeamTargetManager.Instance.AssignTargets();
                 //inputManager.EnableInput(true);
                 break;
-            case GameState.Upgrade:
-                //uiManager.ShowUpgradeUI(false);
-                break;
             case GameState.Augmentation:
                 uiManager.ShowShopUI(false);
-                //uiManager.ShowAugmentSelection();
+                uiManager.ShowAugmentSelection();
                 break;
 
         }
@@ -127,8 +124,8 @@ public class GameManager : Singleton<GameManager>
                 break;
             case GameState.Combat:
                 break;
-            case GameState.Upgrade:
-                //uiManager.ShowUpgradeUI(false);
+            case GameState.Augmentation:
+                uiManager.HideAugmentSelection();
                 break;
         }
     }

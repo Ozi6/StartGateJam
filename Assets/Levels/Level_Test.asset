@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   giantAmount: 0
   vikingAmount: 0
-  scoutAmount: 2
+  scoutAmount: 1
   wizardAmount: 0
-  archerAmount: 7
+  archerAmount: 1
   maxPlaceableUnits: 7

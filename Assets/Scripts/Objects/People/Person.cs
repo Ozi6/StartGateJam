@@ -51,7 +51,7 @@ public abstract class Person : MonoBehaviour
 
     public void OnObjectReturn()
     {
-        UnitRegistrar.UnregisterUnit(this);
+
     }
 
     protected virtual void Awake()
@@ -236,6 +236,7 @@ public abstract class Person : MonoBehaviour
 
     protected virtual void Die()
     {
+        UnitRegistrar.UnregisterUnit(this);
         GameManager.Instance.currentGold += isEnemyGolded ? givenGold + 1 : givenGold;
     }
 

@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class AugmentHandler : Singleton<AugmentHandler>
 {
+    public AugmentIconDatabase iconDB;
     [System.Serializable]
     public class Augment
     {
@@ -12,15 +13,17 @@ public class AugmentHandler : Singleton<AugmentHandler>
         public float chance;
         public bool repeatable;
         public int purchased; // stack count
+        public Sprite icon;
 
-        public Augment(int id, string title, string description, float chance, bool repeatable)
+        public Augment(int id, string title, string description, float chance, bool repeatable, Sprite icon)
         {
             this.id = id;
             this.title = title;
             this.description = description;
             this.chance = chance;
             this.repeatable = repeatable;
-            this.purchased = 0;
+            this.icon = icon;
+            purchased = 0;
         }
     }
 
@@ -38,31 +41,31 @@ public class AugmentHandler : Singleton<AugmentHandler>
         augmentById.Clear();
 
         AddAugment(new Augment(0, "Vital Boost",
-            "All power-ups additionally restore 10% health.", 5f, false));
+            "All power-ups additionally restore 10% health.", 5f, false, iconDB.GetIcon(0)));
 
         AddAugment(new Augment(1, "Enhanced Haste",
-            "Haste power-up multiplier is increased by +0.5.", 15f, true));
+            "Haste power-up multiplier is increased by +0.5.", 15f, true, iconDB.GetIcon(1)));
 
         AddAugment(new Augment(2, "Fortified Shield",
-            "Shield power-up duration and cooldown are increased by +0.5 seconds.", 15f, true));
+            "Shield power-up duration and cooldown are increased by +0.5 seconds.", 15f, true, iconDB.GetIcon(2)));
 
         AddAugment(new Augment(3, "Overdrive Rush",
-            "Rush power-up effect is increased to 3x.", 5f, false));
+            "Rush power-up effect is increased to 3x.", 5f, false, iconDB.GetIcon(3)));
 
         AddAugment(new Augment(4, "Controlled Rage",
-            "While Rage is active, damage taken is reduced to 25%.", 5f, false));
+            "While Rage is active, damage taken is reduced to 25%.", 5f, false, iconDB.GetIcon(4)));
 
         AddAugment(new Augment(5, "Brutal Rage",
-            "Rage power-up damage bonus is increased to +150%.", 5f, false));
+            "Rage power-up damage bonus is increased to +150%.", 5f, false, iconDB.GetIcon(5)));
 
         AddAugment(new Augment(6, "Golden Opportunity",
-            "Gold power-up can be used +1 extra time per wave.", 20f, true));
+            "Gold power-up can be used +1 extra time per wave.", 20f, true, iconDB.GetIcon(6)));
 
         AddAugment(new Augment(7, "Expanded Destruction",
-            "Area damage power-up radius is increased by 1.2x.", 15f, true));
+            "Area damage power-up radius is increased by 1.2x.", 15f, true, iconDB.GetIcon(7)));
 
         AddAugment(new Augment(8, "Improved Life Steal",
-            "Life Steal power-up steal amount is increased by +5%.", 15f, true));
+            "Life Steal power-up steal amount is increased by +5%.", 15f, true, iconDB.GetIcon(8)));
     }
 
     private void AddAugment(Augment augment)
