@@ -438,6 +438,7 @@ MonoBehaviour:
   givenXP: 5
   givenGold: 1
   poolTag: 
+  areaBuff: 1
   isEnemyGolded: 0
   TargetEntity: {fileID: 0}
   targetPosition: {x: 0, y: 0, z: 0}
