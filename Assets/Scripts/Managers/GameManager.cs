@@ -6,6 +6,7 @@ public class GameManager : Singleton<GameManager>
     public GameState CurrentState { get; private set; }
     public List<Person> playersTeam = new List<Person>();
     public List<Person> enemyTeam = new List<Person>();
+    public int currentGold = 100;
     public GameObject currentThrowableHeld;
     [Header("Manager References")]
     public EnemySpawner enemySpawner;
@@ -24,7 +25,7 @@ public class GameManager : Singleton<GameManager>
         if (uiManager == null) uiManager = FindFirstObjectByType<UIManager>();
         uiManager?.InitializeUI();
         inputManager?.Initialize(uiManager, database, this);
-        SetState(GameState.Deployment);
+        SetState(GameState.Shopping);
     }
     public void SetState(GameState newState)
     {
@@ -38,9 +39,10 @@ public class GameManager : Singleton<GameManager>
         switch (state)
         {
             case GameState.Shopping:
-                //uiManager.ShowShopUI(true);
+                uiManager.ShowShopUI(true); 
                 break;
             case GameState.Deployment:
+                uiManager.ShowShopUI(false);
                 if (enemySpawner != null && testWaveConfig != null)
                     enemySpawner.SpawnWave(testWaveConfig);
                 break;

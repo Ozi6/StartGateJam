@@ -26,7 +26,7 @@ public abstract class Person : MonoBehaviour
     public float AttackSpeed => attackSpeed;
     public float DamageArea => damageArea;
     public float GivenXP => givenXP;
-    public float GivenGold => givenGold;
+    public int GivenGold => givenGold;
     public bool[] PowerUpList => powerUpList;
     public Person TargetEntity;
     protected bool isWaiting = false;

@@ -4,6 +4,10 @@ using TMPro;
 
 public class UIManager : MonoBehaviour
 {
+    [Header("Shop UI")]
+    public ShopUI shopUI; // Reference to the new ShopUI script
+    public TMP_Text currentGoldText; // Display player currency
+
     [Header("UI Elements")]
     public GameObject speechBubblePrefab;
     public Canvas canvas;
@@ -33,6 +37,32 @@ public class UIManager : MonoBehaviour
         }
         SetKeywordUIVisibility(false, firstKeywordText);
         SetKeywordUIVisibility(false, secondKeywordText);
+
+        // Initialize Shop UI visibility (Start hidden)
+        shopUI?.ToggleShop(false);
+    }
+
+    // --- New Shop UI Methods ---
+
+    /// <summary>
+    /// Triggers the shop panel's animated appearance/disappearance.
+    /// </summary>
+    public void ShowShopUI(bool show)
+    {
+        // Ensure the gold display is up-to-date when the shop is shown
+        UpdateGoldUI();
+        shopUI?.ToggleShop(show);
+    }
+
+    /// <summary>
+    /// Updates the text element displaying the player's gold.
+    /// </summary>
+    public void UpdateGoldUI()
+    {
+        if (currentGoldText != null && GameManager.Instance != null)
+        {
+            currentGoldText.text = $"Gold: {GameManager.Instance.currentGold}";
+        }
     }
 
     private void SetKeywordUIVisibility(bool visible, TMP_Text textObject)
