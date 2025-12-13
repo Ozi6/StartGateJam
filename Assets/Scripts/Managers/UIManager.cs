@@ -120,6 +120,11 @@ public class UIManager : MonoBehaviour
                 $"Range: {atkRange}\n" +
                 $"Move Speed: {moveSpd}";
         }
+        if (person.upgradeCost != 0)
+        {
+            unitStatsText.text +=
+                $"Upgrade Cost: {person.upgradeCost}";
+        }
 
         if (upgradeButton != null && person.upgradeCost <= GameManager.Instance.currentGold)
         {
