@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Level_Test
   m_EditorClassIdentifier: 
   giantAmount: 1
-  vikingAmount: 2
-  scoutAmount: 3
+  vikingAmount: 1
+  scoutAmount: 1
   wizardAmount: 0
-  archerAmount: 3
-  giantAmountLvl2: 1
+  archerAmount: 1
+  giantAmountLvl2: 0
   vikingAmountLvl2: 0
   scoutAmountLvl2: 0
   wizardAmountLvl2: 0
