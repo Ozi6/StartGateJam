@@ -94,6 +94,13 @@ public class InputManager : MonoBehaviour
                     rb.isKinematic = true;
                     rb.useGravity = false;
                 }
+                
+                // Set the correct PowerUpType from the database
+                Throwable throwable = gameManager.currentThrowableHeld.GetComponent<Throwable>();
+                if (throwable != null)
+                {
+                    throwable.powerUpType = database.GetPowerUp(heldKeyword, secondKeyword);
+                }
             }
             uiManager.DisplayAndHideSecondKeyword(secondKeyword, 0.5f);
             heldKeyword = "";
