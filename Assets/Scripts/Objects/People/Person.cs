@@ -214,7 +214,6 @@ public abstract class Person : MonoBehaviour
     }
     protected virtual void Die()
     {
-        ObjectPooler.Instance.ReturnToPool(gameObject, poolTag);
         GameManager.Instance.currentGold += isEnemyGolded ? givenGold + 1 : givenGold;
     }
 
@@ -292,7 +291,6 @@ public abstract class Person : MonoBehaviour
         damageMultiplier /= dmgMult;
         damageTakenMultiplier /= takenMult;
     }
-
 
     public void ApplyAreaDamage(float duration, float radiusMultiplier)
     {

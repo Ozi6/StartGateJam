@@ -14,5 +14,6 @@ public class Scout : Person
     protected override void Die()
     {
         ObjectPooler.Instance.ReturnToPool(gameObject, "Scout");
+        base.Die();
     }
 }

@@ -14,5 +14,6 @@ public class Giant : Person
     protected override void Die()
     {
         ObjectPooler.Instance.ReturnToPool(gameObject, "Giant");
+        base.Die();
     }
 }

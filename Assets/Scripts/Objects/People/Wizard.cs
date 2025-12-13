@@ -30,5 +30,6 @@ public class Wizard : Person
     protected override void Die()
     {
         ObjectPooler.Instance.ReturnToPool(gameObject, "Wizard");
+        base.Die();
     }
 }
