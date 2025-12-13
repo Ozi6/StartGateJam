@@ -13,8 +13,13 @@ MonoBehaviour:
   m_Name: Level_Test
   m_EditorClassIdentifier: 
   giantAmount: 1
-  vikingAmount: 0
+  vikingAmount: 2
   scoutAmount: 3
   wizardAmount: 0
   archerAmount: 3
+  giantAmountLvl2: 1
+  vikingAmountLvl2: 0
+  scoutAmountLvl2: 0
+  wizardAmountLvl2: 0
+  archerAmountLvl2: 0
   maxPlaceableUnits: 7

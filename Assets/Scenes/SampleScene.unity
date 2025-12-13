@@ -3115,7 +3115,7 @@ MonoBehaviour:
     prefab: {fileID: 8461961940972001279, guid: 2644761d05a5c794a870f634ea540a81, type: 3}
     size: 15
   - tag: Giant_lvl2
-    prefab: {fileID: 8461961940972001279, guid: 99a04227468051a4e8cdc56a4d8cccad, type: 3}
+    prefab: {fileID: 415697295354753267, guid: 99a04227468051a4e8cdc56a4d8cccad, type: 3}
     size: 15
   - tag: Scout_lvl2
     prefab: {fileID: 8461961940972001279, guid: 30c102741bf4d554ba50f34246a69efb, type: 3}
