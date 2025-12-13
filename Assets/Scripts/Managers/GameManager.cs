@@ -31,7 +31,7 @@ public class GameManager : Singleton<GameManager>
         uiManager?.InitializeUI();
         inputManager?.Initialize(uiManager, database, this);
 
-        SetState(GameState.Shopping);
+        SetState(GameState.Deployment);
     }
 
     public void SetState(GameState newState)
@@ -52,14 +52,13 @@ public class GameManager : Singleton<GameManager>
                 break;
 
             case GameState.Deployment:
-
+                if (enemySpawner != null && testWaveConfig != null)
+                    enemySpawner.SpawnWave(testWaveConfig);
                 break;
 
             case GameState.Combat:
                 //inputManager.EnableInput(true);
 
-                if (enemySpawner != null && testWaveConfig != null)
-                    enemySpawner.SpawnWave(testWaveConfig);
                 break;
 
             case GameState.Upgrade:
