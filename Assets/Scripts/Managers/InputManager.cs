@@ -22,37 +22,43 @@ public class InputManager : MonoBehaviour
         HandleSpecialKeys();
     }
 
+    // ==============================
+    // KEYBOARD INPUT
+    // ==============================
     private void HandleKeyboardInput()
     {
-        foreach (char c in Input.inputString)
+        foreach (char rawChar in Input.inputString)
         {
-            if (char.IsLetter(c))
+            if (!char.IsLetter(rawChar)) continue;
+            if (gameManager.currentThrowableHeld != null) continue;
+
+            char normalizedChar = NormalizeChar(rawChar);
+            currentBubbleText += normalizedChar;
+
+            uiManager.UpdateSpeechBubble(currentBubbleText);
+
+            if (database != null && database.IsValid(currentBubbleText))
             {
-                if (gameManager.currentThrowableHeld != null) continue;
+                string matched = currentBubbleText;
+                currentBubbleText = "";
+                uiManager.UpdateSpeechBubble("");
 
-                currentBubbleText += char.ToLower(c);
-                uiManager.UpdateSpeechBubble(currentBubbleText);
-
-                if (database != null && database.IsValid(currentBubbleText))
+                if (string.IsNullOrEmpty(heldKeyword))
                 {
-                    string matched = currentBubbleText;
-                    currentBubbleText = "";
-                    uiManager.UpdateSpeechBubble(currentBubbleText);
-
-                    if (heldKeyword == "")
-                    {
-                        heldKeyword = matched;
-                        uiManager.DisplayKeyword(heldKeyword);
-                    }
-                    else
-                    {
-                        TryCreateThrowable(matched);
-                    }
+                    heldKeyword = matched;
+                    uiManager.DisplayKeyword(heldKeyword);
+                }
+                else
+                {
+                    TryCreateThrowable(matched);
                 }
             }
         }
     }
 
+    // ==============================
+    // SPECIAL KEYS
+    // ==============================
     private void HandleSpecialKeys()
     {
         if (Input.GetKeyDown(KeyCode.Backspace))
@@ -60,9 +66,9 @@ public class InputManager : MonoBehaviour
             if (!string.IsNullOrEmpty(currentBubbleText))
             {
                 currentBubbleText = "";
-                uiManager.UpdateSpeechBubble(currentBubbleText);
+                uiManager.UpdateSpeechBubble("");
             }
-            else if (heldKeyword != "")
+            else if (!string.IsNullOrEmpty(heldKeyword))
             {
                 heldKeyword = "";
                 uiManager.ClearHeldKeywordUI();
@@ -80,28 +86,36 @@ public class InputManager : MonoBehaviour
         }
     }
 
+    // ==============================
+    // THROWABLE CREATION
+    // ==============================
     private void TryCreateThrowable(string secondKeyword)
     {
         if (database.HasPair(heldKeyword, secondKeyword))
         {
             GameObject prefab = database.GetPrefab(heldKeyword, secondKeyword);
+
             if (prefab != null)
             {
-                gameManager.currentThrowableHeld = Instantiate(prefab, Vector3.zero, Quaternion.identity);
+                gameManager.currentThrowableHeld =
+                    Instantiate(prefab, Vector3.zero, Quaternion.identity);
+
                 Rigidbody rb = gameManager.currentThrowableHeld.GetComponent<Rigidbody>();
                 if (rb != null)
                 {
                     rb.isKinematic = true;
                     rb.useGravity = false;
                 }
-                
-                // Set the correct PowerUpType from the database
-                Throwable throwable = gameManager.currentThrowableHeld.GetComponent<Throwable>();
+
+                Throwable throwable =
+                    gameManager.currentThrowableHeld.GetComponent<Throwable>();
                 if (throwable != null)
                 {
-                    throwable.powerUpType = database.GetPowerUp(heldKeyword, secondKeyword);
+                    throwable.powerUpType =
+                        database.GetPowerUp(heldKeyword, secondKeyword);
                 }
             }
+
             uiManager.DisplayAndHideSecondKeyword(secondKeyword, 0.5f);
             heldKeyword = "";
         }
@@ -109,6 +123,23 @@ public class InputManager : MonoBehaviour
         {
             heldKeyword = secondKeyword;
             uiManager.DisplayKeyword(heldKeyword);
+        }
+    }
+    private char NormalizeChar(char c)
+    {
+        // Case-insensitive & culture-safe
+        c = char.ToLowerInvariant(c);
+
+        // Turkish character normalization
+        switch (c)
+        {
+            case 'ý': return 'i';
+            case 'ð': return 'g';
+            case 'þ': return 's';
+            case 'ö': return 'o';
+            case 'ü': return 'u';
+            case 'ç': return 'c';
+            default: return c;
         }
     }
 }
