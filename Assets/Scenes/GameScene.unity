@@ -481,6 +481,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shopUI: {fileID: 1424367713}
   currentGoldText: {fileID: 0}
+  augmentSelectionPanel: {fileID: 0}
+  augmentCardPrefab: {fileID: 0}
+  augmentCardContainer: {fileID: 0}
   speechBubblePrefab: {fileID: 6194707825193287724, guid: 7c70a4c289a610646a24a1a04b47f2f2, type: 3}
   canvas: {fileID: 222941834}
   sidePanel: {fileID: 1413480776}
@@ -530,6 +533,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9b1e08ba2476604ca86ed96b397fb40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  iconDB: {fileID: 0}
   allAugments: []
 --- !u!1 &467019586
 GameObject:
@@ -1839,6 +1843,18 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 747d89e48a2b08147bc8d4614adc5905, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2.54
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 747d89e48a2b08147bc8d4614adc5905, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2.54
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 747d89e48a2b08147bc8d4614adc5905, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 2.54
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 747d89e48a2b08147bc8d4614adc5905, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -1878,9 +1894,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 747d89e48a2b08147bc8d4614adc5905, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 747d89e48a2b08147bc8d4614adc5905, type: 3}
       propertyPath: m_Name
       value: arena
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 747d89e48a2b08147bc8d4614adc5905, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7780776697941062646, guid: 747d89e48a2b08147bc8d4614adc5905, type: 3}
       propertyPath: m_Layer
