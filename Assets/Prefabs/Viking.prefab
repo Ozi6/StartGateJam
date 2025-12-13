@@ -481,6 +481,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -2639638324218457063, guid: 97573db97ff26a740b62efe6372c7da2, type: 3}
   m_PrefabInstance: {fileID: 7633027984195061096}
   m_PrefabAsset: {fileID: 0}
+--- !u!95 &4073333426148653305 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 97573db97ff26a740b62efe6372c7da2, type: 3}
+  m_PrefabInstance: {fileID: 7633027984195061096}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4446292463548428374 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6078049643900237118, guid: 97573db97ff26a740b62efe6372c7da2, type: 3}
@@ -526,6 +531,7 @@ MonoBehaviour:
   TargetEntity: {fileID: 0}
   targetPosition: {x: 0, y: 0, z: 0}
   healthBar: {fileID: 4600740302192308700}
+  animator: {fileID: 4073333426148653305}
 --- !u!54 &-3692131294577472687
 Rigidbody:
   m_ObjectHideFlags: 0
