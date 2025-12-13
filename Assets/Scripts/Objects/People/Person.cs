@@ -16,6 +16,7 @@ public abstract class Person : MonoBehaviour
     [SerializeField] protected float givenXP;
     [SerializeField] protected int givenGold;
     [SerializeField] protected bool[] powerUpList = new bool[5]; // isFriendly = true: [strength, speed, shield, -, -] else: [goldIncrease, fatique, -, -, -]
+    [SerializeField] protected string poolTag;
     private float deploymentSpeed = 70;
     public bool IsFriendly => isFriendly;
     public int Health => health;
@@ -31,7 +32,6 @@ public abstract class Person : MonoBehaviour
     protected bool isWaiting = false;
     protected float lastAttackTime = -Mathf.Infinity;
     public Vector3 targetPosition;
-
     public void OnObjectSpawn()
     {
         UnitRegistrar.RegisterUnit(this);
@@ -61,13 +61,21 @@ public abstract class Person : MonoBehaviour
         {
             if (isWaiting)
             {
-                if (TargetEntity != null)
+                if (TargetEntity != null && TargetEntity.gameObject.activeSelf)
                 {
                     Engage();
                 }
                 else
                 {
-                    StopMoving();
+                    TargetEntity = TeamTargetManager.Instance.GetNewTarget(this);
+                    if (TargetEntity != null && TargetEntity.gameObject.activeSelf)
+                    {
+                        Engage();
+                    }
+                    else
+                    {
+                        StopMoving();
+                    }
                 }
             }
         }
@@ -127,7 +135,7 @@ public abstract class Person : MonoBehaviour
     }
     protected virtual void Engage()
     {
-        if (TargetEntity == null) return;
+        if (TargetEntity == null || !TargetEntity.gameObject.activeSelf) return;
         float distance = Vector3.Distance(transform.position, TargetEntity.transform.position);
         if (distance > attackRange)
         {
@@ -145,7 +153,7 @@ public abstract class Person : MonoBehaviour
     }
     protected virtual void Attack()
     {
-        if (TargetEntity != null)
+        if (TargetEntity != null && TargetEntity.gameObject.activeSelf)
         {
             TargetEntity.TakeDamage(CalculateDamage());
         }
@@ -164,6 +172,6 @@ public abstract class Person : MonoBehaviour
     }
     protected virtual void Die()
     {
-        Destroy(gameObject);
+        ObjectPooler.Instance.ReturnToPool(gameObject, poolTag);
     }
 }

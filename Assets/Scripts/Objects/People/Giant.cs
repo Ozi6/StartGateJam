@@ -11,4 +11,8 @@ public class Giant : Person
     {
         // Cleanup if needed
     }
+    protected override void Die()
+    {
+        ObjectPooler.Instance.ReturnToPool(gameObject, "Giant");
+    }
 }
