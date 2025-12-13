@@ -9,7 +9,7 @@ public class GameManager : Singleton<GameManager>
     public List<Person> enemyTeam = new List<Person>();
     public int currentGold = 100;
     public GameObject currentThrowableHeld;
-
+    [SerializeField] public TMP_Text gold;
     [Header("Manager References")]
     public EnemySpawner enemySpawner;
     public InputManager inputManager;
@@ -78,6 +78,7 @@ public class GameManager : Singleton<GameManager>
             }
 
         }
+        gold.text = currentGold.ToString();
     }
 
     public void SetState(GameState newState)
