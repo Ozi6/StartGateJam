@@ -92,6 +92,7 @@ public class GameManager : Singleton<GameManager>
         switch (state)
         {
             case GameState.Shopping:
+                inputManager.typerEnable = false;
                 uiManager.ShowShopUI(true);
                 UpdateUnitCountDisplay();
                 break;
@@ -101,11 +102,13 @@ public class GameManager : Singleton<GameManager>
                     enemySpawner.SpawnWave(CurrentWaveConfig);
                 break;
             case GameState.Combat:
+                inputManager.typerEnable = true;
                 TakeTeamSnapshot();
                 TeamTargetManager.Instance.AssignTargets();
                 //inputManager.EnableInput(true);
                 break;
             case GameState.Augmentation:
+                inputManager.typerEnable = false;
                 uiManager.ShowShopUI(false);
                 uiManager.ShowAugmentSelection();
                 break;

@@ -5,6 +5,7 @@ public class InputManager : MonoBehaviour
     private UIManager uiManager;
     private KeywordDatabase database;
     private GameManager gameManager;
+    public bool typerEnable;
 
     private string currentBubbleText = "";
     private string heldKeyword = "";
@@ -18,8 +19,11 @@ public class InputManager : MonoBehaviour
 
     void Update()
     {
-        HandleKeyboardInput();
-        HandleSpecialKeys();
+        if (typerEnable)
+        {
+            HandleKeyboardInput();
+            HandleSpecialKeys();
+        }
     }
 
     // ==============================
