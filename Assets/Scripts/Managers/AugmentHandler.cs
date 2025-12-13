@@ -27,9 +27,8 @@ public class AugmentHandler : Singleton<AugmentHandler>
     public List<Augment> allAugments = new();
     private List<Augment> availableAugments = new();
 
-    private void Awake()
+    protected override void OnAwake()
     {
-        base.Awake();
         ResetAugmentPool();
     }
 
