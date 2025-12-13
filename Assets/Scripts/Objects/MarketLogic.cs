@@ -13,12 +13,12 @@ public class MarketLogic
         {"Wizard", 50 }
     } ;
 
-    public bool buyUnit()
+    public bool BuyUnit()
     {
         return false;
     }
     
-    public bool sellUnit(Person person)
+    public bool SellUnit(Person person)
     {
         //player.gold += person.Give;
         return true;
