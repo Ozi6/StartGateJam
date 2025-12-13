@@ -4,7 +4,6 @@ using UnityEngine;
 public abstract class Person : MonoBehaviour
 {
     [Header("Collision Push")]
-    private float pushStrength = 0.00002f;
     protected Rigidbody rb;
     [SerializeField] protected int maxHealth;
     [SerializeField] protected int health;
@@ -13,7 +12,7 @@ public abstract class Person : MonoBehaviour
     [SerializeField] protected float attackRange;
     [SerializeField] protected float attackSpeed;
     [SerializeField] protected float damageArea;
-    [SerializeField] protected bool isFriendly;
+    [SerializeField] public bool isFriendly;
     [SerializeField] protected float givenXP;
     [SerializeField] protected int givenGold;
     [SerializeField] protected string poolTag;

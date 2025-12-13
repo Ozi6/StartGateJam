@@ -12,7 +12,6 @@ public class ShopUI : MonoBehaviour
 
     void Awake()
     {
-        // Assume the panel starts at the bottom
         visiblePos = shopPanel.anchoredPosition;
         hiddenPos = new Vector2(visiblePos.x, -visiblePos.y - 500f);
         shopPanel.anchoredPosition = hiddenPos;
