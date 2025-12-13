@@ -156,15 +156,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13b9789c6b2f6944f8f7dda595443877, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 15
+  health: 30
   moveSpeed: 50
-  damage: 25
+  damage: 15
   attackRange: 100
   attackSpeed: 0.9
   damageArea: 0
   isFriendly: 0
-  givenXP: 0
-  givenGold: 5
+  givenXP: 9
+  givenGold: 3
   powerUpList: 0000000000
   TargetEntity: {fileID: 0}
   targetPosition: {x: 0, y: 0, z: 0}

@@ -163,6 +163,7 @@ MonoBehaviour:
   damageArea: 0
   isFriendly: 0
   givenXP: 2
-  givenGold: 10
+  givenGold: 7
   powerUpList: 0000000000
   TargetEntity: {fileID: 0}
+  targetPosition: {x: 0, y: 0, z: 0}
