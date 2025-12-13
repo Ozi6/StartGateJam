@@ -16,6 +16,7 @@ public class UIManager : MonoBehaviour
     public GameObject augmentCardPrefab;
     public Transform augmentCardContainer;
     private GameObject augmentOverlay;
+    private TMP_Text panelTitleText;
 
     // Store the current augment options
     private List<Augment> currentAugmentOptions = new();
@@ -55,6 +56,7 @@ public class UIManager : MonoBehaviour
         if (augmentSelectionPanel != null)
         {
             augmentSelectionPanel.SetActive(false);
+            // Don't setup here - will be set up when shown if needed
         }
     }
 
@@ -66,12 +68,6 @@ public class UIManager : MonoBehaviour
 
     public void ShowAugmentSelection()
     {
-        if (augmentSelectionPanel == null)
-        {
-            Debug.LogError("Augment Selection Panel is not assigned!");
-            return;
-        }
-
         // Get random augments from AugmentHandler
         if (AugmentHandler.Instance != null)
         {
@@ -83,13 +79,37 @@ public class UIManager : MonoBehaviour
             return;
         }
 
+        // Create or setup the panel if it doesn't exist or isn't properly configured
+        if (augmentSelectionPanel == null || canvas == null)
+        {
+            if (canvas == null)
+            {
+                Debug.LogError("Canvas is not assigned! Cannot create augment selection panel.");
+                return;
+            }
+            CreateAugmentSelectionPanel();
+        }
+        else
+        {
+            // Only setup if panel is valid (has transform and is not destroyed)
+            if (augmentSelectionPanel != null && augmentSelectionPanel.transform != null)
+            {
+                SetupAugmentSelectionPanel();
+            }
+            else
+            {
+                // Panel is invalid, create a new one
+                CreateAugmentSelectionPanel();
+            }
+        }
+
         // Create dark overlay if it doesn't exist
         if (augmentOverlay == null)
         {
             augmentOverlay = new GameObject("AugmentOverlay");
             augmentOverlay.transform.SetParent(canvas.transform, false);
             Image overlayImage = augmentOverlay.AddComponent<Image>();
-            overlayImage.color = new Color(0, 0, 0, 0.7f);
+            overlayImage.color = new Color(0, 0, 0, 0.75f);
 
             RectTransform overlayRect = augmentOverlay.GetComponent<RectTransform>();
             overlayRect.anchorMin = Vector2.zero;
@@ -102,6 +122,22 @@ public class UIManager : MonoBehaviour
         augmentOverlay.transform.SetAsLastSibling();
         augmentSelectionPanel.SetActive(true);
         augmentSelectionPanel.transform.SetAsLastSibling();
+        
+        // Force panel to center of screen
+        RectTransform panelRect = augmentSelectionPanel.GetComponent<RectTransform>();
+        if (panelRect != null)
+        {
+            panelRect.anchorMin = new Vector2(0.5f, 0.5f);
+            panelRect.anchorMax = new Vector2(0.5f, 0.5f);
+            panelRect.pivot = new Vector2(0.5f, 0.5f);
+            panelRect.anchoredPosition = Vector2.zero;
+        }
+
+        // Update title
+        if (panelTitleText != null)
+        {
+            panelTitleText.text = "Choose an Augment";
+        }
 
         // Clear previous cards
         if (augmentCardContainer != null)
@@ -115,6 +151,214 @@ public class UIManager : MonoBehaviour
             for (int i = 0; i < currentAugmentOptions.Count; i++)
             {
                 CreateAugmentCard(currentAugmentOptions[i]);
+            }
+        }
+    }
+
+    private void CreateAugmentSelectionPanel()
+    {
+        // Create main panel
+        augmentSelectionPanel = new GameObject("AugmentSelectionPanel");
+        augmentSelectionPanel.transform.SetParent(canvas.transform, false);
+
+        RectTransform panelRect = augmentSelectionPanel.AddComponent<RectTransform>();
+        panelRect.anchorMin = new Vector2(0.5f, 0.5f);
+        panelRect.anchorMax = new Vector2(0.5f, 0.5f);
+        panelRect.pivot = new Vector2(0.5f, 0.5f);
+        panelRect.sizeDelta = new Vector2(900, 600);
+        panelRect.anchoredPosition = Vector2.zero;
+
+        // Add background image
+        Image panelImage = augmentSelectionPanel.AddComponent<Image>();
+        panelImage.color = new Color(0.15f, 0.15f, 0.2f, 0.95f);
+
+        // Add outline/shadow effect using a simple border
+        GameObject border = new GameObject("Border");
+        border.transform.SetParent(augmentSelectionPanel.transform, false);
+        RectTransform borderRect = border.AddComponent<RectTransform>();
+        borderRect.anchorMin = Vector2.zero;
+        borderRect.anchorMax = Vector2.one;
+        borderRect.sizeDelta = Vector2.zero;
+        borderRect.anchoredPosition = Vector2.zero;
+        Image borderImage = border.AddComponent<Image>();
+        borderImage.color = new Color(0.3f, 0.5f, 0.8f, 1f);
+        borderRect.offsetMin = new Vector2(-3, -3);
+        borderRect.offsetMax = new Vector2(3, 3);
+
+        // Create title
+        GameObject titleObj = new GameObject("Title");
+        titleObj.transform.SetParent(augmentSelectionPanel.transform, false);
+        RectTransform titleRect = titleObj.AddComponent<RectTransform>();
+        titleRect.anchorMin = new Vector2(0, 1);
+        titleRect.anchorMax = new Vector2(1, 1);
+        titleRect.pivot = new Vector2(0.5f, 1);
+        titleRect.sizeDelta = new Vector2(0, 80);
+        titleRect.anchoredPosition = new Vector2(0, -10);
+
+        panelTitleText = titleObj.AddComponent<TMP_Text>();
+        panelTitleText.text = "Choose an Augment";
+        panelTitleText.fontSize = 36;
+        panelTitleText.fontStyle = FontStyles.Bold;
+        panelTitleText.alignment = TextAlignmentOptions.Center;
+        panelTitleText.color = Color.white;
+
+        // Create card container
+        GameObject containerObj = new GameObject("CardContainer");
+        containerObj.transform.SetParent(augmentSelectionPanel.transform, false);
+        RectTransform containerRect = containerObj.AddComponent<RectTransform>();
+        containerRect.anchorMin = new Vector2(0, 0);
+        containerRect.anchorMax = new Vector2(1, 1);
+        containerRect.sizeDelta = Vector2.zero;
+        containerRect.anchoredPosition = Vector2.zero;
+        containerRect.offsetMin = new Vector2(20, 100);
+        containerRect.offsetMax = new Vector2(-20, -20);
+
+        HorizontalLayoutGroup layoutGroup = containerObj.AddComponent<HorizontalLayoutGroup>();
+        layoutGroup.spacing = 20;
+        layoutGroup.padding = new RectOffset(20, 20, 20, 20);
+        layoutGroup.childAlignment = TextAnchor.MiddleCenter;
+        layoutGroup.childControlWidth = false;
+        layoutGroup.childControlHeight = false;
+        layoutGroup.childForceExpandWidth = false;
+        layoutGroup.childForceExpandHeight = false;
+
+        ContentSizeFitter sizeFitter = containerObj.AddComponent<ContentSizeFitter>();
+        sizeFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+        sizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+        augmentCardContainer = containerObj.transform;
+    }
+
+    private void SetupAugmentSelectionPanel()
+    {
+        if (augmentSelectionPanel == null) return;
+        
+        // Ensure panel is parented to canvas
+        if (canvas != null && augmentSelectionPanel.transform.parent != canvas.transform)
+        {
+            augmentSelectionPanel.transform.SetParent(canvas.transform, false);
+        }
+
+        RectTransform panelRect = augmentSelectionPanel.GetComponent<RectTransform>();
+        if (panelRect == null)
+        {
+            panelRect = augmentSelectionPanel.AddComponent<RectTransform>();
+        }
+        
+        if (panelRect == null) return; // Safety check
+
+        // Ensure proper positioning (centered) - force it
+        panelRect.anchorMin = new Vector2(0.5f, 0.5f);
+        panelRect.anchorMax = new Vector2(0.5f, 0.5f);
+        panelRect.pivot = new Vector2(0.5f, 0.5f);
+        panelRect.anchoredPosition = Vector2.zero;
+        panelRect.localPosition = Vector3.zero;
+        panelRect.localScale = Vector3.one;
+
+        // Set size if not already set
+        if (panelRect.sizeDelta.x < 100 || panelRect.sizeDelta.y < 100)
+        {
+            panelRect.sizeDelta = new Vector2(900, 600);
+        }
+
+        // Ensure background exists
+        Image panelImage = augmentSelectionPanel.GetComponent<Image>();
+        if (panelImage == null)
+        {
+            panelImage = augmentSelectionPanel.AddComponent<Image>();
+            panelImage.color = new Color(0.15f, 0.15f, 0.2f, 0.95f);
+        }
+
+        // Find or create title
+        if (augmentSelectionPanel.transform != null)
+        {
+            Transform titleTransform = augmentSelectionPanel.transform.Find("Title");
+            if (titleTransform == null)
+            {
+                GameObject titleObj = new GameObject("Title");
+                if (titleObj != null && augmentSelectionPanel.transform != null)
+                {
+                    titleObj.transform.SetParent(augmentSelectionPanel.transform, false);
+                    RectTransform titleRect = titleObj.AddComponent<RectTransform>();
+                    if (titleRect != null)
+                    {
+                        titleRect.anchorMin = new Vector2(0, 1);
+                        titleRect.anchorMax = new Vector2(1, 1);
+                        titleRect.pivot = new Vector2(0.5f, 1);
+                        titleRect.sizeDelta = new Vector2(0, 80);
+                        titleRect.anchoredPosition = new Vector2(0, -10);
+                    }
+
+                    panelTitleText = titleObj.AddComponent<TMP_Text>();
+                    if (panelTitleText != null)
+                    {
+                        panelTitleText.text = "Choose an Augment";
+                        panelTitleText.fontSize = 36;
+                        panelTitleText.fontStyle = FontStyles.Bold;
+                        panelTitleText.alignment = TextAlignmentOptions.Center;
+                        panelTitleText.color = Color.white;
+                    }
+                }
+            }
+            else
+            {
+                panelTitleText = titleTransform.GetComponent<TMP_Text>();
+                if (panelTitleText == null)
+                {
+                    panelTitleText = titleTransform.gameObject.AddComponent<TMP_Text>();
+                    if (panelTitleText != null)
+                    {
+                        panelTitleText.text = "Choose an Augment";
+                        panelTitleText.fontSize = 36;
+                        panelTitleText.fontStyle = FontStyles.Bold;
+                        panelTitleText.alignment = TextAlignmentOptions.Center;
+                        panelTitleText.color = Color.white;
+                    }
+                }
+            }
+        }
+
+        // Find or create card container
+        Transform containerTransform = augmentSelectionPanel.transform.Find("CardContainer");
+        if (containerTransform == null)
+        {
+            GameObject containerObj = new GameObject("CardContainer");
+            containerObj.transform.SetParent(augmentSelectionPanel.transform, false);
+            RectTransform containerRect = containerObj.AddComponent<RectTransform>();
+            containerRect.anchorMin = new Vector2(0, 0);
+            containerRect.anchorMax = new Vector2(1, 1);
+            containerRect.sizeDelta = Vector2.zero;
+            containerRect.anchoredPosition = Vector2.zero;
+            containerRect.offsetMin = new Vector2(20, 100);
+            containerRect.offsetMax = new Vector2(-20, -20);
+
+            HorizontalLayoutGroup layoutGroup = containerObj.AddComponent<HorizontalLayoutGroup>();
+            layoutGroup.spacing = 20;
+            layoutGroup.padding = new RectOffset(20, 20, 20, 20);
+            layoutGroup.childAlignment = TextAnchor.MiddleCenter;
+            layoutGroup.childControlWidth = false;
+            layoutGroup.childControlHeight = false;
+            layoutGroup.childForceExpandWidth = false;
+            layoutGroup.childForceExpandHeight = false;
+
+            augmentCardContainer = containerObj.transform;
+        }
+        else
+        {
+            augmentCardContainer = containerTransform;
+            
+            // Ensure layout group exists
+            HorizontalLayoutGroup layoutGroup = containerTransform.GetComponent<HorizontalLayoutGroup>();
+            if (layoutGroup == null)
+            {
+                layoutGroup = containerTransform.gameObject.AddComponent<HorizontalLayoutGroup>();
+                layoutGroup.spacing = 20;
+                layoutGroup.padding = new RectOffset(20, 20, 20, 20);
+                layoutGroup.childAlignment = TextAnchor.MiddleCenter;
+                layoutGroup.childControlWidth = false;
+                layoutGroup.childControlHeight = false;
+                layoutGroup.childForceExpandWidth = false;
+                layoutGroup.childForceExpandHeight = false;
             }
         }
     }
