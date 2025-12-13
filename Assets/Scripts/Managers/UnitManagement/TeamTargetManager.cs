@@ -5,22 +5,77 @@ public class TeamTargetManager : Singleton<TeamTargetManager>
 {
     public Dictionary<Person, float> playersTargetDictionary = new Dictionary<Person, float>();
     public Dictionary<Person, float> enemiesTargetDictionary = new Dictionary<Person, float>();
-    [SerializeField] private bool playerSide;
 
     void Start()
     {
-        InitializeTargetDictionary(playersTargetDictionary, true);
-        InitializeTargetDictionary(enemiesTargetDictionary, false);
+        // Initialization moved to AssignTargets to ensure teams are populated
     }
 
     public void InitializeTargetDictionary(Dictionary<Person, float> dict, bool player)
     {
         dict.Clear();
-        List<Person> enemies = player ? GameManager.Instance.enemyTeam : GameManager.Instance.playersTeam;
-        foreach (Person enemy in enemies)
+        List<Person> targets = player ? GameManager.Instance.enemyTeam : GameManager.Instance.playersTeam;
+        foreach (Person target in targets)
         {
-            if (enemy != null && !dict.ContainsKey(enemy))
-                dict.Add(enemy, 0);
+            if (target != null && !dict.ContainsKey(target))
+                dict.Add(target, 0);
         }
+    }
+
+    public void AssignTargets()
+    {
+        InitializeTargetDictionary(playersTargetDictionary, true);
+        InitializeTargetDictionary(enemiesTargetDictionary, false);
+
+        foreach (Person person in GameManager.Instance.playersTeam)
+        {
+            if (person != null)
+            {
+                Person target = FindBestTarget(person, playersTargetDictionary);
+                if (target != null)
+                {
+                    person.TargetEntity = target;
+                    playersTargetDictionary[target] += 1;
+                }
+            }
+        }
+
+        foreach (Person person in GameManager.Instance.enemyTeam)
+        {
+            if (person != null)
+            {
+                Person target = FindBestTarget(person, enemiesTargetDictionary);
+                if (target != null)
+                {
+                    person.TargetEntity = target;
+                    enemiesTargetDictionary[target] += 1;
+                }
+            }
+        }
+    }
+
+    private Person FindBestTarget(Person selector, Dictionary<Person, float> targetsDict)
+    {
+        if (targetsDict.Count == 0) return null;
+
+        Person bestTarget = null;
+        float minScore = float.MaxValue;
+
+        foreach (var kvp in targetsDict)
+        {
+            Person target = kvp.Key;
+            if (target == null) continue;
+
+            float dist = Vector3.Distance(selector.transform.position, target.transform.position);
+            float score = kvp.Value + dist;
+
+            if (score < minScore)
+            {
+                minScore = score;
+                bestTarget = target;
+            }
+        }
+
+        return bestTarget;
     }
 }

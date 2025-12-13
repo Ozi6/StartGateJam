@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System.Collections;
 using UnityEngine;
 
@@ -53,6 +54,8 @@ public class EnemySpawner : MonoBehaviour
         yield return SpawnIfNotEmpty(scoutTag, config.scoutAmount);
         yield return SpawnIfNotEmpty(wizardTag, config.wizardAmount);
         yield return SpawnIfNotEmpty(archerTag, config.archerAmount);
+
+        GameManager.Instance.EnterState(GameState.Combat);
     }
 
     private IEnumerator SpawnUnitTypeInLine(string tag, int count, float spacing)
