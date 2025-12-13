@@ -4,7 +4,7 @@ public static class PowerUpEffectProcessor
 {
     public static void Apply(PowerUpType type, Person person)
     {
-        Debug.Log($"[PowerUp APPLY] {type} -> {person.name}");
+        Debug.Log($"[PowerUp APPLY] {type} -> {person.name} : {person.isFriendly}");
 
         if (person.IsFriendly)
         {
