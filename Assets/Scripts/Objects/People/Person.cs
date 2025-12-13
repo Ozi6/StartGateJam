@@ -16,8 +16,18 @@ public abstract class Person : MonoBehaviour
     [SerializeField] protected bool isFriendly;
     [SerializeField] protected float givenXP;
     [SerializeField] protected int givenGold;
-    [SerializeField] protected bool[] powerUpList = new bool[5]; // isFriendly = true: [strength, speed, shield, -, -] else: [goldIncrease, fatique, -, -, -]
     [SerializeField] protected string poolTag;
+
+    // ---------- POWER-UP STATES ----------
+    public bool IsInvulnerable { get; private set; }
+    public bool CanMove { get; private set; } = true;
+
+    public bool HasAreaDamage { get; private set; }
+    public bool HasLifeSteal { get; private set; }
+
+    private float damageMultiplier = 1f;
+    private float damageTakenMultiplier = 1f;
+
 
     public bool isEnemyGolded = false;
     private float deploymentSpeed = 70;
@@ -32,7 +42,6 @@ public abstract class Person : MonoBehaviour
     public float DamageArea => damageArea;
     public float GivenXP => givenXP;
     public int GivenGold => givenGold;
-    public bool[] PowerUpList => powerUpList;
     public Person TargetEntity;
     protected bool isWaiting = false;
     protected float lastAttackTime = -Mathf.Infinity;
@@ -96,12 +105,15 @@ public abstract class Person : MonoBehaviour
     }
     protected void GoToPoint(Vector3 point)
     {
+        if (!CanMove) return;
+
         transform.position = Vector3.MoveTowards(
             transform.position,
             point,
             moveSpeed * Time.deltaTime
         );
     }
+
     protected void StopMoving()
     {
         rb.linearVelocity = Vector3.zero;
@@ -165,12 +177,27 @@ public abstract class Person : MonoBehaviour
     }
     public virtual float CalculateDamage()
     {
-        return damage;
+        float finalDamage = damage * damageMultiplier;
+
+        if (HasLifeSteal)
+        {
+            float heal = finalDamage * 0.35f;
+            TakeDamage(-heal);
+        }
+
+        return finalDamage;
     }
+
     public virtual void TakeDamage(float dmg)
     {
         health -= Mathf.RoundToInt(dmg);
-        if(health > maxHealth)
+        if (IsInvulnerable) return;
+
+        dmg *= damageTakenMultiplier;
+
+        health -= Mathf.RoundToInt(dmg);
+
+        if (health > maxHealth)
         {
             health = maxHealth;
         }
@@ -182,6 +209,96 @@ public abstract class Person : MonoBehaviour
     protected virtual void Die()
     {
         ObjectPooler.Instance.ReturnToPool(gameObject, poolTag);
-        GameManager.Instance.currentGold += isEnemyGolded ? givenGold+1 : givenGold ;
+        GameManager.Instance.currentGold += isEnemyGolded ? givenGold + 1 : givenGold;
+    }
+
+    // ----------- COROUTINES --------------
+
+    public void ApplyShield(float duration)
+    {
+        StartCoroutine(ShieldRoutine(duration));
+    }
+
+    private IEnumerator ShieldRoutine(float duration)
+    {
+        IsInvulnerable = true;
+        CanMove = false;
+
+        yield return new WaitForSeconds(duration);
+
+        IsInvulnerable = false;
+        CanMove = true;
+    }
+
+
+    public void ApplyRush(float multiplier, float duration)
+    {
+        StartCoroutine(RushRoutine(multiplier, duration));
+    }
+
+    private IEnumerator RushRoutine(float multiplier, float duration)
+    {
+        moveSpeed *= multiplier;
+        yield return new WaitForSeconds(duration);
+        moveSpeed /= multiplier;
+    }
+
+
+    public void ApplyHaste(float multiplier, float duration)
+    {
+        StartCoroutine(HasteRoutine(multiplier, duration));
+    }
+
+    private IEnumerator HasteRoutine(float multiplier, float duration)
+    {
+        attackSpeed /= multiplier; // faster attacks
+        yield return new WaitForSeconds(duration);
+        attackSpeed *= multiplier;
+    }
+
+
+    public void ApplyRage(float dmgMult, float takenMult, float duration)
+    {
+        StartCoroutine(RageRoutine(dmgMult, takenMult, duration));
+    }
+
+    private IEnumerator RageRoutine(float dmgMult, float takenMult, float duration)
+    {
+        damageMultiplier *= dmgMult;
+        damageTakenMultiplier *= takenMult;
+
+        yield return new WaitForSeconds(duration);
+
+        damageMultiplier /= dmgMult;
+        damageTakenMultiplier /= takenMult;
+    }
+
+
+    public void ApplyAreaDamage(float duration, float radiusMultiplier)
+    {
+        StartCoroutine(AreaDamageRoutine(duration, radiusMultiplier));
+    }
+
+    private IEnumerator AreaDamageRoutine(float duration, float radiusMultiplier)
+    {
+        HasAreaDamage = true;
+        damageArea *= radiusMultiplier;
+
+        yield return new WaitForSeconds(duration);
+
+        damageArea /= radiusMultiplier;
+        HasAreaDamage = false;
+    }
+
+    public void ApplyLifeSteal(float duration)
+    {
+        StartCoroutine(LifeStealRoutine(duration));
+    }
+
+    private IEnumerator LifeStealRoutine(float duration)
+    {
+        HasLifeSteal = true;
+        yield return new WaitForSeconds(duration);
+        HasLifeSteal = false;
     }
 }

@@ -1,11 +1,11 @@
-using System;
 using UnityEngine;
-using static Throwable;
 
 public static class PowerUpEffectProcessor
 {
     public static void Apply(PowerUpType type, Person person)
     {
+        Debug.Log($"[PowerUp APPLY] {type} -> {person.name}");
+
         if (person.IsFriendly)
         {
             if (AugmentHandler.Instance.allAugments[0].purchased == 1)
@@ -13,19 +13,36 @@ public static class PowerUpEffectProcessor
                 float x = person.MaxHealth * 0.1f;
                 person.TakeDamage(-x);
             }
-            Debug.Log(
-                $"[PowerUp APPLY] Type: {type}, " +
-                $"Target: {person.name}, " +
-                $"IsFriendly: {person.IsFriendly}"
-            );
-        }
-        else
-        {
-            if(type == PowerUpType.EnemyGold && person.isEnemyGolded == 0)
+            switch (type)
             {
-                person.isEnemyGolded = 1;
+                case PowerUpType.Shield:
+                    person.ApplyShield(2f);
+                    break;
+
+                case PowerUpType.Rush:
+                    person.ApplyRush(2f, 3f);
+                    break;
+
+                case PowerUpType.Haste:
+                    person.ApplyHaste(1.5f, 4f);
+                    break;
+
+                case PowerUpType.Rage:
+                    person.ApplyRage(2f, 1.5f, 4f);
+                    break;
+
+                case PowerUpType.AreaDamage:
+                    person.ApplyAreaDamage(4f, 1.2f);
+                    break;
+
+                case PowerUpType.LifeSteal:
+                    person.ApplyLifeSteal(2f);
+                    break;
             }
         }
+        else if (type == PowerUpType.EnemyGold)
+        {
+            person.isEnemyGolded = true;
+        }
     }
-
 }
