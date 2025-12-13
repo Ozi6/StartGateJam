@@ -86,48 +86,24 @@ public class AugmentHandler : Singleton<AugmentHandler>
 
         foreach (var augment in allAugments)
         {
-            if (augment.repeatable || augment.purchased == 0)
-                pool.Add(augment);
+            if (!augment.repeatable && augment.purchased > 0)
+                continue;
+            pool.Add(augment);
         }
 
-        return GetWeightedSelection(pool, count);
-    }
+        List<Augment> selected = new();
+        int maxCount = Mathf.Min(count, pool.Count);
 
-    private List<Augment> GetWeightedSelection(List<Augment> pool, int count)
-    {
-        List<Augment> result = new();
-        List<Augment> tempPool = new(pool);
-
-        for (int i = 0; i < count && tempPool.Count > 0; i++)
+        for (int i = 0; i < maxCount; i++)
         {
-            Augment chosen = GetWeightedRandom(tempPool);
-            result.Add(chosen);
-
-            if (!chosen.repeatable)
-                tempPool.Remove(chosen);
+            int index = Random.Range(0, pool.Count);
+            selected.Add(pool[index]);
+            pool.RemoveAt(index);
         }
 
-        return result;
+        return selected;
     }
 
-    private Augment GetWeightedRandom(List<Augment> pool)
-    {
-        float totalWeight = 0f;
-        foreach (var augment in pool)
-            totalWeight += augment.chance;
-
-        float roll = Random.Range(0f, totalWeight);
-        float cumulative = 0f;
-
-        foreach (var augment in pool)
-        {
-            cumulative += augment.chance;
-            if (roll <= cumulative)
-                return augment;
-        }
-
-        return pool[^1];
-    }
 
     public void PurchaseAugment(int augmentId)
     {

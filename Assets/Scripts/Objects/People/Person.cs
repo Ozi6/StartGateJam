@@ -52,7 +52,7 @@ public abstract class Person : MonoBehaviour
 
     public void OnObjectReturn()
     {
-
+        UnitRegistrar.UnregisterUnit(this);
     }
 
     protected virtual void Awake()
