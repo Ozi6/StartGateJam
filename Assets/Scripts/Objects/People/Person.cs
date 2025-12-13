@@ -222,7 +222,7 @@ public abstract class Person : MonoBehaviour
 
     public void ApplyShield(float duration)
     {
-        float augmentalLag = 05f * AugmentHandler.Instance.GetAugmentById(1).purchased;
+        float augmentalLag = 0.5f * AugmentHandler.Instance.GetAugmentById(1).purchased;
         StartCoroutine(ShieldRoutine(duration+augmentalLag));
     }
 
