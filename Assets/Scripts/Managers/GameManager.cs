@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
+    public GameState CurrentState { get; private set; }
+
     public List<Person> playersTeam = new List<Person>();
     public List<Person> enemyTeam = new List<Person>();
     public GameObject currentThrowableHeld;
@@ -26,19 +28,64 @@ public class GameManager : Singleton<GameManager>
         if (inputManager == null) inputManager = FindFirstObjectByType<InputManager>();
         if (uiManager == null) uiManager = FindFirstObjectByType<UIManager>();
 
-        if (uiManager != null)
-        {
-            uiManager.InitializeUI();
-        }
+        uiManager?.InitializeUI();
+        inputManager?.Initialize(uiManager, database, this);
 
-        if (enemySpawner != null && testWaveConfig != null)
-        {
-            enemySpawner.SpawnWave(testWaveConfig);
-        }
+        SetState(GameState.Shopping);
+    }
 
-        if (inputManager != null)
+    public void SetState(GameState newState)
+    {
+        if (CurrentState == newState) return;
+
+        ExitState(CurrentState);
+        CurrentState = newState;
+        EnterState(CurrentState);
+    }
+
+    private void EnterState(GameState state)
+    {
+        switch (state)
         {
-            inputManager.Initialize(uiManager, database, this);
+            case GameState.Shopping:
+                //uiManager.ShowShopUI(true);
+                break;
+
+            case GameState.Deployment:
+
+                break;
+
+            case GameState.Combat:
+                //inputManager.EnableInput(true);
+
+                if (enemySpawner != null && testWaveConfig != null)
+                    enemySpawner.SpawnWave(testWaveConfig);
+                break;
+
+            case GameState.Upgrade:
+                //uiManager.ShowUpgradeUI(true);
+                //inputManager.EnableInput(false);
+                break;
+        }
+    }
+
+    private void ExitState(GameState state)
+    {
+        switch (state)
+        {
+            case GameState.Shopping:
+                //uiManager.ShowShopUI(false);
+                break;
+
+            case GameState.Deployment:
+                break;
+
+            case GameState.Combat:
+                break;
+
+            case GameState.Upgrade:
+                //uiManager.ShowUpgradeUI(false);
+                break;
         }
     }
 
