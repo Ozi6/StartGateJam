@@ -170,7 +170,7 @@ public abstract class Person : MonoBehaviour
         else
         {
             StopMoving();
-            if (Time.time >= lastAttackTime + attackSpeed)
+            if (Time.time >= lastAttackTime + (1/attackSpeed))
             {
                 Attack();
                 lastAttackTime = Time.time;
@@ -292,9 +292,9 @@ public abstract class Person : MonoBehaviour
 
     private IEnumerator HasteRoutine(float multiplier, float duration)
     {
-        attackSpeed /= multiplier; // faster attacks
+        attackSpeed *= multiplier; // faster attacks
         yield return new WaitForSeconds(duration);
-        attackSpeed *= multiplier;
+        attackSpeed /= multiplier;
     }
 
     public void ApplyRage(float dmgMult, float takenMult, float duration)
