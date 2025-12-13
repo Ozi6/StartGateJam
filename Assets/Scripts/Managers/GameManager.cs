@@ -221,7 +221,7 @@ public class GameManager : Singleton<GameManager>
 
     public void MoveAllWaitingForward()
     {
-        Vector3 shift = Vector3.back * rowSpacing;
+        Vector3 shift = Vector3.left * rowSpacing;
         foreach (Person person in enemyTeam)
         {
             person.targetPosition += shift;

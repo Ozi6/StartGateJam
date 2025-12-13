@@ -18,7 +18,6 @@ public class EnemySpawner : MonoBehaviour
     private const string scoutTag = "Scout";
     private const string wizardTag = "Wizard";
     private const string archerTag = "Archer";
-
     private const string giantTag2 = "Giant_lvl2";
     private const string vikingTag2 = "Viking_lvl2";
     private const string scoutTag2 = "Scout_lvl2";
@@ -50,7 +49,6 @@ public class EnemySpawner : MonoBehaviour
         IEnumerator ProcessUnitGroup(string tag1, int count1, string tag2, int count2)
         {
             int groupTotal = count1 + count2;
-
             if (groupTotal > 0)
             {
                 if (!firstGroup)
@@ -58,9 +56,7 @@ public class EnemySpawner : MonoBehaviour
                     GameManager.Instance.MoveAllWaitingForward();
                     yield return new WaitForSeconds(spawnInterval);
                 }
-
                 firstGroup = false;
-
                 yield return SpawnMixedLine(tag1, count1, tag2, count2, unitSpacing);
             }
         }
@@ -83,7 +79,6 @@ public class EnemySpawner : MonoBehaviour
         int maxBatch = isGiant ? 1 : 3;
 
         int spawnedSoFar = 0;
-
         Vector3 center = enemyWaitPos.position;
         Vector3 designated = enemyGoDesignatedPointPos.position;
 
@@ -95,11 +90,9 @@ public class EnemySpawner : MonoBehaviour
             for (int j = 0; j < thisBatchSize; j++)
             {
                 int currentIndex = spawnedSoFar + j;
-
                 string currentTag = (currentIndex < count1) ? tag1 : tag2;
 
                 Vector3 pos = enemySpawnPos.position;
-
                 GameObject instance = ObjectPooler.Instance.SpawnFromPool(currentTag, pos, Quaternion.identity);
 
                 if (instance != null)
@@ -123,7 +116,7 @@ public class EnemySpawner : MonoBehaviour
 
     private Vector3 CalculateWaitPos(int index, int total, Vector3 center, float spacing)
     {
-        float startX = -(total - 1f) * spacing / 2f;
-        return center + new Vector3(startX + index * spacing, 0f, 0f);
+        float startZ = -(total - 1f) * spacing / 2f;
+        return center + new Vector3(0f, 0f, startZ + index * spacing);
     }
 }
