@@ -429,9 +429,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 50
   health: 50
-  moveSpeed: 2.8
-  damage: 7
-  attackRange: 25
+  moveSpeed: 21
+  damage: 70
+  attackRange: 7
   attackSpeed: 0.3
   damageArea: 0
   isFriendly: 0
@@ -439,6 +439,7 @@ MonoBehaviour:
   givenGold: 10
   poolTag: 
   areaBuff: 1.4
+  turnSpeed: 10
   isEnemyGolded: 0
   TargetEntity: {fileID: 0}
   targetPosition: {x: 0, y: 0, z: 0}
