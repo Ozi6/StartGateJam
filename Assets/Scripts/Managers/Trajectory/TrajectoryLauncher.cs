@@ -63,6 +63,7 @@ public class TrajectoryLauncher : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
+            if (GameManager.Instance.currentThrowableHeld == null) return;
             isCharging = true;
             currentChargeTime = 0f;
             lineRenderer.enabled = true;
@@ -81,6 +82,19 @@ public class TrajectoryLauncher : MonoBehaviour
                 chargeDirection = 1;
             }
             DrawTrajectory(CalculateCurrentForce());
+
+            GameObject held = GameManager.Instance.currentThrowableHeld;
+            if (held != null)
+            {
+                Rigidbody rb = held.GetComponent<Rigidbody>();
+                if (rb != null)
+                {
+                    rb.isKinematic = true;
+                    rb.useGravity = false;
+                    rb.position = firePoint.position;
+                    rb.rotation = firePoint.rotation;
+                }
+            }
         }
         else if (isCharging && Input.GetKeyUp(KeyCode.Space))
         {
@@ -133,21 +147,29 @@ public class TrajectoryLauncher : MonoBehaviour
 
     private void ThrowObject(float force)
     {
-        GameObject prefabToSpawn = GameManager.Instance.currentThrowableHeld;
-        if (prefabToSpawn != null)
+        GameObject held = GameManager.Instance.currentThrowableHeld;
+        if (held != null)
         {
-            GameObject projectile = Instantiate(prefabToSpawn, firePoint.position, Quaternion.identity);
-            Rigidbody rb = projectile.GetComponent<Rigidbody>();
+            Rigidbody rb = held.GetComponent<Rigidbody>();
             if (rb != null)
+            {
+                rb.transform.position = firePoint.position;
+                rb.transform.rotation = firePoint.rotation;
+                rb.isKinematic = false;
+                rb.useGravity = true;
                 rb.linearVelocity = GetLaunchVelocity(force);
+                rb.angularVelocity = Vector3.zero;
+            }
+            Throwable throwable = held.GetComponent<Throwable>();
+            if (throwable != null)
+                throwable.OnThrown();
+            GameManager.Instance.currentThrowableHeld = null;
         }
     }
 
     private Vector3 GetLaunchVelocity(float force)
     {
-        Quaternion pitchRotation = Quaternion.AngleAxis(-launchAngle, transform.right);
-        Vector3 launchDirection = pitchRotation * transform.forward;
-        return launchDirection * force;
+        return GetTrajectoryVelocity(force);
     }
 
     private Vector3 GetTrajectoryVelocity(float force)

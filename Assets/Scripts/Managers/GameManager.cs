@@ -165,31 +165,6 @@ public class GameManager : Singleton<GameManager>
             panelOpen = !panelOpen;
             StartCoroutine(SlidePanel(panelOpen));
         }
-        if (Input.GetKeyDown(KeyCode.Space) && currentThrowableHeld != null)
-        {
-            if (throwStart != null)
-            {
-                currentThrowableHeld.transform.position = throwStart.position;
-                currentThrowableHeld.transform.rotation = throwStart.rotation;
-            }
-
-            Throwable throwable = currentThrowableHeld.GetComponent<Throwable>();
-            if (throwable != null)
-            {
-                throwable.OnThrown();
-            }
-
-            Rigidbody rb = currentThrowableHeld.GetComponent<Rigidbody>();
-            if (rb != null)
-            {
-                rb.isKinematic = false;
-                rb.useGravity = true;
-                Vector3 direction = (throwStart != null) ? throwStart.forward : Vector3.forward;
-                rb.AddForce(direction * throwForce, ForceMode.Impulse);
-            }
-
-            currentThrowableHeld = null;
-        }
     }
 
     private IEnumerator HideSecondUI(float delay)
