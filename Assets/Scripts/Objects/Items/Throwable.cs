@@ -2,9 +2,14 @@ using UnityEngine;
 
 public class Throwable : MonoBehaviour
 {
+    [Header("Area Effect")]
+    [SerializeField] private float effectRadius = 5f;
+    [SerializeField] private LayerMask personLayer ;
+
+    public PowerUpType powerUpType;
+
     public virtual void OnThrown()
     {
-
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -15,14 +20,44 @@ public class Throwable : MonoBehaviour
 
     protected virtual void OnImpact(Collision collision)
     {
-        int groundLayer = LayerMask.NameToLayer("Ground");
-        if (collision.gameObject.layer == groundLayer)
+
+            Vector3 impactPoint = collision.contacts[0].point;
+            Debug.Log($"Impact point: {impactPoint}");
+
+            ApplyAreaPowerUp(impactPoint);
+    }
+
+
+    // ---------------- AREA POWER-UP ----------------
+
+    private void ApplyAreaPowerUp(Vector3 center)
+    {
+        Debug.Log($"Applying {powerUpType} power-up at {center}");
+
+        Collider[] hits = Physics.OverlapSphere(center, effectRadius);
+
+        foreach (Collider hit in hits)
         {
-            Debug.Log("Throwable hit Ground layer.");
+            // This works even if the collider is on a child
+            Person person = hit.GetComponentInParent<Person>();
+            if (person == null) continue;
+
+            // Example: only friendly units
+            if (!person.IsFriendly) continue;
+
+            Debug.Log($"PowerUp hit {person.name}");
+
+            PowerUpEffectProcessor.Apply(powerUpType, person);
         }
-        else
-        {
-            Debug.Log("Throwable hit other layer: " + LayerMask.LayerToName(collision.gameObject.layer));
-        }
+    }
+
+
+
+    // ---------------- DEBUG ----------------
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireSphere(transform.position, effectRadius);
     }
 }

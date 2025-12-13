@@ -20,6 +20,12 @@ MonoBehaviour:
   - first: abra
     second: cadabra
     prefab: {fileID: 2122588547838145858, guid: 207a8394fb2243947b8a28e5ebbc4df1, type: 3}
-  - first: cadabra
-    second: alakazam
-    prefab: {fileID: 1537613362258619792, guid: f147995fe30868b4ca0e7cd655e7094c, type: 3}
+    powerUpType: 0
+  - first: semih
+    second: "\xE7elik"
+    prefab: {fileID: 2122588547838145858, guid: 207a8394fb2243947b8a28e5ebbc4df1, type: 3}
+    powerUpType: 1
+  - first: ozan
+    second: nurcan
+    prefab: {fileID: 2122588547838145858, guid: 207a8394fb2243947b8a28e5ebbc4df1, type: 3}
+    powerUpType: 2

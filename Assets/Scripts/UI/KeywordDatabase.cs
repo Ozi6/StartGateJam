@@ -1,10 +1,17 @@
 using System.Collections.Generic;
 using UnityEngine;
+using static Throwable;
 
-[CreateAssetMenu(fileName = "KeywordDatabase", menuName = "ScriptableObjects/KeywordDatabase", order = 1)]
+[CreateAssetMenu(
+    fileName = "KeywordDatabase",
+    menuName = "ScriptableObjects/KeywordDatabase",
+    order = 1)]
 public class KeywordDatabase : ScriptableObject
 {
+    [Header("Valid single keywords")]
     public List<string> validKeywords = new List<string>();
+
+    [Header("Keyword pairs (order independent)")]
     public List<KeywordPair> pairs = new List<KeywordPair>();
 
     [System.Serializable]
@@ -13,25 +20,43 @@ public class KeywordDatabase : ScriptableObject
         public string first;
         public string second;
         public GameObject prefab;
+        public PowerUpType powerUpType;
     }
 
-    private Dictionary<string, Dictionary<string, GameObject>> pairDict = null;
+    // ---------- Runtime dictionaries ----------
+    private Dictionary<string, Dictionary<string, GameObject>> prefabDict;
+    private Dictionary<(string, string), PowerUpType> powerUpDict;
 
-    private void BuildDictionary()
+    // ---------- Build ----------
+    private void BuildDictionaries()
     {
-        if (pairDict != null) return;
-        pairDict = new Dictionary<string, Dictionary<string, GameObject>>();
+        if (prefabDict != null) return;
+
+        prefabDict = new Dictionary<string, Dictionary<string, GameObject>>();
+        powerUpDict = new Dictionary<(string, string), PowerUpType>();
+
         foreach (var pair in pairs)
         {
-            string f = pair.first.ToLower();
-            string s = pair.second.ToLower();
-            if (!pairDict.ContainsKey(f))
-            {
-                pairDict[f] = new Dictionary<string, GameObject>();
-            }
-            pairDict[f][s] = pair.prefab;
+            string a = pair.first.ToLower();
+            string b = pair.second.ToLower();
+
+            AddPrefabPair(a, b, pair.prefab);
+            AddPrefabPair(b, a, pair.prefab);
+
+            powerUpDict[(a, b)] = pair.powerUpType;
+            powerUpDict[(b, a)] = pair.powerUpType;
         }
     }
+
+    private void AddPrefabPair(string first, string second, GameObject prefab)
+    {
+        if (!prefabDict.ContainsKey(first))
+            prefabDict[first] = new Dictionary<string, GameObject>();
+
+        prefabDict[first][second] = prefab;
+    }
+
+    // ---------- Public API ----------
 
     public bool IsValid(string word)
     {
@@ -40,21 +65,35 @@ public class KeywordDatabase : ScriptableObject
 
     public bool HasPair(string first, string second)
     {
-        BuildDictionary();
+        BuildDictionaries();
+
         first = first.ToLower();
         second = second.ToLower();
-        return pairDict.ContainsKey(first) && pairDict[first].ContainsKey(second);
+
+        return prefabDict.ContainsKey(first)
+            && prefabDict[first].ContainsKey(second);
     }
 
     public GameObject GetPrefab(string first, string second)
     {
-        BuildDictionary();
+        BuildDictionaries();
+
         first = first.ToLower();
         second = second.ToLower();
+
         if (HasPair(first, second))
-        {
-            return pairDict[first][second];
-        }
+            return prefabDict[first][second];
+
         return null;
+    }
+
+    public PowerUpType GetPowerUp(string first, string second)
+    {
+        BuildDictionaries();
+
+        first = first.ToLower();
+        second = second.ToLower();
+
+        return powerUpDict[(first, second)];
     }
 }
