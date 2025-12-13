@@ -29,6 +29,7 @@ public class AugmentHandler : Singleton<AugmentHandler>
 
     private void Awake()
     {
+        base.Awake();
         ResetAugmentPool();
     }
 

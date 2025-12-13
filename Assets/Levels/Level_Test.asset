@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7203d8cb9abd804bac2d8954ef794b1, type: 3}
   m_Name: Level_Test
   m_EditorClassIdentifier: 
-  giantAmount: 3
+  giantAmount: 0
   vikingAmount: 0
   scoutAmount: 2
   wizardAmount: 0
-  archerAmount: 0
+  archerAmount: 7
