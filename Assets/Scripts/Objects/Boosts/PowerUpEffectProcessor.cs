@@ -8,7 +8,7 @@ public static class PowerUpEffectProcessor
 
         if (person.IsFriendly)
         {
-            if (AugmentHandler.Instance.allAugments[0].purchased == 1)
+            if (AugmentHandler.Instance.GetAugmentById(0).purchased > 0)
             {
                 float x = person.MaxHealth * 0.1f;
                 person.TakeDamage(-x);

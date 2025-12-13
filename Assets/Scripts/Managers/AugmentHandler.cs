@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class AugmentHandler : Singleton<AugmentHandler>
@@ -11,9 +11,9 @@ public class AugmentHandler : Singleton<AugmentHandler>
         public string description;
         public float chance;
         public bool repeatable;
-        public int purchased;
+        public int purchased; // stack count
 
-        public Augment(int id, string title, string description, float chance, bool repeatable, int purchased)
+        public Augment(int id, string title, string description, float chance, bool repeatable)
         {
             this.id = id;
             this.title = title;
@@ -25,57 +25,87 @@ public class AugmentHandler : Singleton<AugmentHandler>
     }
 
     public List<Augment> allAugments = new();
-    private List<Augment> availableAugments = new();
+    private Dictionary<int, Augment> augmentById = new();
 
     protected override void OnAwake()
     {
         ResetAugmentPool();
+=======
+        base.Awake();
+        ResetAugments();
+>>>>>>> Stashed changes
     }
 
-
-    public void ResetAugmentPool()
+    private void ResetAugments()
     {
         allAugments.Clear();
+        augmentById.Clear();
 
-        allAugments.Add(new Augment(0, "Vital Boost",
-            "All power-ups additionally restore 10% health.", 5f, true, 0));
+        AddAugment(new Augment(0, "Vital Boost",
+            "All power-ups additionally restore 10% health.", 5f, false));
 
-        allAugments.Add(new Augment(1, "Enhanced Haste",
-            "Haste power-up multiplier is increased by +0.5.", 15f, true, 0));
+        AddAugment(new Augment(1, "Enhanced Haste",
+            "Haste power-up multiplier is increased by +0.5.", 15f, true));
 
-        allAugments.Add(new Augment(2, "Fortified Shield",
-            "Shield power-up duration and cooldown are increased by +0.5 seconds.", 15f, true, 0));
+        AddAugment(new Augment(2, "Fortified Shield",
+            "Shield power-up duration and cooldown are increased by +0.5 seconds.", 15f, true));
 
-        allAugments.Add(new Augment(3, "Overdrive Rush",
-            "Rush power-up effect is increased to 3x.", 5f, false, 0));
+        AddAugment(new Augment(3, "Overdrive Rush",
+            "Rush power-up effect is increased to 3x.", 5f, false));
 
-        allAugments.Add(new Augment(4, "Controlled Rage",
-            "While Rage is active, damage taken is reduced to 25%.", 5f, false, 0));
+        AddAugment(new Augment(4, "Controlled Rage",
+            "While Rage is active, damage taken is reduced to 25%.", 5f, false));
 
-        allAugments.Add(new Augment(5, "Brutal Rage",
-            "Rage power-up damage bonus is increased to +150%.", 5f, false, 0));
+        AddAugment(new Augment(5, "Brutal Rage",
+            "Rage power-up damage bonus is increased to +150%.", 5f, false));
 
-        allAugments.Add(new Augment(6, "Golden Opportunity",
-            "Gold power-up can be used +1 extra time per wave.", 20f, true, 0));
+        AddAugment(new Augment(6, "Golden Opportunity",
+            "Gold power-up can be used +1 extra time per wave.", 20f, true));
 
-        allAugments.Add(new Augment(7, "Expanded Destruction",
-            "Area damage power-up radius is increased by 1.2x.", 15f, true, 0));
+        AddAugment(new Augment(7, "Expanded Destruction",
+            "Area damage power-up radius is increased by 1.2x.", 15f, true));
 
-        allAugments.Add(new Augment(8, "Improved Life Steal",
-            "Life Steal power-up steal amount is increased by +5%.", 15f, true, 0));
-        availableAugments = new List<Augment>(allAugments);
+        AddAugment(new Augment(8, "Improved Life Steal",
+            "Life Steal power-up steal amount is increased by +5%.", 15f, true));
+    }
+
+    private void AddAugment(Augment augment)
+    {
+        allAugments.Add(augment);
+        augmentById.Add(augment.id, augment);
+    }
+
+    public Augment GetAugmentById(int id)
+    {
+        augmentById.TryGetValue(id, out var augment);
+        return augment;
     }
 
     public List<Augment> GetRandomAugments(int count)
     {
+        List<Augment> pool = new();
+
+        foreach (var augment in allAugments)
+        {
+            if (augment.repeatable || augment.purchased == 0)
+                pool.Add(augment);
+        }
+
+        return GetWeightedSelection(pool, count);
+    }
+
+    private List<Augment> GetWeightedSelection(List<Augment> pool, int count)
+    {
         List<Augment> result = new();
-        List<Augment> tempPool = new(availableAugments);
+        List<Augment> tempPool = new(pool);
 
         for (int i = 0; i < count && tempPool.Count > 0; i++)
         {
             Augment chosen = GetWeightedRandom(tempPool);
             result.Add(chosen);
-            tempPool.Remove(chosen);
+
+            if (!chosen.repeatable)
+                tempPool.Remove(chosen);
         }
 
         return result;
@@ -100,21 +130,11 @@ public class AugmentHandler : Singleton<AugmentHandler>
         return pool[^1];
     }
 
-    public void PurchaseAugment(Augment augment)
+    public void PurchaseAugment(int augmentId)
     {
-        ApplyAugmentEffect(augment);
+        Augment augment = GetAugmentById(augmentId);
+        if (augment == null) return;
 
-        if (!augment.repeatable)
-        {
-            availableAugments.RemoveAll(a => a.id == augment.id);
-            Debug.Log($"Removed non-repeatable augment: {augment.title}");
-        }
-
-        allAugments[augment.id].purchased++;
-    }
-
-    private void ApplyAugmentEffect(Augment augment)
-    {
-        Debug.Log($"Applied augment: {augment.title}");
+        augment.purchased++;
     }
 }

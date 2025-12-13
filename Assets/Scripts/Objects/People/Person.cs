@@ -212,7 +212,8 @@ public abstract class Person : MonoBehaviour
 
     public void ApplyShield(float duration)
     {
-        StartCoroutine(ShieldRoutine(duration));
+        float augmentalLag = 05f * AugmentHandler.Instance.GetAugmentById(1).purchased;
+        StartCoroutine(ShieldRoutine(duration+augmentalLag));
     }
 
     private IEnumerator ShieldRoutine(float duration)
@@ -229,6 +230,10 @@ public abstract class Person : MonoBehaviour
 
     public void ApplyRush(float multiplier, float duration)
     {
+        if(AugmentHandler.Instance.GetAugmentById(3).purchased > 0)
+        {
+            multiplier = 3f;
+        }
         StartCoroutine(RushRoutine(multiplier, duration));
     }
 
@@ -242,7 +247,8 @@ public abstract class Person : MonoBehaviour
 
     public void ApplyHaste(float multiplier, float duration)
     {
-        StartCoroutine(HasteRoutine(multiplier, duration));
+        float augmentalMult = 0.5f * AugmentHandler.Instance.GetAugmentById(1).purchased;
+        StartCoroutine(HasteRoutine(multiplier+augmentalMult, duration));
     }
 
     private IEnumerator HasteRoutine(float multiplier, float duration)
@@ -255,6 +261,14 @@ public abstract class Person : MonoBehaviour
 
     public void ApplyRage(float dmgMult, float takenMult, float duration)
     {
+        if(AugmentHandler.Instance.GetAugmentById(4).purchased > 0)
+        {
+            takenMult = 1.25f;
+        }
+        if(AugmentHandler.Instance.GetAugmentById(5).purchased > 0)
+        {
+            dmgMult = 2.5f;
+        }
         StartCoroutine(RageRoutine(dmgMult, takenMult, duration));
     }
 
@@ -272,7 +286,8 @@ public abstract class Person : MonoBehaviour
 
     public void ApplyAreaDamage(float duration, float radiusMultiplier)
     {
-        StartCoroutine(AreaDamageRoutine(duration, radiusMultiplier));
+        float radiusMultAugment = 02f * AugmentHandler.Instance.GetAugmentById(7).purchased;
+        StartCoroutine(AreaDamageRoutine(duration, radiusMultiplier+radiusMultAugment));
     }
 
     private IEnumerator AreaDamageRoutine(float duration, float radiusMultiplier)
@@ -288,7 +303,8 @@ public abstract class Person : MonoBehaviour
 
     public void ApplyLifeSteal(float duration)
     {
-        StartCoroutine(LifeStealRoutine(duration));
+        float lifeStealMult = 05f * AugmentHandler.Instance.GetAugmentById(8).purchased;
+        StartCoroutine(LifeStealRoutine(duration+lifeStealMult));
     }
 
     private IEnumerator LifeStealRoutine(float duration)
