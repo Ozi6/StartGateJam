@@ -56,3 +56,7 @@ MonoBehaviour:
     second: exitium
     prefab: {fileID: 2122588547838145858, guid: 207a8394fb2243947b8a28e5ebbc4df1, type: 3}
     powerUpType: 5
+  - first: vita
+    second: furto
+    prefab: {fileID: 2122588547838145858, guid: 207a8394fb2243947b8a28e5ebbc4df1, type: 3}
+    powerUpType: 6
