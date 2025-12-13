@@ -15,6 +15,7 @@ Shader "Custom/HemisphereUnlit"
         Pass
         {
             CGPROGRAM
+            #pragma multi_compile _ SKINNED
             #pragma vertex vert
             #pragma fragment frag
             #include "UnityCG.cginc"

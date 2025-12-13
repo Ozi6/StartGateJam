@@ -1265,6 +1265,7 @@ MonoBehaviour:
   database: {fileID: 11400000, guid: 15c9fff425083194e8d93cfd807d21dd, type: 2}
   waveConfigs:
   - {fileID: 11400000, guid: 9b4f94f58c8919244937782a971dad0c, type: 2}
+  - {fileID: 11400000, guid: 55dcbd226435e1d4190e48c0e14cc121, type: 2}
   unitCountText: {fileID: 1065762972}
   rowSpacing: 1.8
 --- !u!4 &971262073
@@ -2378,10 +2379,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pools:
   - tag: Giant
-    prefab: {fileID: 8461961940972001279, guid: 477203d1718dd6c49a1c4f0d8cf016cf, type: 3}
+    prefab: {fileID: 7852249785133169965, guid: 82bbdc64c3d6efe4b962ce5e2a3e712b, type: 3}
     size: 30
   - tag: Viking
-    prefab: {fileID: 8461961940972001279, guid: d8021974cbcee7249a0fefc1032eb8ff, type: 3}
+    prefab: {fileID: 7290377077559998521, guid: 9032b5664a2b8e44b9474a3e50af8ed2, type: 3}
     size: 30
   - tag: Scout
     prefab: {fileID: 8461961940972001279, guid: 7ac0b63fa30218644b181589948b5041, type: 3}

@@ -23,6 +23,9 @@ public class GameManager : Singleton<GameManager>
     private int currentWaveIndex = 0;
     public float rowSpacing = 3f;
 
+    // Team snapshot storage
+    private List<PersonSnapshot> teamSnapshot = new List<PersonSnapshot>();
+
     protected override void OnAwake()
     {
         //playersTeam = new List<Person>();
@@ -48,7 +51,10 @@ public class GameManager : Singleton<GameManager>
         {
             if (enemyTeam.Count == 0)
             {
-                // Combat ends, proceed to next wave
+                // Combat ends, restore team from snapshot
+                RestoreTeamFromSnapshot();
+
+                // Proceed to next wave
                 currentWaveIndex++;
                 if (currentWaveIndex < waveConfigs.Count)
                 {
@@ -65,6 +71,9 @@ public class GameManager : Singleton<GameManager>
             }
             else if (playersTeam.Count == 0)
             {
+                // Restore team even on defeat
+                RestoreTeamFromSnapshot();
+
                 // Handle lose condition
                 Debug.Log("Player team defeated! Game over.");
                 // Optionally set to a Lose state
@@ -93,12 +102,12 @@ public class GameManager : Singleton<GameManager>
                     enemySpawner.SpawnWave(CurrentWaveConfig);
                 break;
             case GameState.Combat:
+                TakeTeamSnapshot();
                 TeamTargetManager.Instance.AssignTargets();
                 //inputManager.EnableInput(true);
                 break;
             case GameState.Upgrade:
-                //uiManager.ShowUpgradeUI(true);
-                //inputManager.EnableInput(false);
+                //uiManager.ShowUpgradeUI(false);
                 break;
         }
     }
@@ -113,11 +122,92 @@ public class GameManager : Singleton<GameManager>
             case GameState.Deployment:
                 break;
             case GameState.Combat:
+                RestoreTeamFromSnapshot();
                 break;
             case GameState.Upgrade:
                 //uiManager.ShowUpgradeUI(false);
                 break;
         }
+    }
+
+    private void TakeTeamSnapshot()
+    {
+        teamSnapshot.Clear();
+
+        foreach (Person person in playersTeam)
+        {
+            PersonSnapshot snapshot = new PersonSnapshot
+            {
+                prefabName = person.gameObject.name.Replace("(Clone)", "").Trim(),
+                position = person.transform.position,
+                rotation = person.transform.rotation,
+                targetPosition = person.targetPosition,
+                currentHealth = person.maxHealth,
+                maxHealth = person.maxHealth
+            };
+
+            teamSnapshot.Add(snapshot);
+        }
+
+        Debug.Log($"Team snapshot taken: {teamSnapshot.Count} units");
+    }
+
+    private void RestoreTeamFromSnapshot()
+    {
+        // Clear current team and deactivate/destroy current units
+        foreach (Person person in playersTeam)
+        {
+            if (person != null && person.gameObject != null)
+            {
+                // Try to return to pool if using object pooling
+                IPooledObject pooledObj = person.GetComponent<IPooledObject>();
+                if (pooledObj != null)
+                {
+                    // Determine the pool tag (you may need to adjust this based on your setup)
+                    string poolTag = person.gameObject.name.Replace("(Clone)", "").Trim();
+                    ObjectPooler.Instance?.ReturnToPool(person.gameObject, poolTag);
+                }
+                else
+                {
+                    Destroy(person.gameObject);
+                }
+            }
+        }
+        playersTeam.Clear();
+
+        // Restore team from snapshot
+        foreach (PersonSnapshot snapshot in teamSnapshot)
+        {
+            GameObject restoredUnit = null;
+
+            // Try to spawn from pool first
+            if (ObjectPooler.Instance != null)
+            {
+                restoredUnit = ObjectPooler.Instance.SpawnFromPool(
+                    snapshot.prefabName,
+                    snapshot.position,
+                    snapshot.rotation
+                );
+            }
+
+            if (restoredUnit != null)
+            {
+                Person person = restoredUnit.GetComponent<Person>();
+                if (person != null)
+                {
+                    person.targetPosition = snapshot.targetPosition;
+                    person.health = person.maxHealth;
+                    playersTeam.Add(person);
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"Failed to restore unit: {snapshot.prefabName}");
+            }
+        }
+
+        Debug.Log($"Team restored from snapshot: {playersTeam.Count} units");
+        UpdateUnitCountDisplay();
     }
 
     public void AddEnemy(Person newEnemy)
@@ -141,4 +231,17 @@ public class GameManager : Singleton<GameManager>
             unitCountText.text = $"{playersTeam.Count}/{CurrentWaveConfig.maxPlaceableUnits}";
         }
     }
+}
+
+// Snapshot class to store unit data
+[System.Serializable]
+public class PersonSnapshot
+{
+    public string prefabName;
+    public Vector3 position;
+    public Quaternion rotation;
+    public Vector3 targetPosition;
+    public int currentHealth;
+    public int maxHealth;
+    // Add any other properties you need to restore
 }

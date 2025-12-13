@@ -5,8 +5,8 @@ public abstract class Person : MonoBehaviour
 {
     [Header("Collision Push")]
     protected Rigidbody rb;
-    [SerializeField] protected int maxHealth;
-    [SerializeField] protected int health;
+    [SerializeField] public int maxHealth;
+    [SerializeField] public int health;
     [SerializeField] protected float moveSpeed;
     [SerializeField] protected float damage;
     [SerializeField] protected float attackRange;
