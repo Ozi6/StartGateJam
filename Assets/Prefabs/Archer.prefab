@@ -48,6 +48,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13b9789c6b2f6944f8f7dda595443877, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxHealth: 30
   health: 30
   moveSpeed: 2
   damage: 1.5
@@ -58,6 +59,7 @@ MonoBehaviour:
   givenXP: 9
   givenGold: 3
   powerUpList: 0000000000
+  poolTag: 
   TargetEntity: {fileID: 0}
   targetPosition: {x: 0, y: 0, z: 0}
   projectilePrefab: {fileID: 2979180512190703486, guid: 58cde33b4f117874f94cbde3cfa6fa3d, type: 3}
