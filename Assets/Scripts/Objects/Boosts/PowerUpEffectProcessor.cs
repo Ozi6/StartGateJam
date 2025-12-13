@@ -32,7 +32,7 @@ public static class PowerUpEffectProcessor
                     break;
 
                 case PowerUpType.AreaDamage:
-                    person.ApplyAreaDamage(4f, 1.2f);
+                    person.ApplyAreaDamage(4f);
                     break;
 
                 case PowerUpType.LifeSteal:

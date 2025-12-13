@@ -16,6 +16,7 @@ public abstract class Person : MonoBehaviour
     [SerializeField] protected float givenXP;
     [SerializeField] protected int givenGold;
     [SerializeField] protected string poolTag;
+    [SerializeField] protected float areaBuff;
 
     // ---------- POWER-UP STATES ----------
     public bool IsInvulnerable { get; private set; }
@@ -40,6 +41,7 @@ public abstract class Person : MonoBehaviour
     public float AttackSpeed => attackSpeed;
     public float DamageArea => damageArea;
     public float GivenXP => givenXP;
+    public float AreaBuff => areaBuff;
     public int GivenGold => givenGold;
     public Person TargetEntity;
     protected bool isWaiting = false;
@@ -176,11 +178,41 @@ public abstract class Person : MonoBehaviour
     }
     protected virtual void Attack()
     {
-        if (TargetEntity != null && TargetEntity.gameObject.activeSelf)
+        if (TargetEntity == null || !TargetEntity.gameObject.activeSelf)
+            return;
+
+        float finalDamage = CalculateDamage();
+
+        if (HasAreaDamage && damageArea > 0f)
         {
-            TargetEntity.TakeDamage(CalculateDamage());
+            ApplyAreaDamage(TargetEntity.transform.position, finalDamage);
+        }
+        else
+        {
+            TargetEntity.TakeDamage(finalDamage);
         }
     }
+
+    protected virtual void ApplyAreaDamage(Vector3 center, float dmg)
+    {
+        Collider[] hits = Physics.OverlapSphere(center, damageArea);
+
+        foreach (Collider hit in hits)
+        {
+            Person p = hit.GetComponent<Person>();
+            if (p == null) continue;
+
+            // Skip same team
+            if (p.IsFriendly == this.IsFriendly) continue;
+
+            // Skip dead / inactive
+            if (!p.gameObject.activeSelf) continue;
+
+            p.TakeDamage(dmg);
+        }
+    }
+
+
     public virtual float CalculateDamage()
     {
         float finalDamage = damage * damageMultiplier;
@@ -196,7 +228,6 @@ public abstract class Person : MonoBehaviour
 
     public virtual void TakeDamage(float dmg)
     {
-        health -= Mathf.RoundToInt(dmg);
         if (IsInvulnerable) return;
 
         dmg *= damageTakenMultiplier;
@@ -292,10 +323,10 @@ public abstract class Person : MonoBehaviour
         damageTakenMultiplier /= takenMult;
     }
 
-    public void ApplyAreaDamage(float duration, float radiusMultiplier)
+    public void ApplyAreaDamage(float duration)
     {
         float radiusMultAugment = 02f * AugmentHandler.Instance.GetAugmentById(7).purchased;
-        StartCoroutine(AreaDamageRoutine(duration, radiusMultiplier+radiusMultAugment));
+        StartCoroutine(AreaDamageRoutine(duration, areaBuff+radiusMultAugment));
     }
 
     private IEnumerator AreaDamageRoutine(float duration, float radiusMultiplier)
