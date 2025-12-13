@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Collections;
+using System.Text.RegularExpressions;
 using static AugmentHandler;
 
 public class AugmentCardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
@@ -60,10 +61,10 @@ public class AugmentCardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterH
         onSelect = selectCallback;
 
         if (titleText != null)
-            titleText.text = aug.title;
+            titleText.text = ColorizeNumbersAndSymbols(aug.title); // optional for title
 
         if (descriptionText != null)
-            descriptionText.text = aug.description;
+            descriptionText.text = ColorizeNumbersAndSymbols(aug.description);
 
         if (icon != null && aug.icon != null)
             icon.sprite = aug.icon;
@@ -75,6 +76,14 @@ public class AugmentCardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterH
             StartCoroutine(AnimateEntrance(delay));
         }
     }
+
+    // Only affects numbers and + - % symbols
+    private string ColorizeNumbersAndSymbols(string text)
+    {
+        string pattern = @"([\d\+\-%]+)";
+        return Regex.Replace(text, pattern, "<color=red>$1</color>");
+    }
+
 
     private IEnumerator AnimateEntrance(float delay)
     {

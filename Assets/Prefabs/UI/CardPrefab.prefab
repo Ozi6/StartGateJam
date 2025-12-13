@@ -93,6 +93,13 @@ MonoBehaviour:
   titleText: {fileID: 8520444331644705274}
   descriptionText: {fileID: 3670372119809844018}
   icon: {fileID: 0}
+  cardBackground: {fileID: 0}
+  borderHighlight: {fileID: 0}
+  glowEffect: {fileID: 0}
+  hoverScale: 1.15
+  hoverDuration: 0.2
+  hoverBorderColor: {r: 1, g: 0.8, b: 0, a: 1}
+  normalBorderColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
 --- !u!1 &4561645827869899973
 GameObject:
   m_ObjectHideFlags: 0
@@ -192,7 +199,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 3
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
