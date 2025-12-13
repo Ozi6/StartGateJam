@@ -7,7 +7,6 @@ public class ObjectPooler : Singleton<ObjectPooler>
     [SerializeField] private List<Pool> pools = new List<Pool>();
     private Dictionary<string, Queue<PooledObjectWrapper>> poolDictionary;
     private Dictionary<string, Pool> poolDefinitions;
-
     protected override void OnAwake()
     {
         poolDictionary = new Dictionary<string, Queue<PooledObjectWrapper>>();
@@ -26,7 +25,6 @@ public class ObjectPooler : Singleton<ObjectPooler>
             poolDictionary.Add(pool.tag, objectPool);
         }
     }
-
     private PooledObjectWrapper CreateNewPooledObject(string tag)
     {
         if (poolDefinitions.TryGetValue(tag, out Pool poolDefinition))
@@ -39,7 +37,6 @@ public class ObjectPooler : Singleton<ObjectPooler>
         else
             return null;
     }
-
     public GameObject SpawnFromPool(string tag, Vector3 position, Quaternion rotation)
     {
         if (!poolDictionary.ContainsKey(tag))
@@ -63,12 +60,10 @@ public class ObjectPooler : Singleton<ObjectPooler>
         wrapper.pooledObject?.OnObjectSpawn();
         return wrapper.gameObject;
     }
-
     public GameObject SpawnFromPool(string tag, Vector3 position)
     {
         return SpawnFromPool(tag, position, Quaternion.identity);
     }
-
     public void ReturnToPool(GameObject obj, string tag)
     {
         if (!poolDictionary.ContainsKey(tag))

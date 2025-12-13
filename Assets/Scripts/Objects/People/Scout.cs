@@ -11,4 +11,8 @@ public class Scout : Person
     {
         // Cleanup if needed
     }
+    protected override void Die()
+    {
+        ObjectPooler.Instance.ReturnToPool(gameObject, "Scout");
+    }
 }

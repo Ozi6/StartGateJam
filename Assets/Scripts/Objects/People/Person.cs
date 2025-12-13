@@ -4,7 +4,7 @@ using UnityEngine;
 public abstract class Person : MonoBehaviour
 {
     [Header("Collision Push")]
-    [SerializeField] protected float pushStrength = 0.5f;
+    private float pushStrength = 0.00002f;
     protected Rigidbody rb;
     [SerializeField] protected int health;
     [SerializeField] protected float moveSpeed;
@@ -16,9 +16,8 @@ public abstract class Person : MonoBehaviour
     [SerializeField] protected float givenXP;
     [SerializeField] protected int givenGold;
     [SerializeField] protected bool[] powerUpList = new bool[5]; // isFriendly = true: [strength, speed, shield, -, -] else: [goldIncrease, fatique, -, -, -]
-
+    [SerializeField] protected string poolTag;
     private float deploymentSpeed = 70;
-
     public bool IsFriendly => isFriendly;
     public int Health => health;
     public float MoveSpeed => moveSpeed;
@@ -30,20 +29,17 @@ public abstract class Person : MonoBehaviour
     public float GivenGold => givenGold;
     public bool[] PowerUpList => powerUpList;
     public Person TargetEntity;
-    public Vector3 targetPosition;
     protected bool isWaiting = false;
     protected float lastAttackTime = -Mathf.Infinity;
-
+    public Vector3 targetPosition;
     public void OnObjectSpawn()
     {
         UnitRegistrar.RegisterUnit(this);
     }
-
     public void OnObjectReturn()
     {
         UnitRegistrar.UnregisterUnit(this);
     }
-
     protected virtual void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -53,9 +49,7 @@ public abstract class Person : MonoBehaviour
             RigidbodyConstraints.FreezeRotation |
             RigidbodyConstraints.FreezePositionY;
     }
-
     protected abstract void Start();
-
     protected virtual void Update()
     {
         if (GameManager.Instance.CurrentState == GameState.Deployment)
@@ -67,15 +61,16 @@ public abstract class Person : MonoBehaviour
         {
             if (isWaiting)
             {
-                if (TargetEntity != null)
+                if (TargetEntity != null && TargetEntity.gameObject.activeSelf)
                 {
                     Engage();
                 }
                 else
                 {
-                    if (Vector3.Distance(transform.position, targetPosition) > 0.01f)
+                    TargetEntity = TeamTargetManager.Instance.GetNewTarget(this);
+                    if (TargetEntity != null && TargetEntity.gameObject.activeSelf)
                     {
-                        GoToPoint(targetPosition);
+                        Engage();
                     }
                     else
                     {
@@ -85,9 +80,7 @@ public abstract class Person : MonoBehaviour
             }
         }
     }
-
     protected abstract void OnDestroy();
-
     protected void GoToPointDesignatedVer(Vector3 point)
     {
         transform.position = Vector3.MoveTowards(
@@ -96,7 +89,6 @@ public abstract class Person : MonoBehaviour
             deploymentSpeed * Time.deltaTime
         );
     }
-
     protected void GoToPoint(Vector3 point)
     {
         transform.position = Vector3.MoveTowards(
@@ -105,17 +97,14 @@ public abstract class Person : MonoBehaviour
             moveSpeed * Time.deltaTime
         );
     }
-
     protected void StopMoving()
     {
         rb.linearVelocity = Vector3.zero;
     }
-
     public void BeginDeployment(Vector3 designated)
     {
         StartCoroutine(MoveToDesignated(designated));
     }
-
     protected IEnumerator MoveToDesignated(Vector3 designated)
     {
         while (Vector3.Distance(transform.position, designated) > 0.01f)
@@ -131,7 +120,6 @@ public abstract class Person : MonoBehaviour
         StopMoving();
         isWaiting = true;
     }
-
     protected virtual void OnCollisionStay(Collision collision)
     {
         if (collision.gameObject.layer != gameObject.layer)
@@ -143,15 +131,12 @@ public abstract class Person : MonoBehaviour
         pushDir.y = 0f;
         if (pushDir.sqrMagnitude < 0.0001f)
             return;
-        rb.AddForce(pushDir.normalized * pushStrength, ForceMode.Acceleration);
+        //rb.AddForce(pushDir.normalized * pushStrength, ForceMode.Acceleration);
     }
-
     protected virtual void Engage()
     {
-        if (TargetEntity == null) return;
-
+        if (TargetEntity == null || !TargetEntity.gameObject.activeSelf) return;
         float distance = Vector3.Distance(transform.position, TargetEntity.transform.position);
-
         if (distance > attackRange)
         {
             GoToPoint(TargetEntity.transform.position);
@@ -166,20 +151,17 @@ public abstract class Person : MonoBehaviour
             }
         }
     }
-
     protected virtual void Attack()
     {
-        if (TargetEntity != null)
+        if (TargetEntity != null && TargetEntity.gameObject.activeSelf)
         {
             TargetEntity.TakeDamage(CalculateDamage());
         }
     }
-
     public virtual float CalculateDamage()
     {
         return damage;
     }
-
     public virtual void TakeDamage(float dmg)
     {
         health -= Mathf.RoundToInt(dmg);
@@ -188,9 +170,8 @@ public abstract class Person : MonoBehaviour
             Die();
         }
     }
-
     protected virtual void Die()
     {
-        Destroy(gameObject);
+        ObjectPooler.Instance.ReturnToPool(gameObject, poolTag);
     }
 }

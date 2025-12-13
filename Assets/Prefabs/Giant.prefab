@@ -45,8 +45,8 @@ Rigidbody:
   m_GameObject: {fileID: 8461961940972001279}
   serializedVersion: 4
   m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
+  m_Drag: 0.5
+  m_AngularDrag: 0.5
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -152,11 +152,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd77704215d11e54e9022261e7aadb6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pushStrength: 0.5
   health: 550
-  moveSpeed: 0.2
+  moveSpeed: 1.2
   damage: 2
-  attackRange: 15
+  attackRange: 2
   attackSpeed: 0.2
   damageArea: 0
   isFriendly: 0

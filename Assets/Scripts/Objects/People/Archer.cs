@@ -27,4 +27,8 @@ public class Archer : Person
             }
         }
     }
+    protected override void Die()
+    {
+        ObjectPooler.Instance.ReturnToPool(gameObject, "Archer");
+    }
 }
