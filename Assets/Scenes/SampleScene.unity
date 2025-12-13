@@ -1255,12 +1255,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72b2f0870aa0ceb418d7e912bf61762b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playersTeam:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  playersTeam: []
   enemyTeam: []
   currentGold: 100
   currentThrowableHeld: {fileID: 0}

@@ -72,23 +72,20 @@ public abstract class Person : MonoBehaviour
         }
         else if (GameManager.Instance.CurrentState == GameState.Combat)
         {
-            if (isWaiting)
+            if (TargetEntity != null && TargetEntity.gameObject.activeSelf)
             {
+                Engage();
+            }
+            else
+            {
+                TargetEntity = TeamTargetManager.Instance.GetNewTarget(this);
                 if (TargetEntity != null && TargetEntity.gameObject.activeSelf)
                 {
                     Engage();
                 }
                 else
                 {
-                    TargetEntity = TeamTargetManager.Instance.GetNewTarget(this);
-                    if (TargetEntity != null && TargetEntity.gameObject.activeSelf)
-                    {
-                        Engage();
-                    }
-                    else
-                    {
-                        StopMoving();
-                    }
+                    StopMoving();
                 }
             }
         }

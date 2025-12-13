@@ -63,17 +63,4 @@ public class ShopManager : MonoBehaviour
             buyButton.Initialize(unitTag, icon, displayName);
         }
     }
-
-    // Optional: Add button manually at runtime
-    public void AddUnitToShop(string unitTag, Sprite icon, string displayName)
-    {
-        if (marketLogic.marketPrices.ContainsKey(unitTag))
-        {
-            CreateBuyButton(unitTag, icon, displayName);
-        }
-        else
-        {
-            Debug.LogError($"Unit {unitTag} not found in MarketLogic prices!");
-        }
-    }
 }
