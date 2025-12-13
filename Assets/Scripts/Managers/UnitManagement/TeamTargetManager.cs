@@ -48,25 +48,38 @@ public class TeamTargetManager : Singleton<TeamTargetManager>
             }
         }
     }
+
+    private const float LOAD_WEIGHT = 1000f;       // Dominates target assignment
+    private const float DISTANCE_WEIGHT = 1.5f;    // Distance preference multiplier
+
     private Person FindBestTarget(Person selector, Dictionary<Person, float> targetsDict)
     {
         if (targetsDict.Count == 0) return null;
+
         Person bestTarget = null;
-        float minScore = float.MaxValue;
+        float bestScore = float.MaxValue;
+
         foreach (var kvp in targetsDict)
         {
             Person target = kvp.Key;
-            if (target == null || !target.gameObject.activeSelf) continue;
+            if (target == null || !target.gameObject.activeSelf)
+                continue;
+
+            float load = kvp.Value;
             float dist = Vector3.Distance(selector.transform.position, target.transform.position);
-            float score = kvp.Value + dist;
-            if (score < minScore)
+
+            float score = load * LOAD_WEIGHT + dist * DISTANCE_WEIGHT;
+
+            if (score < bestScore)
             {
-                minScore = score;
+                bestScore = score;
                 bestTarget = target;
             }
         }
+
         return bestTarget;
     }
+
     public Person GetNewTarget(Person selector)
     {
         Dictionary<Person, float> targetsDict = selector.IsFriendly ? playersTargetDictionary : enemiesTargetDictionary;
