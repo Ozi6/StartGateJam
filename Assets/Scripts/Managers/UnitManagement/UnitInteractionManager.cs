@@ -194,8 +194,8 @@ public class UnitInteractionManager : MonoBehaviour
                 Person person = draggingUnit.GetComponent<Person>();
                 if (person != null)
                 {
-                    GameManager.Instance.playersTeam.Add(person);
                     person.SetFriendly(true);
+                    person.OnObjectSpawn(); // This will register the unit via UnitRegistrar (prevents duplicates)
                 }
 
                 // Immediately select the newly bought unit? (Optional)

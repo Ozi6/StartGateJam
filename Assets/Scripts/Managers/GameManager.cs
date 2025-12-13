@@ -197,7 +197,8 @@ public class GameManager : Singleton<GameManager>
                 {
                     person.targetPosition = snapshot.targetPosition;
                     person.health = person.maxHealth;
-                    playersTeam.Add(person);
+                    person.SetFriendly(true); // Ensure health bar color is correct
+                    person.OnObjectSpawn(); // This will register the unit via UnitRegistrar (prevents duplicates)
                 }
             }
             else
@@ -226,10 +227,21 @@ public class GameManager : Singleton<GameManager>
 
     public void UpdateUnitCountDisplay()
     {
+        // Clean up null references from the list
+        CleanupNullUnits();
+        
         if (unitCountText != null && CurrentWaveConfig != null)
         {
             unitCountText.text = $"{playersTeam.Count}/{CurrentWaveConfig.maxPlaceableUnits}";
         }
+    }
+
+    /// <summary>
+    /// Removes null or destroyed units from the playersTeam list to ensure accurate counting.
+    /// </summary>
+    private void CleanupNullUnits()
+    {
+        playersTeam.RemoveAll(person => person == null || person.gameObject == null || !person.gameObject.activeSelf);
     }
 }
 
