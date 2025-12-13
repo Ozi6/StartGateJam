@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 416983654844075825}
   m_Layer: 0
   m_Name: Scout
-  m_TagString: Untagged
+  m_TagString: Scout
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -152,6 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7589850f51d8dfc448a7b63bd83c3e85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxHealth: 0
   health: 150
   moveSpeed: 3.6
   damage: 4
@@ -161,6 +162,7 @@ MonoBehaviour:
   isFriendly: 0
   givenXP: 2
   givenGold: 7
-  powerUpList: 0000000000
+  poolTag: 
+  isEnemyGolded: 0
   TargetEntity: {fileID: 0}
   targetPosition: {x: 0, y: 0, z: 0}

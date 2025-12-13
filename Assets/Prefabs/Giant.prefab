@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 464409278966641292}
   m_Layer: 0
   m_Name: Giant
-  m_TagString: Untagged
+  m_TagString: Giant
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -152,6 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd77704215d11e54e9022261e7aadb6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxHealth: 0
   health: 550
   moveSpeed: 1.2
   damage: 2
@@ -161,6 +162,7 @@ MonoBehaviour:
   isFriendly: 0
   givenXP: 20
   givenGold: 5
-  powerUpList: 0000000000
+  poolTag: 
+  isEnemyGolded: 0
   TargetEntity: {fileID: 0}
   targetPosition: {x: 0, y: 0, z: 0}

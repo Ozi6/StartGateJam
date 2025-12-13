@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: -8526281335288640940}
   m_Layer: 0
   m_Name: Viking
-  m_TagString: Untagged
+  m_TagString: Viking
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -152,6 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9ad7cbef1ba0f44683b5c30dd1cf16d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxHealth: 0
   health: 100
   moveSpeed: 2.8
   damage: 2
@@ -161,6 +162,7 @@ MonoBehaviour:
   isFriendly: 0
   givenXP: 5
   givenGold: 1
-  powerUpList: 0000000000
+  poolTag: 
+  isEnemyGolded: 0
   TargetEntity: {fileID: 0}
   targetPosition: {x: 0, y: 0, z: 0}
