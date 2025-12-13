@@ -9,6 +9,11 @@ TagManager:
   - Giant
   - Wizard
   - Scout
+  - Archer_lvl2
+  - Giant_lvl2
+  - Scout_lvl2
+  - Viking_lvl2
+  - Wizard_lvl2
   layers:
   - Default
   - TransparentFX

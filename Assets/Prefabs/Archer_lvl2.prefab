@@ -290,7 +290,7 @@ GameObject:
   - component: {fileID: 6013088724431895346}
   m_Layer: 0
   m_Name: Archer_lvl2
-  m_TagString: Archer
+  m_TagString: Archer_lvl2
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -366,7 +366,7 @@ MonoBehaviour:
   isEnemyGolded: 0
   TargetEntity: {fileID: 0}
   targetPosition: {x: 0, y: 0, z: 0}
-  healthBar: {fileID: 0}
+  healthBar: {fileID: 1125004148435347040}
   projectilePrefab: {fileID: 0}
   projectileSpeed: 10
 --- !u!136 &2482002724605677460

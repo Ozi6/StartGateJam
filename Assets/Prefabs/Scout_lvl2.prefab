@@ -290,7 +290,7 @@ GameObject:
   - component: {fileID: 808352132171872480}
   m_Layer: 0
   m_Name: Scout_lvl2
-  m_TagString: Scout
+  m_TagString: Scout_lvl2
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -438,7 +438,9 @@ MonoBehaviour:
   givenXP: 5
   givenGold: 10
   poolTag: 
+  areaBuff: 0
+  turnSpeed: 10
   isEnemyGolded: 0
   TargetEntity: {fileID: 0}
   targetPosition: {x: 0, y: 0, z: 0}
-  healthBar: {fileID: 0}
+  healthBar: {fileID: 5626704963004144129}

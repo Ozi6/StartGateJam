@@ -290,7 +290,7 @@ GameObject:
   - component: {fileID: 3934237961636297642}
   m_Layer: 0
   m_Name: Wizard_lvl2
-  m_TagString: Wizard
+  m_TagString: Wizard_lvl2
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -443,4 +443,4 @@ MonoBehaviour:
   isEnemyGolded: 0
   TargetEntity: {fileID: 0}
   targetPosition: {x: 0, y: 0, z: 0}
-  healthBar: {fileID: 0}
+  healthBar: {fileID: 4498763716557816486}
