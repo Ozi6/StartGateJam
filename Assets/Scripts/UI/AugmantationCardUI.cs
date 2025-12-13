@@ -77,15 +77,20 @@ public class AugmentCardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterH
         }
     }
 
-    // Only affects numbers and + - % symbols
     private string ColorizeNumbersAndSymbols(string text)
     {
-        string pattern = @"([\d\+\-%]+)";
+        // Matches:
+        // 1. Optional + or - followed by digits, optional x at the end
+        // 2. Numbers with decimal point (e.g., 3.14)
+        // 3. % symbol
+        string pattern = @"([+\-]?\d+(\.\d+)?x?|%)";
         return Regex.Replace(text, pattern, "<color=red>$1</color>");
     }
 
 
-    private IEnumerator AnimateEntrance(float delay)
+
+
+private IEnumerator AnimateEntrance(float delay)
     {
         yield return new WaitForSeconds(delay);
 
