@@ -6,6 +6,7 @@ public abstract class Person : MonoBehaviour
     [Header("Collision Push")]
     private float pushStrength = 0.00002f;
     protected Rigidbody rb;
+    [SerializeField] protected int maxHealth;
     [SerializeField] protected int health;
     [SerializeField] protected float moveSpeed;
     [SerializeField] protected float damage;
@@ -20,6 +21,8 @@ public abstract class Person : MonoBehaviour
     private float deploymentSpeed = 70;
     public bool IsFriendly => isFriendly;
     public int Health => health;
+
+    public int MaxHealth => maxHealth;
     public float MoveSpeed => moveSpeed;
     public float Damage => damage;
     public float AttackRange => attackRange;
@@ -165,7 +168,11 @@ public abstract class Person : MonoBehaviour
     public virtual void TakeDamage(float dmg)
     {
         health -= Mathf.RoundToInt(dmg);
-        if (health <= 0)
+        if(health > maxHealth)
+        {
+            health = maxHealth;
+        }
+        else if (health <= 0)
         {
             Die();
         }

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AugmentHandler : MonoBehaviour
+public class AugmentHandler : Singleton<AugmentHandler>
 {
     [System.Serializable]
     public class Augment
@@ -11,60 +11,58 @@ public class AugmentHandler : MonoBehaviour
         public string description;
         public float chance;
         public bool repeatable;
+        public int purchased;
 
-        public Augment(int id, string title, string description, float chance, bool repeatable)
+        public Augment(int id, string title, string description, float chance, bool repeatable, int purchased)
         {
             this.id = id;
             this.title = title;
             this.description = description;
             this.chance = chance;
             this.repeatable = repeatable;
+            this.purchased = 0;
         }
     }
 
-    private List<Augment> allAugments = new();
+    public List<Augment> allAugments = new();
     private List<Augment> availableAugments = new();
 
     private void Awake()
     {
-        InitializeAugments();
         ResetAugmentPool();
     }
 
-    private void InitializeAugments()
+
+    public void ResetAugmentPool()
     {
         allAugments.Clear();
 
         allAugments.Add(new Augment(0, "Vital Boost",
-            "All power-ups additionally restore 10% health.", 5f, true));
+            "All power-ups additionally restore 10% health.", 5f, true, 0));
 
         allAugments.Add(new Augment(1, "Enhanced Haste",
-            "Haste power-up multiplier is increased by +0.5.", 15f, true));
+            "Haste power-up multiplier is increased by +0.5.", 15f, true, 0));
 
         allAugments.Add(new Augment(2, "Fortified Shield",
-            "Shield power-up duration and cooldown are increased by +0.5 seconds.", 15f, true));
+            "Shield power-up duration and cooldown are increased by +0.5 seconds.", 15f, true, 0));
 
         allAugments.Add(new Augment(3, "Overdrive Rush",
-            "Rush power-up effect is increased to 3x.", 5f, false));
+            "Rush power-up effect is increased to 3x.", 5f, false, 0));
 
         allAugments.Add(new Augment(4, "Controlled Rage",
-            "While Rage is active, damage taken is reduced to 25%.", 5f, false));
+            "While Rage is active, damage taken is reduced to 25%.", 5f, false, 0));
 
         allAugments.Add(new Augment(5, "Brutal Rage",
-            "Rage power-up damage bonus is increased to +150%.", 5f, false));
+            "Rage power-up damage bonus is increased to +150%.", 5f, false, 0));
 
         allAugments.Add(new Augment(6, "Golden Opportunity",
-            "Gold power-up can be used +1 extra time per wave.", 20f, true));
+            "Gold power-up can be used +1 extra time per wave.", 20f, true, 0));
 
         allAugments.Add(new Augment(7, "Expanded Destruction",
-            "Area damage power-up radius is increased by 1.2x.", 15f, true));
+            "Area damage power-up radius is increased by 1.2x.", 15f, true, 0));
 
         allAugments.Add(new Augment(8, "Improved Life Steal",
-            "Life Steal power-up steal amount is increased by +5%.", 15f, true));
-    }
-
-    public void ResetAugmentPool()
-    {
+            "Life Steal power-up steal amount is increased by +5%.", 15f, true, 0));
         availableAugments = new List<Augment>(allAugments);
     }
 
@@ -111,6 +109,8 @@ public class AugmentHandler : MonoBehaviour
             availableAugments.RemoveAll(a => a.id == augment.id);
             Debug.Log($"Removed non-repeatable augment: {augment.title}");
         }
+
+        allAugments[augment.id].purchased++;
     }
 
     private void ApplyAugmentEffect(Augment augment)
