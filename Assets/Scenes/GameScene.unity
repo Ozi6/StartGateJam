@@ -1429,10 +1429,10 @@ MonoBehaviour:
     prefab: {fileID: 7290377077559998521, guid: 9032b5664a2b8e44b9474a3e50af8ed2, type: 3}
     size: 30
   - tag: Scout
-    prefab: {fileID: 8461961940972001279, guid: 7ac0b63fa30218644b181589948b5041, type: 3}
+    prefab: {fileID: 5734998851423519394, guid: 0e7c3922b6277c04eb23473b3ca9d9aa, type: 3}
     size: 30
   - tag: Wizard
-    prefab: {fileID: 8461961940972001279, guid: ca4bbd66786ccad4eb8b43970e140955, type: 3}
+    prefab: {fileID: 5053220921849905340, guid: f25631d04a0b5264593e5e918ce92684, type: 3}
     size: 30
   - tag: Archer
     prefab: {fileID: 5121599396880773165, guid: 4fd62e1a572f53049bc91b92f364022d, type: 3}
