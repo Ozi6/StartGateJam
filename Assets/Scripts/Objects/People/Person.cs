@@ -349,34 +349,4 @@ public abstract class Person : MonoBehaviour
         yield return new WaitForSeconds(duration);
         HasLifeSteal = false;
     }
-
-    public void GetStats(
-        out int maxHp,
-        out int hp,
-        out float moveSpd,
-        out float dmg,
-        out float atkRange,
-        out float atkSpd,
-        out float dmgArea,
-        out float dmgMult,
-        out float dmgTakenMult,
-        out bool invulnerable,
-        out bool canMove,
-        out bool areaDamage,
-        out bool lifeSteal)
-    {
-        maxHp = maxHealth;
-        hp = health;
-        moveSpd = moveSpeed;
-        dmg = damage;
-        atkRange = attackRange;
-        atkSpd = attackSpeed;
-        dmgArea = damageArea;
-        dmgMult = damageMultiplier;
-        dmgTakenMult = damageTakenMultiplier;
-        invulnerable = IsInvulnerable;
-        canMove = CanMove;
-        areaDamage = HasAreaDamage;
-        lifeSteal = HasLifeSteal;
-    }
 }

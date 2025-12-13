@@ -5,13 +5,7 @@ public class UnitInteractionManager : MonoBehaviour
 {
     public LayerMask groundLayer;
     public LayerMask unitLayer;
-
-    // Tracking drag vs click
-    private GameObject potentialDragUnit; // Unit we clicked on, but haven't dragged yet
-    private GameObject draggingUnit;      // Unit we are actively moving
-    private Vector3 clickOrigin;          // Mouse pos when we first clicked
-    private float dragThreshold = 10f;    // Pixels mouse must move to count as a drag
-
+    private GameObject draggingUnit;
     private bool isDraggingFromShop = false;
     private string currentUnitTag;
     private int currentUnitPrice = 0;
@@ -23,7 +17,7 @@ public class UnitInteractionManager : MonoBehaviour
     private Renderer unitRenderer;
     private Color originalColor;
     private MarketLogic marketLogic;
-    private float unitBottomOffset = 0f;
+    private float unitBottomOffset = 0f; // Offset from pivot to bottom of unit
 
     void Awake()
     {
@@ -32,58 +26,32 @@ public class UnitInteractionManager : MonoBehaviour
 
     void Update()
     {
-        // 1. Mouse Down: Identify potential target
+        // Only handle manual unit dragging (not shop dragging)
         if (Input.GetMouseButtonDown(0) && !IsPointerOverUI())
         {
-            PrepareInteraction();
+            HandleClick();
         }
-
-        // 2. Mouse Hold: Determine if dragging
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButton(0) && draggingUnit != null)
         {
-            // If dragging from shop, we skip threshold check (it's always a drag)
-            if (draggingUnit != null)
-            {
-                HandleDrag();
-            }
-            // If we have a target but haven't started dragging yet, check distance
-            else if (potentialDragUnit != null)
-            {
-                float dist = Vector3.Distance(Input.mousePosition, clickOrigin);
-                if (dist > dragThreshold)
-                {
-                    StartDraggingExistingUnit();
-                }
-            }
+            HandleDrag();
         }
-
-        // 3. Mouse Up: Drop or Select
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonUp(0) && draggingUnit != null)
         {
-            if (draggingUnit != null)
-            {
-                HandleDrop();
-            }
-            else if (potentialDragUnit != null)
-            {
-                // We pressed down and up without moving much -> It's a CLICK
-                HandleClickSelection();
-            }
-
-            // Cleanup
-            potentialDragUnit = null;
+            HandleDrop();
         }
     }
 
     public void StartShopDrag(string unitTag)
     {
-        // Close upgrade panel if buying new unit
-        if (UIManager.Instance) UIManager.Instance.CloseUpgradePanel();
-
         // Get price from MarketLogic
-        if (!marketLogic.marketPrices.ContainsKey(unitTag)) return;
+        if (!marketLogic.marketPrices.ContainsKey(unitTag))
+        {
+            Debug.LogError($"Unit tag '{unitTag}' not found in market prices!");
+            return;
+        }
         int price = marketLogic.marketPrices[unitTag];
 
+        // Check unit limit first
         if (GameManager.Instance.playersTeam.Count >= GameManager.Instance.CurrentWaveConfig.maxPlaceableUnits)
         {
             Debug.Log("Maximum placeable units reached!");
@@ -96,21 +64,23 @@ public class UnitInteractionManager : MonoBehaviour
             currentUnitPrice = price;
             Vector3 spawnPos = GetMouseWorldPos();
             draggingUnit = ObjectPooler.Instance.SpawnFromPool(unitTag, spawnPos);
-
             if (draggingUnit != null)
             {
                 isDraggingFromShop = true;
-                SetupVisuals(draggingUnit);
+                unitRenderer = draggingUnit.GetComponent<Renderer>();
+                if (unitRenderer != null)
+                    originalColor = unitRenderer.material.color;
+                // Calculate the offset from pivot to bottom
                 CalculateBottomOffset();
             }
         }
         else
         {
-            Debug.Log($"Insufficient gold!");
+            Debug.Log($"Insufficient gold! Need {price}, have {GameManager.Instance.currentGold}");
         }
     }
 
-    private void PrepareInteraction()
+    private void HandleClick()
     {
         if (GameManager.Instance.CurrentState != GameState.Shopping)
             return;
@@ -118,35 +88,15 @@ public class UnitInteractionManager : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit, 100f, unitLayer))
         {
-            potentialDragUnit = hit.collider.gameObject;
-            clickOrigin = Input.mousePosition;
-        }
-        else
-        {
-            // Clicked on empty ground -> Close panels
-            if (UIManager.Instance) UIManager.Instance.CloseUpgradePanel();
-        }
-    }
-
-    private void StartDraggingExistingUnit()
-    {
-        // Threshold passed, convert potential unit to dragging unit
-        draggingUnit = potentialDragUnit;
-        isDraggingFromShop = false;
-
-        SetupVisuals(draggingUnit);
-        CalculateBottomOffset();
-
-        // Close UI if we start moving a unit
-        if (UIManager.Instance) UIManager.Instance.CloseUpgradePanel();
-    }
-
-    private void HandleClickSelection()
-    {
-        // Logic for simply clicking a unit (Selecting it)
-        if (potentialDragUnit != null && UIManager.Instance != null)
-        {
-            UIManager.Instance.OpenUpgradePanel(potentialDragUnit);
+            draggingUnit = hit.collider.gameObject;
+            isDraggingFromShop = false;
+            unitRenderer = draggingUnit.GetComponent<Renderer>();
+            if (unitRenderer != null)
+            {
+                originalColor = unitRenderer.material.color;
+            }
+            // Calculate the offset from pivot to bottom
+            CalculateBottomOffset();
         }
     }
 
@@ -155,6 +105,7 @@ public class UnitInteractionManager : MonoBehaviour
         Vector3 pos = GetMouseWorldPos();
         draggingUnit.transform.position = pos;
 
+        // Visual feedback for placement validity
         if (isDraggingFromShop && unitRenderer != null)
         {
             bool isOverUI = IsPointerOverUI();
@@ -166,6 +117,7 @@ public class UnitInteractionManager : MonoBehaviour
     {
         bool isOverUI = IsPointerOverUI();
 
+        // Restore original color
         if (unitRenderer != null)
         {
             unitRenderer.material.color = originalColor;
@@ -173,34 +125,34 @@ public class UnitInteractionManager : MonoBehaviour
 
         if (isOverUI)
         {
-            // Dropped on UI
+            // Dropping back on UI - cancel purchase or sell unit
             if (!isDraggingFromShop)
             {
                 SellUnit(draggingUnit);
-                // Also close upgrade panel if we sell the selected unit
-                if (UIManager.Instance) UIManager.Instance.CloseUpgradePanel();
             }
             else
             {
+                // Return to pool without charging
                 ObjectPooler.Instance.ReturnToPool(draggingUnit, currentUnitTag);
             }
         }
         else
         {
-            // Dropped on Game Area
+            // Dropping on valid game area
             if (isDraggingFromShop)
             {
+                // Deduct gold and finalize purchase
                 GameManager.Instance.currentGold -= currentUnitPrice;
+                // Add to player's team
                 Person person = draggingUnit.GetComponent<Person>();
                 if (person != null)
                 {
                     GameManager.Instance.playersTeam.Add(person);
                     person.SetFriendly(true);
                 }
-
-                // Immediately select the newly bought unit? (Optional)
-                // if(UIManager.Instance) UIManager.Instance.OpenUpgradePanel(draggingUnit);
+                Debug.Log($"Unit purchased! Gold remaining: {GameManager.Instance.currentGold}");
             }
+            // If not from shop, just repositioning existing unit (no action needed)
         }
 
         GameManager.Instance.UpdateUnitCountDisplay();
@@ -214,39 +166,38 @@ public class UnitInteractionManager : MonoBehaviour
         unitBottomOffset = 0f;
     }
 
-    private void SetupVisuals(GameObject unit)
-    {
-        unitRenderer = unit.GetComponent<Renderer>();
-        if (unitRenderer != null)
-        {
-            originalColor = unitRenderer.material.color;
-        }
-    }
-
     private void SellUnit(GameObject unitObj)
     {
         Person p = unitObj.GetComponent<Person>();
         if (p != null)
         {
+            // Use MarketLogic to handle selling
             marketLogic.SellUnit(p);
             int refundAmount = p.GivenGold;
             GameManager.Instance.currentGold += refundAmount;
+            // Remove from player's team
             GameManager.Instance.playersTeam.Remove(p);
             p.isFriendly = false;
+            Debug.Log($"Unit sold for {refundAmount} gold!");
         }
         ObjectPooler.Instance.ReturnToPool(unitObj, unitObj.tag);
+
         GameManager.Instance.UpdateUnitCountDisplay();
     }
 
     private void CalculateBottomOffset()
     {
         if (draggingUnit == null) return;
+
+        // Try to get collider bounds first (more accurate for gameplay)
         Collider col = draggingUnit.GetComponent<Collider>();
         if (col != null)
         {
             unitBottomOffset = col.bounds.extents.y;
             return;
         }
+
+        // Fallback to renderer bounds
         Renderer rend = draggingUnit.GetComponent<Renderer>();
         if (rend != null)
         {
@@ -261,6 +212,7 @@ public class UnitInteractionManager : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit, 100f, groundLayer))
         {
+            // Adjust position so the bottom of the unit touches the ground
             Vector3 groundPos = hit.point;
             groundPos.y += unitBottomOffset;
             return groundPos;
