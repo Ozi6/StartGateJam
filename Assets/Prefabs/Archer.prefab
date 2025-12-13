@@ -426,6 +426,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Archer
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: fe7cf6da9a073bb4cb2558557e80d819, type: 3}
+      propertyPath: m_TagString
+      value: Archer
+      objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: fe7cf6da9a073bb4cb2558557e80d819, type: 3}
       propertyPath: m_Controller
       value: 

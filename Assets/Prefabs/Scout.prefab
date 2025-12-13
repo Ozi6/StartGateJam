@@ -424,6 +424,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Scout
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 52b9ccce8dbc0734093b0daa130f8272, type: 3}
+      propertyPath: m_TagString
+      value: Scout
+      objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: 52b9ccce8dbc0734093b0daa130f8272, type: 3}
       propertyPath: m_Controller
       value: 
