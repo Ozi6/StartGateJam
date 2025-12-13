@@ -17,23 +17,18 @@ public abstract class Person : MonoBehaviour
     [SerializeField] protected int givenGold;
     [SerializeField] protected string poolTag;
     [SerializeField] protected float areaBuff;
-
+    [SerializeField] protected float turnSpeed = 10f;
     // ---------- POWER-UP STATES ----------
     public bool IsInvulnerable { get; private set; }
     public bool CanMove { get; private set; } = true;
-
     public bool HasAreaDamage { get; private set; }
     public bool HasLifeSteal { get; private set; }
-
     private float damageMultiplier = 1f;
     private float damageTakenMultiplier = 1f;
-
-
     public bool isEnemyGolded = false;
     private float deploymentSpeed = 70;
     public bool IsFriendly => isFriendly;
     public int Health => health;
-
     public int MaxHealth => maxHealth;
     public float MoveSpeed => moveSpeed;
     public float Damage => damage;
@@ -47,27 +42,31 @@ public abstract class Person : MonoBehaviour
     protected bool isWaiting = false;
     protected float lastAttackTime = -Mathf.Infinity;
     public Vector3 targetPosition;
-
     [SerializeField] HealthBar healthBar;
 
     public void OnObjectSpawn()
     {
         UnitRegistrar.RegisterUnit(this);
     }
+
     public void OnObjectReturn()
     {
         UnitRegistrar.UnregisterUnit(this);
     }
+
     protected virtual void Awake()
     {
         rb = GetComponent<Rigidbody>();
         rb.useGravity = false;
         rb.isKinematic = false;
         rb.constraints =
-            RigidbodyConstraints.FreezeRotation |
+            RigidbodyConstraints.FreezeRotationX |
+            RigidbodyConstraints.FreezeRotationZ |
             RigidbodyConstraints.FreezePositionY;
     }
+
     protected abstract void Start();
+
     protected virtual void Update()
     {
         if (GameManager.Instance.CurrentState == GameState.Deployment)
@@ -95,30 +94,29 @@ public abstract class Person : MonoBehaviour
             }
         }
     }
+
     protected abstract void OnDestroy();
+
     protected void GoToPointDesignatedVer(Vector3 point)
     {
-        transform.position = Vector3.MoveTowards(
-            transform.position,
-            point,
-            deploymentSpeed * Time.deltaTime
-        );
+        FacePosition(point);
+        Vector3 newPos = Vector3.MoveTowards(transform.position, point, deploymentSpeed * Time.deltaTime);
+        rb.MovePosition(newPos);
     }
+
     protected void GoToPoint(Vector3 point)
     {
         if (!CanMove) return;
-
-        transform.position = Vector3.MoveTowards(
-            transform.position,
-            point,
-            moveSpeed * Time.deltaTime
-        );
+        FacePosition(point);
+        Vector3 newPos = Vector3.MoveTowards(transform.position, point, moveSpeed * Time.deltaTime);
+        rb.MovePosition(newPos);
     }
 
     protected void StopMoving()
     {
         rb.linearVelocity = Vector3.zero;
     }
+
     public void BeginDeployment(Vector3 designated)
     {
         StartCoroutine(MoveToDesignated(designated));
@@ -145,6 +143,7 @@ public abstract class Person : MonoBehaviour
         StopMoving();
         isWaiting = true;
     }
+
     protected virtual void OnCollisionStay(Collision collision)
     {
         if (collision.gameObject.layer != gameObject.layer)
@@ -158,9 +157,11 @@ public abstract class Person : MonoBehaviour
             return;
         //rb.AddForce(pushDir.normalized * pushStrength, ForceMode.Acceleration);
     }
+
     protected virtual void Engage()
     {
         if (TargetEntity == null || !TargetEntity.gameObject.activeSelf) return;
+        FacePosition(TargetEntity.transform.position);
         float distance = Vector3.Distance(transform.position, TargetEntity.transform.position);
         if (distance > attackRange)
         {
@@ -176,13 +177,12 @@ public abstract class Person : MonoBehaviour
             }
         }
     }
+
     protected virtual void Attack()
     {
         if (TargetEntity == null || !TargetEntity.gameObject.activeSelf)
             return;
-
         float finalDamage = CalculateDamage();
-
         if (HasAreaDamage && damageArea > 0f)
         {
             ApplyAreaDamage(TargetEntity.transform.position, finalDamage);
@@ -196,44 +196,34 @@ public abstract class Person : MonoBehaviour
     protected virtual void ApplyAreaDamage(Vector3 center, float dmg)
     {
         Collider[] hits = Physics.OverlapSphere(center, damageArea);
-
         foreach (Collider hit in hits)
         {
             Person p = hit.GetComponent<Person>();
             if (p == null) continue;
-
             // Skip same team
             if (p.IsFriendly == this.IsFriendly) continue;
-
             // Skip dead / inactive
             if (!p.gameObject.activeSelf) continue;
-
             p.TakeDamage(dmg);
         }
     }
 
-
     public virtual float CalculateDamage()
     {
         float finalDamage = damage * damageMultiplier;
-
         if (HasLifeSteal)
         {
             float heal = finalDamage * 0.35f;
             TakeDamage(-heal);
         }
-
         return finalDamage;
     }
 
     public virtual void TakeDamage(float dmg)
     {
         if (IsInvulnerable) return;
-
         dmg *= damageTakenMultiplier;
-
         health -= Mathf.RoundToInt(dmg);
-
         if (health > maxHealth)
         {
             health = maxHealth;
@@ -243,34 +233,43 @@ public abstract class Person : MonoBehaviour
             Die();
         }
     }
+
     protected virtual void Die()
     {
         GameManager.Instance.currentGold += isEnemyGolded ? givenGold + 1 : givenGold;
     }
 
-    // ----------- COROUTINES --------------
+    protected void FacePosition(Vector3 position)
+    {
+        Vector3 direction = position - transform.position;
+        direction.y = 0f;
+        if (direction.sqrMagnitude > 0.0001f)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            targetRotation *= Quaternion.Euler(0, 180, 0); // Adjust for backwards model
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
+        }
+    }
 
+    // ----------- COROUTINES --------------
     public void ApplyShield(float duration)
     {
         float augmentalLag = 0.5f * AugmentHandler.Instance.GetAugmentById(1).purchased;
-        StartCoroutine(ShieldRoutine(duration+augmentalLag));
+        StartCoroutine(ShieldRoutine(duration + augmentalLag));
     }
 
     private IEnumerator ShieldRoutine(float duration)
     {
         IsInvulnerable = true;
         CanMove = false;
-
         yield return new WaitForSeconds(duration);
-
         IsInvulnerable = false;
         CanMove = true;
     }
 
-
     public void ApplyRush(float multiplier, float duration)
     {
-        if(AugmentHandler.Instance.GetAugmentById(3).purchased > 0)
+        if (AugmentHandler.Instance.GetAugmentById(3).purchased > 0)
         {
             multiplier = 3f;
         }
@@ -284,11 +283,10 @@ public abstract class Person : MonoBehaviour
         moveSpeed /= multiplier;
     }
 
-
     public void ApplyHaste(float multiplier, float duration)
     {
         float augmentalMult = 0.5f * AugmentHandler.Instance.GetAugmentById(1).purchased;
-        StartCoroutine(HasteRoutine(multiplier+augmentalMult, duration));
+        StartCoroutine(HasteRoutine(multiplier + augmentalMult, duration));
     }
 
     private IEnumerator HasteRoutine(float multiplier, float duration)
@@ -298,14 +296,13 @@ public abstract class Person : MonoBehaviour
         attackSpeed *= multiplier;
     }
 
-
     public void ApplyRage(float dmgMult, float takenMult, float duration)
     {
-        if(AugmentHandler.Instance.GetAugmentById(4).purchased > 0)
+        if (AugmentHandler.Instance.GetAugmentById(4).purchased > 0)
         {
             takenMult = 1.25f;
         }
-        if(AugmentHandler.Instance.GetAugmentById(5).purchased > 0)
+        if (AugmentHandler.Instance.GetAugmentById(5).purchased > 0)
         {
             dmgMult = 2.5f;
         }
@@ -316,34 +313,30 @@ public abstract class Person : MonoBehaviour
     {
         damageMultiplier *= dmgMult;
         damageTakenMultiplier *= takenMult;
-
         yield return new WaitForSeconds(duration);
-
         damageMultiplier /= dmgMult;
         damageTakenMultiplier /= takenMult;
     }
 
     public void ApplyAreaDamage(float duration)
     {
-        float radiusMultAugment = 02f * AugmentHandler.Instance.GetAugmentById(7).purchased;
-        StartCoroutine(AreaDamageRoutine(duration, areaBuff+radiusMultAugment));
+        float radiusMultAugment = 0.2f * AugmentHandler.Instance.GetAugmentById(7).purchased;
+        StartCoroutine(AreaDamageRoutine(duration, areaBuff + radiusMultAugment));
     }
 
     private IEnumerator AreaDamageRoutine(float duration, float radiusMultiplier)
     {
         HasAreaDamage = true;
         damageArea *= radiusMultiplier;
-
         yield return new WaitForSeconds(duration);
-
         damageArea /= radiusMultiplier;
         HasAreaDamage = false;
     }
 
     public void ApplyLifeSteal(float duration)
     {
-        float lifeStealMult = 05f * AugmentHandler.Instance.GetAugmentById(8).purchased;
-        StartCoroutine(LifeStealRoutine(duration+lifeStealMult));
+        float lifeStealMult = 0.5f * AugmentHandler.Instance.GetAugmentById(8).purchased;
+        StartCoroutine(LifeStealRoutine(duration + lifeStealMult));
     }
 
     private IEnumerator LifeStealRoutine(float duration)
