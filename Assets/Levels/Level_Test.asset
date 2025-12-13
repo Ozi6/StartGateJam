@@ -17,3 +17,4 @@ MonoBehaviour:
   scoutAmount: 2
   wizardAmount: 0
   archerAmount: 7
+  maxPlaceableUnits: 7

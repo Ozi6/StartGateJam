@@ -5,7 +5,6 @@ public class UnitInteractionManager : MonoBehaviour
 {
     public LayerMask groundLayer;
     public LayerMask unitLayer;
-
     private GameObject draggingUnit;
     private bool isDraggingFromShop = false;
     private string currentUnitTag;
@@ -32,12 +31,10 @@ public class UnitInteractionManager : MonoBehaviour
         {
             HandleClick();
         }
-
         if (Input.GetMouseButton(0) && draggingUnit != null)
         {
             HandleDrag();
         }
-
         if (Input.GetMouseButtonUp(0) && draggingUnit != null)
         {
             HandleDrop();
@@ -52,14 +49,19 @@ public class UnitInteractionManager : MonoBehaviour
             Debug.LogError($"Unit tag '{unitTag}' not found in market prices!");
             return;
         }
-
         int price = marketLogic.marketPrices[unitTag];
+
+        // Check unit limit first
+        if (GameManager.Instance.playersTeam.Count >= GameManager.Instance.CurrentWaveConfig.maxPlaceableUnits)
+        {
+            Debug.Log("Maximum placeable units reached!");
+            return;
+        }
 
         if (GameManager.Instance.currentGold >= price)
         {
             currentUnitTag = unitTag;
             currentUnitPrice = price;
-
             Vector3 spawnPos = GetMouseWorldPos();
             draggingUnit = ObjectPooler.Instance.SpawnFromPool(unitTag, spawnPos);
             if (draggingUnit != null)
@@ -68,7 +70,6 @@ public class UnitInteractionManager : MonoBehaviour
                 unitRenderer = draggingUnit.GetComponent<Renderer>();
                 if (unitRenderer != null)
                     originalColor = unitRenderer.material.color;
-
                 // Calculate the offset from pivot to bottom
                 CalculateBottomOffset();
             }
@@ -83,18 +84,17 @@ public class UnitInteractionManager : MonoBehaviour
     {
         if (GameManager.Instance.CurrentState != GameState.Shopping)
             return;
+
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit, 100f, unitLayer))
         {
             draggingUnit = hit.collider.gameObject;
             isDraggingFromShop = false;
-
             unitRenderer = draggingUnit.GetComponent<Renderer>();
             if (unitRenderer != null)
             {
                 originalColor = unitRenderer.material.color;
             }
-
             // Calculate the offset from pivot to bottom
             CalculateBottomOffset();
         }
@@ -143,7 +143,6 @@ public class UnitInteractionManager : MonoBehaviour
             {
                 // Deduct gold and finalize purchase
                 GameManager.Instance.currentGold -= currentUnitPrice;
-
                 // Add to player's team
                 Person person = draggingUnit.GetComponent<Person>();
                 if (person != null)
@@ -151,11 +150,12 @@ public class UnitInteractionManager : MonoBehaviour
                     GameManager.Instance.playersTeam.Add(person);
                     person.SetFriendly(true);
                 }
-
                 Debug.Log($"Unit purchased! Gold remaining: {GameManager.Instance.currentGold}");
             }
             // If not from shop, just repositioning existing unit (no action needed)
         }
+
+        GameManager.Instance.UpdateUnitCountDisplay();
 
         // Reset state
         draggingUnit = null;
@@ -173,18 +173,16 @@ public class UnitInteractionManager : MonoBehaviour
         {
             // Use MarketLogic to handle selling
             marketLogic.SellUnit(p);
-
             int refundAmount = p.GivenGold;
             GameManager.Instance.currentGold += refundAmount;
-
             // Remove from player's team
             GameManager.Instance.playersTeam.Remove(p);
             p.isFriendly = false;
-
             Debug.Log($"Unit sold for {refundAmount} gold!");
         }
-
         ObjectPooler.Instance.ReturnToPool(unitObj, unitObj.tag);
+
+        GameManager.Instance.UpdateUnitCountDisplay();
     }
 
     private void CalculateBottomOffset()
@@ -206,8 +204,6 @@ public class UnitInteractionManager : MonoBehaviour
             unitBottomOffset = rend.bounds.extents.y;
             return;
         }
-
-        // If neither exists, assume no offset needed
         unitBottomOffset = 0f;
     }
 
@@ -221,7 +217,6 @@ public class UnitInteractionManager : MonoBehaviour
             groundPos.y += unitBottomOffset;
             return groundPos;
         }
-
         return draggingUnit != null ? draggingUnit.transform.position : Vector3.zero;
     }
 

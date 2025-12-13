@@ -9,4 +9,7 @@ public class WaveConfig : ScriptableObject
     [SerializeField][Min(0)] public int scoutAmount;
     [SerializeField][Min(0)] public int wizardAmount;
     [SerializeField][Min(0)] public int archerAmount;
+
+    [Header("Placement Limits")]
+    [SerializeField][Min(0)] public int maxPlaceableUnits;
 }
