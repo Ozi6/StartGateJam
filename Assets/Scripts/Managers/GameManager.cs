@@ -28,7 +28,7 @@ public class GameManager : Singleton<GameManager>
 
     protected override void OnAwake()
     {
-        //playersTeam = new List<Person>();
+        playersTeam = new List<Person>();
         enemyTeam = new List<Person>();
         if (enemySpawner == null) enemySpawner = FindFirstObjectByType<EnemySpawner>();
         if (inputManager == null) inputManager = FindFirstObjectByType<InputManager>();
@@ -143,7 +143,8 @@ public class GameManager : Singleton<GameManager>
                 rotation = person.transform.rotation,
                 targetPosition = person.targetPosition,
                 currentHealth = person.maxHealth,
-                maxHealth = person.maxHealth
+                maxHealth = person.maxHealth,
+                isFriendly = person.isFriendly
             };
 
             teamSnapshot.Add(snapshot);
@@ -197,6 +198,10 @@ public class GameManager : Singleton<GameManager>
                 {
                     person.targetPosition = snapshot.targetPosition;
                     person.health = person.maxHealth;
+                    // Restore friendly status and update health bar color
+                    person.SetFriendly(snapshot.isFriendly);
+                    // Register the unit properly
+                    person.OnObjectSpawn();
                     playersTeam.Add(person);
                 }
             }
@@ -243,5 +248,6 @@ public class PersonSnapshot
     public Vector3 targetPosition;
     public int currentHealth;
     public int maxHealth;
+    public bool isFriendly;
     // Add any other properties you need to restore
 }

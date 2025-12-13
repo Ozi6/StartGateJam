@@ -125,7 +125,10 @@ public abstract class Person : MonoBehaviour
     public void SetFriendly(bool friendly)
     {
         isFriendly = friendly;
-        healthBar.SetHealthBarColor(friendly);
+        if (healthBar != null)
+        {
+            healthBar.SetHealthBarColor(friendly);
+        }
     }
 
     protected IEnumerator MoveToDesignated(Vector3 designated)
