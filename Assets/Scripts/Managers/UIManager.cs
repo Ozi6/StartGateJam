@@ -124,7 +124,6 @@ public class UIManager : MonoBehaviour
         if (upgradeButton != null && person.upgradeCost <= GameManager.Instance.currentGold)
         {
             upgradeButton.onClick.RemoveAllListeners();
-            GameManager.Instance.currentGold -= person.upgradeCost;
             upgradeButton.onClick.AddListener(() => UpgradeUnit(unit));
         }
 
@@ -142,19 +141,47 @@ public class UIManager : MonoBehaviour
             Debug.LogWarning("Cannot upgrade: unit or ObjectPooler is null");
             return;
         }
+
+        Person oldPerson = unit.GetComponent<Person>();
+        if (oldPerson == null)
+        {
+            Debug.LogWarning("Cannot upgrade: unit does not have a Person component");
+            return;
+        }
+
         string currentTag = unit.tag;
         string upgradedTag = currentTag + "_lvl2";
-        GameObject upgradedUnit = ObjectPooler.Instance.SpawnFromPool(
+
+        GameObject upgradedUnitGO = ObjectPooler.Instance.SpawnFromPool(
             upgradedTag,
             unit.transform.position,
             unit.transform.rotation
         );
 
-        if (upgradedUnit != null)
+        if (upgradedUnitGO != null)
         {
-            Debug.Log($"Upgraded {currentTag} to {upgradedTag}");
-            ObjectPooler.Instance.ReturnToPool(unit, currentTag);
-            CloseUpgradePanel();
+            Person upgradedPerson = upgradedUnitGO.GetComponent<Person>();
+            if (upgradedPerson != null)
+            {
+                // Remove old unit from playersTeam
+                GameManager.Instance.currentGold -= oldPerson.upgradeCost;
+                GameManager.Instance.playersTeam.Remove(oldPerson);
+
+                GameManager.Instance.playersTeam.Add(upgradedPerson);
+
+                Debug.Log($"Upgraded {currentTag} to {upgradedTag}");
+
+                ObjectPooler.Instance.ReturnToPool(unit, currentTag);
+
+                GameManager.Instance.UpdateUnitCountDisplay();
+
+                CloseUpgradePanel();
+            }
+            else
+            {
+                Debug.LogWarning($"Spawned upgraded unit '{upgradedTag}' does not have a Person component.");
+                ObjectPooler.Instance.ReturnToPool(upgradedUnitGO, upgradedTag);
+            }
         }
         else
         {

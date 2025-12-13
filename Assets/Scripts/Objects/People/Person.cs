@@ -18,7 +18,7 @@ public abstract class Person : MonoBehaviour
     [SerializeField] protected string poolTag;
     [SerializeField] protected float areaBuff;
     [SerializeField] protected float turnSpeed = 10f;
-    public int upgradeCost;
+    [SerializeField] public int upgradeCost;
     // ---------- POWER-UP STATES ----------
     public bool IsInvulnerable { get; private set; }
     public bool CanMove { get; private set; } = true;
@@ -238,7 +238,12 @@ public abstract class Person : MonoBehaviour
     protected virtual void Die()
     {
         UnitRegistrar.UnregisterUnit(this);
-        GameManager.Instance.currentGold += isEnemyGolded ? givenGold + 1 : givenGold;
+
+        if (!this.isFriendly)
+        {
+            int goldAmount = isEnemyGolded ? givenGold + 1 : givenGold;
+            GameManager.Instance.currentGold += goldAmount;
+        }
     }
 
     protected void FacePosition(Vector3 position)

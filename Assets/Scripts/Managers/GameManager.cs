@@ -28,7 +28,7 @@ public class GameManager : Singleton<GameManager>
 
     protected override void OnAwake()
     {
-        //playersTeam = new List<Person>();
+        playersTeam = new List<Person>();
         enemyTeam = new List<Person>();
         if (enemySpawner == null) enemySpawner = FindFirstObjectByType<EnemySpawner>();
         if (inputManager == null) inputManager = FindFirstObjectByType<InputManager>();

@@ -527,6 +527,7 @@ MonoBehaviour:
   poolTag: 
   areaBuff: 1.6
   turnSpeed: 10
+  upgradeCost: 25
   isEnemyGolded: 0
   TargetEntity: {fileID: 0}
   targetPosition: {x: 0, y: 0, z: 0}
