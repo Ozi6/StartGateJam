@@ -48,9 +48,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13b9789c6b2f6944f8f7dda595443877, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pushStrength: 0.5
   health: 30
-  moveSpeed: 1
+  moveSpeed: 2
   damage: 1.5
   attackRange: 30
   attackSpeed: 0.9
@@ -72,7 +71,7 @@ Rigidbody:
   m_GameObject: {fileID: 8461961940972001279}
   serializedVersion: 4
   m_Mass: 1
-  m_Drag: 0
+  m_Drag: 0.5
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
