@@ -2,18 +2,29 @@ using UnityEngine;
 
 public class Wizard : Person
 {
-    protected override void OnDestroy()
-    {
-
-    }
+    [SerializeField] private GameObject projectilePrefab;
+    [SerializeField] private float projectileSpeed = 10f;
 
     protected override void Start()
     {
-
+        // Initialization if needed
     }
 
-    protected override void Update()
+    protected override void OnDestroy()
     {
+        // Cleanup if needed
+    }
 
+    protected override void Attack()
+    {
+        if (TargetEntity != null && projectilePrefab != null)
+        {
+            GameObject proj = Instantiate(projectilePrefab, transform.position + Vector3.up * 1f, Quaternion.identity);
+            Projectile projectileScript = proj.GetComponent<Projectile>();
+            if (projectileScript != null)
+            {
+                projectileScript.SetTarget(TargetEntity, CalculateDamage(), isFriendly, projectileSpeed);
+            }
+        }
     }
 }

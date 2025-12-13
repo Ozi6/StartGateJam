@@ -55,7 +55,7 @@ public class EnemySpawner : MonoBehaviour
         yield return SpawnIfNotEmpty(wizardTag, config.wizardAmount);
         yield return SpawnIfNotEmpty(archerTag, config.archerAmount);
 
-        GameManager.Instance.EnterState(GameState.Combat);
+        GameManager.Instance.SetState(GameState.Combat);
     }
 
     private IEnumerator SpawnUnitTypeInLine(string tag, int count, float spacing)

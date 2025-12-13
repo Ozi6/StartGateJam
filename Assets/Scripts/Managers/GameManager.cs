@@ -33,7 +33,7 @@ public class GameManager : Singleton<GameManager>
         CurrentState = newState;
         EnterState(CurrentState);
     }
-    public void EnterState(GameState state)
+    private void EnterState(GameState state)
     {
         switch (state)
         {

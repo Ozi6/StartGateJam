@@ -16,6 +16,9 @@ public abstract class Person : MonoBehaviour
     [SerializeField] protected float givenXP;
     [SerializeField] protected int givenGold;
     [SerializeField] protected bool[] powerUpList = new bool[5]; // isFriendly = true: [strength, speed, shield, -, -] else: [goldIncrease, fatique, -, -, -]
+
+    private float deploymentSpeed = 70;
+
     public bool IsFriendly => isFriendly;
     public int Health => health;
     public float MoveSpeed => moveSpeed;
@@ -29,14 +32,18 @@ public abstract class Person : MonoBehaviour
     public Person TargetEntity;
     public Vector3 targetPosition;
     protected bool isWaiting = false;
+    protected float lastAttackTime = -Mathf.Infinity;
+
     public void OnObjectSpawn()
     {
         UnitRegistrar.RegisterUnit(this);
     }
+
     public void OnObjectReturn()
     {
         UnitRegistrar.UnregisterUnit(this);
     }
+
     protected virtual void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -46,13 +53,50 @@ public abstract class Person : MonoBehaviour
             RigidbodyConstraints.FreezeRotation |
             RigidbodyConstraints.FreezePositionY;
     }
+
     protected abstract void Start();
+
     protected virtual void Update()
     {
-        if (isWaiting && Vector3.Distance(transform.position, targetPosition) > 0.01f)
-            GoToPoint(targetPosition);
+        if (GameManager.Instance.CurrentState == GameState.Deployment)
+        {
+            if (isWaiting && Vector3.Distance(transform.position, targetPosition) > 0.01f)
+                GoToPointDesignatedVer(targetPosition);
+        }
+        else if (GameManager.Instance.CurrentState == GameState.Combat)
+        {
+            if (isWaiting)
+            {
+                if (TargetEntity != null)
+                {
+                    Engage();
+                }
+                else
+                {
+                    if (Vector3.Distance(transform.position, targetPosition) > 0.01f)
+                    {
+                        GoToPoint(targetPosition);
+                    }
+                    else
+                    {
+                        StopMoving();
+                    }
+                }
+            }
+        }
     }
+
     protected abstract void OnDestroy();
+
+    protected void GoToPointDesignatedVer(Vector3 point)
+    {
+        transform.position = Vector3.MoveTowards(
+            transform.position,
+            point,
+            deploymentSpeed * Time.deltaTime
+        );
+    }
+
     protected void GoToPoint(Vector3 point)
     {
         transform.position = Vector3.MoveTowards(
@@ -61,19 +105,33 @@ public abstract class Person : MonoBehaviour
             moveSpeed * Time.deltaTime
         );
     }
+
+    protected void StopMoving()
+    {
+        rb.linearVelocity = Vector3.zero;
+    }
+
     public void BeginDeployment(Vector3 designated)
     {
         StartCoroutine(MoveToDesignated(designated));
     }
+
     protected IEnumerator MoveToDesignated(Vector3 designated)
     {
         while (Vector3.Distance(transform.position, designated) > 0.01f)
         {
-            GoToPoint(designated);
+            GoToPointDesignatedVer(designated);
             yield return null;
         }
+        while (Vector3.Distance(transform.position, targetPosition) > 0.01f)
+        {
+            GoToPointDesignatedVer(targetPosition);
+            yield return null;
+        }
+        StopMoving();
         isWaiting = true;
     }
+
     protected virtual void OnCollisionStay(Collision collision)
     {
         if (collision.gameObject.layer != gameObject.layer)
@@ -86,5 +144,53 @@ public abstract class Person : MonoBehaviour
         if (pushDir.sqrMagnitude < 0.0001f)
             return;
         rb.AddForce(pushDir.normalized * pushStrength, ForceMode.Acceleration);
+    }
+
+    protected virtual void Engage()
+    {
+        if (TargetEntity == null) return;
+
+        float distance = Vector3.Distance(transform.position, TargetEntity.transform.position);
+
+        if (distance > attackRange)
+        {
+            GoToPoint(TargetEntity.transform.position);
+        }
+        else
+        {
+            StopMoving();
+            if (Time.time >= lastAttackTime + attackSpeed)
+            {
+                Attack();
+                lastAttackTime = Time.time;
+            }
+        }
+    }
+
+    protected virtual void Attack()
+    {
+        if (TargetEntity != null)
+        {
+            TargetEntity.TakeDamage(CalculateDamage());
+        }
+    }
+
+    public virtual float CalculateDamage()
+    {
+        return damage;
+    }
+
+    public virtual void TakeDamage(float dmg)
+    {
+        health -= Mathf.RoundToInt(dmg);
+        if (health <= 0)
+        {
+            Die();
+        }
+    }
+
+    protected virtual void Die()
+    {
+        Destroy(gameObject);
     }
 }
