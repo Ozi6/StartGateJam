@@ -45,6 +45,9 @@ public abstract class Person : MonoBehaviour
     protected bool isWaiting = false;
     protected float lastAttackTime = -Mathf.Infinity;
     public Vector3 targetPosition;
+
+    [SerializeField] HealthBar healthBar;
+
     public void OnObjectSpawn()
     {
         UnitRegistrar.RegisterUnit(this);
@@ -118,6 +121,13 @@ public abstract class Person : MonoBehaviour
     {
         StartCoroutine(MoveToDesignated(designated));
     }
+
+    public void SetFriendly(bool friendly)
+    {
+        isFriendly = friendly;
+        healthBar.SetHealthBarColor(friendly);
+    }
+
     protected IEnumerator MoveToDesignated(Vector3 designated)
     {
         while (Vector3.Distance(transform.position, designated) > 0.01f)

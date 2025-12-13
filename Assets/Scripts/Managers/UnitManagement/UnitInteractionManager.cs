@@ -62,7 +62,6 @@ public class UnitInteractionManager : MonoBehaviour
 
             Vector3 spawnPos = GetMouseWorldPos();
             draggingUnit = ObjectPooler.Instance.SpawnFromPool(unitTag, spawnPos);
-
             if (draggingUnit != null)
             {
                 isDraggingFromShop = true;
@@ -150,7 +149,7 @@ public class UnitInteractionManager : MonoBehaviour
                 if (person != null)
                 {
                     GameManager.Instance.playersTeam.Add(person);
-                    person.isFriendly = true;
+                    person.SetFriendly(true);
                 }
 
                 Debug.Log($"Unit purchased! Gold remaining: {GameManager.Instance.currentGold}");
