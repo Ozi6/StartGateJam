@@ -29,7 +29,6 @@ public class GameManager : Singleton<GameManager>
     }
     public void SetState(GameState newState)
     {
-        if (CurrentState == newState) return;
         ExitState(CurrentState);
         CurrentState = newState;
         EnterState(CurrentState);
