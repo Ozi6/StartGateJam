@@ -50,9 +50,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pushStrength: 0.5
   health: 30
-  moveSpeed: 0.5
+  moveSpeed: 1
   damage: 1.5
-  attackRange: 100
+  attackRange: 30
   attackSpeed: 0.9
   damageArea: 0
   isFriendly: 0
