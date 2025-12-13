@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TeamTargetManager : MonoBehaviour
+public class TeamTargetManager : Singleton<TeamTargetManager>
 {
     public Dictionary<Person, float> playersTargetDictionary = new Dictionary<Person, float>();
     public Dictionary<Person, float> enemiesTargetDictionary = new Dictionary<Person, float>();
