@@ -44,7 +44,7 @@ public abstract class Person : MonoBehaviour
     protected float lastAttackTime = -Mathf.Infinity;
     public Vector3 targetPosition;
     [SerializeField] HealthBar healthBar;
-    [SerializeField] private Animator animator;
+    [SerializeField] protected Animator animator;
 
     public void OnObjectSpawn()
     {
