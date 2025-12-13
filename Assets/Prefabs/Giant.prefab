@@ -523,7 +523,7 @@ MonoBehaviour:
   health: 350
   moveSpeed: 6
   damage: 20
-  attackRange: 3
+  attackRange: 5
   attackSpeed: 0.2
   damageArea: 0
   isFriendly: 0
