@@ -18,6 +18,7 @@ public class UnitInteractionManager : MonoBehaviour
     private Renderer unitRenderer;
     private Color originalColor;
     private MarketLogic marketLogic;
+    private float unitBottomOffset = 0f; // Offset from pivot to bottom of unit
 
     void Awake()
     {
@@ -59,20 +60,18 @@ public class UnitInteractionManager : MonoBehaviour
             currentUnitTag = unitTag;
             currentUnitPrice = price;
 
-            // Spawn the unit at mouse position
             Vector3 spawnPos = GetMouseWorldPos();
             draggingUnit = ObjectPooler.Instance.SpawnFromPool(unitTag, spawnPos);
 
             if (draggingUnit != null)
             {
                 isDraggingFromShop = true;
-
-                // Store original color for visual feedback
                 unitRenderer = draggingUnit.GetComponent<Renderer>();
                 if (unitRenderer != null)
-                {
                     originalColor = unitRenderer.material.color;
-                }
+
+                // Calculate the offset from pivot to bottom
+                CalculateBottomOffset();
             }
         }
         else
@@ -94,6 +93,9 @@ public class UnitInteractionManager : MonoBehaviour
             {
                 originalColor = unitRenderer.material.color;
             }
+
+            // Calculate the offset from pivot to bottom
+            CalculateBottomOffset();
         }
     }
 
@@ -146,6 +148,7 @@ public class UnitInteractionManager : MonoBehaviour
                 if (person != null)
                 {
                     GameManager.Instance.playersTeam.Add(person);
+                    person.isFriendly = true;
                 }
 
                 Debug.Log($"Unit purchased! Gold remaining: {GameManager.Instance.currentGold}");
@@ -159,6 +162,7 @@ public class UnitInteractionManager : MonoBehaviour
         currentUnitTag = null;
         currentUnitPrice = 0;
         unitRenderer = null;
+        unitBottomOffset = 0f;
     }
 
     private void SellUnit(GameObject unitObj)
@@ -174,6 +178,7 @@ public class UnitInteractionManager : MonoBehaviour
 
             // Remove from player's team
             GameManager.Instance.playersTeam.Remove(p);
+            p.isFriendly = false;
 
             Debug.Log($"Unit sold for {refundAmount} gold!");
         }
@@ -181,12 +186,39 @@ public class UnitInteractionManager : MonoBehaviour
         ObjectPooler.Instance.ReturnToPool(unitObj, unitObj.tag);
     }
 
+    private void CalculateBottomOffset()
+    {
+        if (draggingUnit == null) return;
+
+        // Try to get collider bounds first (more accurate for gameplay)
+        Collider col = draggingUnit.GetComponent<Collider>();
+        if (col != null)
+        {
+            unitBottomOffset = col.bounds.extents.y;
+            return;
+        }
+
+        // Fallback to renderer bounds
+        Renderer rend = draggingUnit.GetComponent<Renderer>();
+        if (rend != null)
+        {
+            unitBottomOffset = rend.bounds.extents.y;
+            return;
+        }
+
+        // If neither exists, assume no offset needed
+        unitBottomOffset = 0f;
+    }
+
     private Vector3 GetMouseWorldPos()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit, 100f, groundLayer))
         {
-            return hit.point;
+            // Adjust position so the bottom of the unit touches the ground
+            Vector3 groundPos = hit.point;
+            groundPos.y += unitBottomOffset;
+            return groundPos;
         }
 
         return draggingUnit != null ? draggingUnit.transform.position : Vector3.zero;
