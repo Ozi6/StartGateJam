@@ -29,11 +29,8 @@ public class AugmentHandler : Singleton<AugmentHandler>
 
     protected override void OnAwake()
     {
-        ResetAugmentPool();
-=======
         base.Awake();
         ResetAugments();
->>>>>>> Stashed changes
     }
 
     private void ResetAugments()
