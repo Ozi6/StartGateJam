@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 684d5bd9c2822d94189db22370b90a85
+guid: d5b2ff3bb62a6f6409b029be41121962
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -9,7 +9,7 @@ TrueTypeFontImporter:
   characterPadding: 1
   includeFontData: 1
   fontNames:
-  - IM FELL English
+  - MedievalSharp
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0
