@@ -121,16 +121,44 @@ public class UIManager : MonoBehaviour
                 $"Move Speed: {moveSpd}";
         }
 
-        if (upgradeButton != null)
+        if (upgradeButton != null && person.upgradeCost <= GameManager.Instance.currentGold)
         {
             upgradeButton.onClick.RemoveAllListeners();
-            upgradeButton.onClick.AddListener(() => Debug.Log($"Upgrade clicked for {unit.name}"));
+            GameManager.Instance.currentGold -= person.upgradeCost;
+            upgradeButton.onClick.AddListener(() => UpgradeUnit(unit));
         }
 
         if (!isRightPanelOpen)
         {
             isRightPanelOpen = true;
             StartCoroutine(SlidePanel(rightSidePanel.GetComponent<RectTransform>(), rightPanelClosedPos, rightPanelOpenPos));
+        }
+    }
+
+    private void UpgradeUnit(GameObject unit)
+    {
+        if (unit == null || ObjectPooler.Instance == null)
+        {
+            Debug.LogWarning("Cannot upgrade: unit or ObjectPooler is null");
+            return;
+        }
+        string currentTag = unit.tag;
+        string upgradedTag = currentTag + "_lvl2";
+        GameObject upgradedUnit = ObjectPooler.Instance.SpawnFromPool(
+            upgradedTag,
+            unit.transform.position,
+            unit.transform.rotation
+        );
+
+        if (upgradedUnit != null)
+        {
+            Debug.Log($"Upgraded {currentTag} to {upgradedTag}");
+            ObjectPooler.Instance.ReturnToPool(unit, currentTag);
+            CloseUpgradePanel();
+        }
+        else
+        {
+            Debug.LogWarning($"Failed to spawn upgraded unit with tag '{upgradedTag}'. Make sure this tag exists in ObjectPooler.");
         }
     }
 

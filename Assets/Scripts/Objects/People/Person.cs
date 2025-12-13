@@ -18,6 +18,7 @@ public abstract class Person : MonoBehaviour
     [SerializeField] protected string poolTag;
     [SerializeField] protected float areaBuff;
     [SerializeField] protected float turnSpeed = 10f;
+    public int upgradeCost;
     // ---------- POWER-UP STATES ----------
     public bool IsInvulnerable { get; private set; }
     public bool CanMove { get; private set; } = true;
