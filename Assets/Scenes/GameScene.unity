@@ -1435,7 +1435,7 @@ MonoBehaviour:
     prefab: {fileID: 8461961940972001279, guid: ca4bbd66786ccad4eb8b43970e140955, type: 3}
     size: 30
   - tag: Archer
-    prefab: {fileID: 8461961940972001279, guid: 3a04f37852170014f8538083ddabcdcf, type: 3}
+    prefab: {fileID: 5121599396880773165, guid: 4fd62e1a572f53049bc91b92f364022d, type: 3}
     size: 30
   - tag: Archer_lvl2
     prefab: {fileID: 8461961940972001279, guid: 4204379f646765e4f9c83b629be033a2, type: 3}

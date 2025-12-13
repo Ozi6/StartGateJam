@@ -460,6 +460,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -3592878009827376568, guid: cbd309e20f27abe439dd988302078f42, type: 3}
   m_PrefabInstance: {fileID: 6933751507786580092}
   m_PrefabAsset: {fileID: 0}
+--- !u!95 &3554246015625362925 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: cbd309e20f27abe439dd988302078f42, type: 3}
+  m_PrefabInstance: {fileID: 6933751507786580092}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4280597432976364645 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -2639638324218457063, guid: cbd309e20f27abe439dd988302078f42, type: 3}
@@ -532,6 +537,7 @@ MonoBehaviour:
   TargetEntity: {fileID: 0}
   targetPosition: {x: 0, y: 0, z: 0}
   healthBar: {fileID: 2797007033078659663}
+  animator: {fileID: 3554246015625362925}
 --- !u!65 &-6065967765348272629
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -44,6 +44,7 @@ public abstract class Person : MonoBehaviour
     protected float lastAttackTime = -Mathf.Infinity;
     public Vector3 targetPosition;
     [SerializeField] HealthBar healthBar;
+    [SerializeField] private Animator animator;
 
     public void OnObjectSpawn()
     {
@@ -183,6 +184,8 @@ public abstract class Person : MonoBehaviour
     {
         if (TargetEntity == null || !TargetEntity.gameObject.activeSelf)
             return;
+        if (animator != null)
+            animator.SetBool("Attacking", true);
         float finalDamage = CalculateDamage();
         if (HasAreaDamage && damageArea > 0f)
         {
@@ -191,6 +194,8 @@ public abstract class Person : MonoBehaviour
         else
         {
             TargetEntity.TakeDamage(finalDamage);
+            if (TargetEntity.health <= finalDamage)
+                animator.SetBool("Attacking", false);
         }
     }
 
