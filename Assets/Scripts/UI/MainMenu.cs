@@ -12,7 +12,8 @@ public class MainMenu : MonoBehaviour
 
     public void StartGame()
     {
-            SceneManager.LoadScene(sceneIndex);
+        SceneManager.LoadScene(sceneIndex);
+        AudioManager.Instance.PlayMusic(1);
     }
     public void OpenPanel2()
     {

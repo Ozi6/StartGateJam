@@ -674,6 +674,7 @@ MonoBehaviour:
   sfxSource: {fileID: 0}
   musicTracks:
   - {fileID: 8300000, guid: a9bc473ccdfb5fd428bf6a55f1816739, type: 3}
+  - {fileID: 8300000, guid: 44e8a45a74f52c14c8c45dd71e09d4e0, type: 3}
   sfxClips:
   - {fileID: 8300000, guid: d25a83928a299994d91d5cee913d8a5a, type: 3}
   - {fileID: 8300000, guid: 44c1f5bb34fe19549bbfb38d53d6665c, type: 3}
