@@ -19,7 +19,6 @@ public abstract class Person : MonoBehaviour
     [SerializeField] protected float areaBuff;
     [SerializeField] protected float turnSpeed = 10f;
     [SerializeField] public int upgradeCost;
-    [SerializeField] private ParticleSystem coinDropParticles;
 
     // --- WALK SFX ADDITIONS ---
     [Header("Walk SFX")]
@@ -327,9 +326,6 @@ public abstract class Person : MonoBehaviour
             Debug.Log("Enemy died and dropped " + givenGold + "base" + EnemyGolded + " buffed golds");
         }
         UnitRegistrar.UnregisterUnit(this);
-
-        Vector3 spawnPos = transform.position + Vector3.up * 0.5f;
-        Instantiate(coinDropParticles, spawnPos, Quaternion.identity);
     }
 
     protected void FacePosition(Vector3 position)

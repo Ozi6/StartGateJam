@@ -538,7 +538,14 @@ MonoBehaviour:
   areaBuff: 1.2
   turnSpeed: 10
   upgradeCost: 0
-  isEnemyGolded: 0
+  coinDropParticles: {fileID: 0}
+  walkSFXInterval: 0.4
+  groundRaycastDistance: 10
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  groundOffset: 0.1
+  EnemyGolded: 0
   TargetEntity: {fileID: 0}
   targetPosition: {x: 0, y: 0, z: 0}
   healthBar: {fileID: 9163547319123098344}
