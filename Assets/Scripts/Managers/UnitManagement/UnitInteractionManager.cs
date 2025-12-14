@@ -96,6 +96,7 @@ public class UnitInteractionManager : MonoBehaviour
             currentUnitPrice = price;
             Vector3 spawnPos = GetMouseWorldPos();
             draggingUnit = ObjectPooler.Instance.SpawnFromPool(unitTag, spawnPos);
+            draggingUnit.GetComponent<Person>().isNew = true;
             if (draggingUnit != null)
             {
                 isDraggingFromShop = true;
@@ -243,6 +244,10 @@ public class UnitInteractionManager : MonoBehaviour
         {
             marketLogic.SellUnit(p);
             int refundAmount = p.GivenGold;
+            if (p.isNew)
+            {
+                refundAmount = marketLogic.marketPrices[p.tag];
+            }
             GameManager.Instance.currentGold += refundAmount;
             GameManager.Instance.playersTeam.Remove(p);
             p.isFriendly = false;

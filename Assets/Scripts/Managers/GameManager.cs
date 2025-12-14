@@ -218,6 +218,7 @@ public class GameManager : Singleton<GameManager>
         switch (state)
         {
             case GameState.Shopping:
+                tagAllFriendlyUnits();
                 //uiManager.ShowShopUI(false);
                 break;
             case GameState.Deployment:
@@ -229,6 +230,14 @@ public class GameManager : Singleton<GameManager>
             case GameState.Augmentation:
                 uiManager.HideAugmentSelection();
                 break;
+        }
+    }
+
+    private void tagAllFriendlyUnits()
+    {
+        foreach ( Person p in playersTeam)
+        {
+            p.isNew = false;
         }
     }
 

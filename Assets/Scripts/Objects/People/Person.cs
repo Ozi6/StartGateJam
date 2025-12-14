@@ -19,6 +19,7 @@ public abstract class Person : MonoBehaviour
     [SerializeField] protected float areaBuff;
     [SerializeField] protected float turnSpeed = 10f;
     [SerializeField] public int upgradeCost;
+    public bool isNew = false;
     // --- WALK SFX ADDITIONS ---
     [Header("Walk SFX")]
     [SerializeField] protected float walkSFXInterval = 0.4f; // Time between walk sounds
