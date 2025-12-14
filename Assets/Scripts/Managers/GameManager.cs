@@ -35,6 +35,7 @@ public class GameManager : Singleton<GameManager>
 
     protected override void OnAwake()
     {
+        AudioManager.Instance.PlayMusic(0);
         playersTeam = new List<Person>();
         enemyTeam = new List<Person>();
         if (enemySpawner == null) enemySpawner = FindFirstObjectByType<EnemySpawner>();
@@ -99,10 +100,15 @@ public class GameManager : Singleton<GameManager>
         GameResultHolder.Result = result;
 
         if (result == GameResult.Win)
+        {
             playerAnimator.SetTrigger("GameWin");
+            AudioManager.Instance.PlaySFX("win");
+        }
         else
+        {
             playerAnimator.SetTrigger("GameOver");
-
+            AudioManager.Instance.PlaySFX("lose");
+        }
         yield return new WaitForSeconds(3.5f);
 
         SceneManager.LoadScene("EndScreen");
@@ -135,7 +141,6 @@ public class GameManager : Singleton<GameManager>
                 inputManager.typerEnable = true;
                 TakeTeamSnapshot();
                 TeamTargetManager.Instance.AssignTargets();
-                AudioManager.Instance.PlaySFX("alkis_ambians");
                 //inputManager.EnableInput(true);
                 break;
             case GameState.Augmentation:
@@ -224,7 +229,6 @@ public class GameManager : Singleton<GameManager>
             case GameState.Deployment:
                 break;
             case GameState.Combat:
-                AudioManager.Instance.PlaySFX("alkis_ambians");
                 currentThrowableHeld = null;
                 break;
             case GameState.Augmentation:
