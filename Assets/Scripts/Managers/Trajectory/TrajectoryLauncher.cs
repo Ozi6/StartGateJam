@@ -152,7 +152,7 @@ public class TrajectoryLauncher : MonoBehaviour
 
     private void ThrowObject(float force)
     {
-        AudioManager.Instance.PlaySFX("Main Character Throw");
+        
         GameObject held = GameManager.Instance.currentThrowableHeld;
         if (held != null)
         {
@@ -165,6 +165,7 @@ public class TrajectoryLauncher : MonoBehaviour
                 rb.useGravity = true;
                 rb.linearVelocity = GetLaunchVelocity(force);
                 rb.angularVelocity = Vector3.zero;
+                AudioManager.Instance.PlaySFX("Main Character Throw");
             }
             Throwable throwable = held.GetComponent<Throwable>();
             if (throwable != null)
