@@ -48,9 +48,12 @@ public class AudioManager : Singleton<AudioManager>
     {
         if (trackIndex < 0 || trackIndex >= musicTracks.Length || musicTracks[trackIndex] == null)
             return;
+
+        musicSource.loop = true;
         musicSource.clip = musicTracks[trackIndex];
         musicSource.Play();
     }
+
 
     public void PlayMusic(string trackName)
     {
