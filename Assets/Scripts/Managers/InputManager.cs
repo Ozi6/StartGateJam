@@ -45,6 +45,8 @@ public class InputManager : MonoBehaviour
             if (gameManager.currentThrowableHeld != null) continue;
 
             char normalizedChar = NormalizeChar(rawChar);
+            if (string.IsNullOrEmpty(currentBubbleText))
+                gameManager.playerAnimator.SetBool("IsWriting", true);
             currentBubbleText += normalizedChar;
 
             uiManager.UpdateSpeechBubble(currentBubbleText);
@@ -54,7 +56,7 @@ public class InputManager : MonoBehaviour
                 string matched = currentBubbleText;
                 currentBubbleText = "";
                 uiManager.UpdateSpeechBubble("");
-
+                gameManager.playerAnimator.SetBool("IsWriting", false);
                 if (string.IsNullOrEmpty(heldKeyword))
                 {
                     heldKeyword = matched;
@@ -88,8 +90,10 @@ public class InputManager : MonoBehaviour
             else if (gameManager.currentThrowableHeld != null)
             {
                 Destroy(gameManager.currentThrowableHeld);
-                gameManager.currentThrowableHeld = null;
+                GameManager.Instance.currentThrowableHeld = null;
+                GameManager.Instance.playerAnimator.SetTrigger("Correct");
             }
+            gameManager.playerAnimator.SetTrigger("Wrong");
         }
 
         if (Input.GetKeyDown(KeyCode.Tab))

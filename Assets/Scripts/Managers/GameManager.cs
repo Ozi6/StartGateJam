@@ -26,6 +26,7 @@ public class GameManager : Singleton<GameManager>
 
     // Team snapshot storage
     private List<PersonSnapshot> teamSnapshot = new List<PersonSnapshot>();
+    [SerializeField] public Animator playerAnimator;
 
     protected override void OnAwake()
     {
@@ -50,12 +51,11 @@ public class GameManager : Singleton<GameManager>
     {
         if (CurrentState == GameState.Combat)
         {
+            CleanupNullUnits();
+            CleanupNullEnemies();
             if (enemyTeam.Count == 0)
             {
-                // Combat ends, restore team from snapshot
                 RestoreTeamFromSnapshot();
-
-                // Proceed to next wave
                 currentWaveIndex++;
                 if (currentWaveIndex < waveConfigs.Count)
                 {
@@ -65,12 +65,16 @@ public class GameManager : Singleton<GameManager>
                 }
                 else
                 {
-                    // All waves completed, handle win condition
                     Debug.Log("All waves completed! You win!");
-                    // Optionally set to a Win state or something
+                    playerAnimator.SetTrigger("GameWin");
                 }
             }
-
+            else if (playersTeam.Count == 0)
+            {
+                Debug.Log("Game Over! You lose!");
+                playerAnimator.SetTrigger("GameOver");
+                // Handle lose condition, perhaps set state
+            }
         }
         gold.text = currentGold.ToString();
     }
@@ -246,6 +250,10 @@ public class GameManager : Singleton<GameManager>
     private void CleanupNullUnits()
     {
         playersTeam.RemoveAll(person => person == null || person.gameObject == null || !person.gameObject.activeSelf);
+    }
+    private void CleanupNullEnemies()
+    {
+        enemyTeam.RemoveAll(person => person == null || person.gameObject == null || !person.gameObject.activeSelf);
     }
 }
 
