@@ -1959,6 +1959,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Panel1: {fileID: 1537128764}
   Panel2: {fileID: 625317977}
+  Panel3: {fileID: 0}
   sceneIndex: 1
 --- !u!4 &2042125718
 Transform:

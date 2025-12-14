@@ -3521,7 +3521,7 @@ MonoBehaviour:
   Panel1: {fileID: 1856205639}
   Panel2: {fileID: 1144297671}
   Panel3: {fileID: 804174714}
-  sceneIndex: 2
+  sceneIndex: 1
 --- !u!4 &1940314365
 Transform:
   m_ObjectHideFlags: 0
