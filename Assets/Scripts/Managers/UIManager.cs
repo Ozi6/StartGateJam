@@ -194,6 +194,11 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    public void ResetSpells()
+    {
+        firstKeywordText.text = "";
+        secondKeywordText.text = "";
+    }
     public void CloseUpgradePanel()
     {
         currentSelectedUnit = null;

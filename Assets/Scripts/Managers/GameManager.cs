@@ -109,6 +109,9 @@ public class GameManager : Singleton<GameManager>
                 //inputManager.EnableInput(true);
                 break;
             case GameState.Augmentation:
+                inputManager.Reset();
+                uiManager.ResetSpells();
+                uiManager.UpdateSpeechBubble("");
                 inputManager.typerEnable = false;
                 uiManager.ShowShopUI(false);
                 uiManager.ShowAugmentSelection();

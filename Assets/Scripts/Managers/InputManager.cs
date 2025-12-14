@@ -19,11 +19,17 @@ public class InputManager : MonoBehaviour
 
     void Update()
     {
+        HandleSpecialKeys();
         if (typerEnable)
         {
             HandleKeyboardInput();
-            HandleSpecialKeys();
         }
+    }
+
+    public void Reset()
+    {
+        currentBubbleText = "";
+        heldKeyword = "";
     }
 
     // ==============================
