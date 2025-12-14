@@ -16,4 +16,14 @@ public class Scout_lvl2 : Person
         ObjectPooler.Instance.ReturnToPool(gameObject, "Scout_lvl2");
         base.Die();
     }
+
+    protected override void AttackSound()
+    {
+        AudioManager.Instance.PlaySFXAtPoint("sword", gameObject.transform.position);
+    }
+
+    protected override void PlayWalkSFX()
+    {
+        AudioManager.Instance.PlaySFXAtPoint("horse", gameObject.transform.position);
+    }
 }

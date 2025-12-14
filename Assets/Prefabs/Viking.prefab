@@ -460,7 +460,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 97573db97ff26a740b62efe6372c7da2, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.66
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 97573db97ff26a740b62efe6372c7da2, type: 3}
       propertyPath: m_LocalPosition.z
@@ -591,7 +591,7 @@ MonoBehaviour:
   health: 100
   moveSpeed: 21
   damage: 20
-  attackRange: 1
+  attackRange: 1.8
   attackSpeed: 0.6
   damageArea: 0
   isFriendly: 0
@@ -601,7 +601,7 @@ MonoBehaviour:
   areaBuff: 1
   turnSpeed: 10
   upgradeCost: 5
-  isEnemyGolded: 0
+  EnemyGolded: 0
   TargetEntity: {fileID: 0}
   targetPosition: {x: 0, y: 0, z: 0}
   healthBar: {fileID: 4600740302192308700}

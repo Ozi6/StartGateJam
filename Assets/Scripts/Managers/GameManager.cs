@@ -101,6 +101,7 @@ public class GameManager : Singleton<GameManager>
                 inputManager.typerEnable = true;
                 TakeTeamSnapshot();
                 TeamTargetManager.Instance.AssignTargets();
+                AudioManager.Instance.PlaySFX("alkis_ambians");
                 //inputManager.EnableInput(true);
                 break;
             case GameState.Augmentation:
@@ -125,6 +126,7 @@ public class GameManager : Singleton<GameManager>
             case GameState.Deployment:
                 break;
             case GameState.Combat:
+                AudioManager.Instance.PlaySFX("alkis_ambians");
                 break;
             case GameState.Augmentation:
                 uiManager.HideAugmentSelection();

@@ -14,4 +14,14 @@ public class Giant_lvl2 : Person
         ObjectPooler.Instance.ReturnToPool(gameObject, "Giant_lvl2");
         base.Die();
     }
+
+    protected override void AttackSound()
+    {
+        AudioManager.Instance.PlaySFXAtPoint("axe_hit", gameObject.transform.position);
+    }
+
+    protected override void PlayWalkSFX()
+    {
+        AudioManager.Instance.PlaySFXAtPoint("giant_step", gameObject.transform.position);
+    }
 }

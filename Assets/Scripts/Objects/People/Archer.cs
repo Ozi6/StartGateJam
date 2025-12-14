@@ -31,7 +31,14 @@ public class Archer : Person
                     animator.SetBool("Attacking", false);
             }
         }
+        AttackSound();
     }
+
+    protected override void AttackSound()
+    {
+        AudioManager.Instance.PlaySFXAtPoint("bow", gameObject.transform.position);
+    }
+
     protected override void Die()
     {
         ObjectPooler.Instance.ReturnToPool(gameObject, "Archer");

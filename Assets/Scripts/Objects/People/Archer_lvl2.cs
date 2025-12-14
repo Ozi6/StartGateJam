@@ -31,6 +31,17 @@ public class Archer_lvl2 : Person
                     animator.SetBool("Attacking", false);
             }
         }
+        AttackSound();
+    }
+
+    protected override void AttackSound()
+    {
+        AudioManager.Instance.PlaySFXAtPoint("bow", gameObject.transform.position);
+    }
+
+    protected override void PlayWalkSFX()
+    {
+        //AudioManager.Instance.PlaySFXAtPoint()
     }
 
     protected override void Die()

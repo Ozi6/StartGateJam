@@ -16,4 +16,14 @@ public class Viking : Person
         ObjectPooler.Instance.ReturnToPool(gameObject, "Viking");
         base.Die();
     }
+
+    protected override void AttackSound()
+    {
+        AudioManager.Instance.PlaySFXAtPoint("axe_hit", gameObject.transform.position);
+    }
+
+    protected override void PlayWalkSFX()
+    {
+        //AudioManager.Instance.PlaySFXAtPoint()
+    }
 }

@@ -19,6 +19,19 @@ public abstract class Person : MonoBehaviour
     [SerializeField] protected float areaBuff;
     [SerializeField] protected float turnSpeed = 10f;
     [SerializeField] public int upgradeCost;
+    [SerializeField] private ParticleSystem coinDropParticles;
+
+    // --- WALK SFX ADDITIONS ---
+    [Header("Walk SFX")]
+    [SerializeField] protected float walkSFXInterval = 0.4f; // Time between walk sounds
+    private float walkSFXTimer = 0f;
+    // -------------------------
+
+    [Header("Ground Detection")]
+    [SerializeField] protected float groundRaycastDistance = 10f;
+    [SerializeField] protected LayerMask groundLayer;
+    [SerializeField] protected float groundOffset = 0.1f; // Small offset above ground
+
     // ---------- POWER-UP STATES ----------
     public bool IsInvulnerable { get; private set; }
     public bool CanMove { get; private set; } = true;
@@ -45,7 +58,6 @@ public abstract class Person : MonoBehaviour
     public Vector3 targetPosition;
     [SerializeField] HealthBar healthBar;
     [SerializeField] protected Animator animator;
-    // In your player movement script
     [SerializeField] ParticleSystem sandEffect;
 
     public void OnObjectSpawn()
@@ -73,23 +85,28 @@ public abstract class Person : MonoBehaviour
 
     protected virtual void Update()
     {
+        bool isMoving = false; // Flag to check if the unit is moving this frame
+
         if (GameManager.Instance.CurrentState == GameState.Deployment)
         {
             if (isWaiting && Vector3.Distance(transform.position, targetPosition) > 0.01f)
+            {
                 GoToPointDesignatedVer(targetPosition);
+                isMoving = true;
+            }
         }
         else if (GameManager.Instance.CurrentState == GameState.Combat)
         {
             if (TargetEntity != null && TargetEntity.gameObject.activeSelf)
             {
-                Engage();
+                isMoving = Engage(); // Engage returns true if movement occurred
             }
             else
             {
                 TargetEntity = TeamTargetManager.Instance.GetNewTarget(this);
                 if (TargetEntity != null && TargetEntity.gameObject.activeSelf)
                 {
-                    Engage();
+                    isMoving = Engage(); // Engage returns true if movement occurred
                 }
                 else
                 {
@@ -97,15 +114,52 @@ public abstract class Person : MonoBehaviour
                 }
             }
         }
+
+        // Handle Walk SFX
+        if (isMoving)
+        {
+            walkSFXTimer += Time.deltaTime;
+            if (walkSFXTimer >= walkSFXInterval)
+            {
+                PlayWalkSFX();
+                walkSFXTimer = 0f;
+            }
+        }
+        else
+        {
+            walkSFXTimer = 0f; // Reset timer when stopped
+        }
+
+        // Always lock to ground
+        LockToGround();
     }
 
     protected abstract void OnDestroy();
+
+    protected void LockToGround()
+    {
+        RaycastHit hit;
+        Vector3 rayStart = transform.position + Vector3.up * 5f; // Start raycast from above
+
+        if (Physics.Raycast(rayStart, Vector3.down, out hit, groundRaycastDistance, groundLayer))
+        {
+            float targetY = hit.point.y + groundOffset;
+            Vector3 pos = transform.position;
+            pos.y = targetY;
+            transform.position = pos;
+        }
+    }
 
     protected void GoToPointDesignatedVer(Vector3 point)
     {
         FacePosition(point);
         if (!sandEffect.isPlaying) sandEffect.Play();
-        Vector3 newPos = Vector3.MoveTowards(transform.position, point, deploymentSpeed * Time.deltaTime);
+
+        // Only move in XZ plane
+        Vector3 currentPos = transform.position;
+        Vector3 targetPos = new Vector3(point.x, currentPos.y, point.z);
+        Vector3 newPos = Vector3.MoveTowards(currentPos, targetPos, deploymentSpeed * Time.deltaTime);
+
         rb.MovePosition(newPos);
     }
 
@@ -114,7 +168,12 @@ public abstract class Person : MonoBehaviour
         if (!CanMove) return;
         FacePosition(point);
         if (!sandEffect.isPlaying) sandEffect.Play();
-        Vector3 newPos = Vector3.MoveTowards(transform.position, point, moveSpeed * Time.deltaTime);
+
+        // Only move in XZ plane
+        Vector3 currentPos = transform.position;
+        Vector3 targetPos = new Vector3(point.x, currentPos.y, point.z);
+        Vector3 newPos = Vector3.MoveTowards(currentPos, targetPos, moveSpeed * Time.deltaTime);
+
         rb.MovePosition(newPos);
     }
 
@@ -165,23 +224,26 @@ public abstract class Person : MonoBehaviour
         //rb.AddForce(pushDir.normalized * pushStrength, ForceMode.Acceleration);
     }
 
-    protected virtual void Engage()
+    // Changed return type to bool to indicate if movement happened
+    protected virtual bool Engage()
     {
-        if (TargetEntity == null || !TargetEntity.gameObject.activeSelf) return;
+        if (TargetEntity == null || !TargetEntity.gameObject.activeSelf) return false;
         FacePosition(TargetEntity.transform.position);
         float distance = Vector3.Distance(transform.position, TargetEntity.transform.position);
         if (distance > attackRange)
         {
             GoToPoint(TargetEntity.transform.position);
+            return true; // Unit is moving
         }
         else
         {
             StopMoving();
-            if (Time.time >= lastAttackTime + (1/attackSpeed))
+            if (Time.time >= lastAttackTime + (1 / attackSpeed))
             {
                 Attack();
                 lastAttackTime = Time.time;
             }
+            return false; // Unit is stationary (attacking or idle)
         }
     }
 
@@ -202,6 +264,17 @@ public abstract class Person : MonoBehaviour
             if (TargetEntity.health <= finalDamage)
                 animator.SetBool("Attacking", false);
         }
+        AttackSound();
+    }
+
+    protected virtual void AttackSound()
+    {
+
+    }
+
+    protected virtual void PlayWalkSFX()
+    {
+
     }
 
     protected virtual void ApplyAreaDamage(Vector3 center, float dmg)
@@ -255,7 +328,8 @@ public abstract class Person : MonoBehaviour
         }
         UnitRegistrar.UnregisterUnit(this);
 
-
+        Vector3 spawnPos = transform.position + Vector3.up * 0.5f;
+        Instantiate(coinDropParticles, spawnPos, Quaternion.identity);
     }
 
     protected void FacePosition(Vector3 position)
