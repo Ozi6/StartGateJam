@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using static Throwable;
 
 [CreateAssetMenu(
     fileName = "KeywordDatabase",
@@ -95,5 +94,14 @@ public class KeywordDatabase : ScriptableObject
         second = second.ToLower();
 
         return powerUpDict[(first, second)];
+    }
+
+    public GameObject GetPrefabByPowerUpType(PowerUpType type)
+    {
+        foreach (var pair in pairs)
+        {
+            if (pair.powerUpType == type) return pair.prefab;
+        }
+        return null;
     }
 }

@@ -238,7 +238,7 @@ public abstract class Person : MonoBehaviour
         if (distance > attackRange)
         {
             GoToPoint(TargetEntity.transform.position);
-            return true; // Unit is moving
+            return true;
         }
         else
         {
@@ -248,7 +248,7 @@ public abstract class Person : MonoBehaviour
                 StartCoroutine(PerformAttack());
                 lastAttackTime = Time.time;
             }
-            return false; // Unit is stationary (attacking or idle)
+            return false;
         }
     }
 
@@ -258,7 +258,6 @@ public abstract class Person : MonoBehaviour
         if (animator != null)
             animator.SetBool("Attacking", true);
 
-        // Wait for half the duration to simulate wind-up before applying damage
         yield return new WaitForSeconds(attackDuration / 2f);
 
         if (TargetEntity != null && TargetEntity.gameObject.activeSelf)
@@ -369,6 +368,7 @@ public abstract class Person : MonoBehaviour
     // ----------- COROUTINES --------------
     public void ApplyShield(float duration)
     {
+        ShowPowerUpVisual(PowerUpType.Shield);
         float augmentalLag = 0.5f * AugmentHandler.Instance.GetAugmentById(1).purchased;
         StartCoroutine(ShieldRoutine(duration + augmentalLag));
     }
@@ -384,6 +384,7 @@ public abstract class Person : MonoBehaviour
 
     public void ApplyRush(float multiplier, float duration)
     {
+        ShowPowerUpVisual(PowerUpType.Rush);
         if (AugmentHandler.Instance.GetAugmentById(3).purchased > 0)
         {
             multiplier = 3f;
@@ -400,6 +401,7 @@ public abstract class Person : MonoBehaviour
 
     public void ApplyHaste(float multiplier, float duration)
     {
+        ShowPowerUpVisual(PowerUpType.Haste);
         float augmentalMult = 0.5f * AugmentHandler.Instance.GetAugmentById(1).purchased;
         StartCoroutine(HasteRoutine(multiplier + augmentalMult, duration));
     }
@@ -413,6 +415,7 @@ public abstract class Person : MonoBehaviour
 
     public void ApplyRage(float dmgMult, float takenMult, float duration)
     {
+        ShowPowerUpVisual(PowerUpType.Rage);
         if (AugmentHandler.Instance.GetAugmentById(4).purchased > 0)
         {
             takenMult = 1.25f;
@@ -435,6 +438,7 @@ public abstract class Person : MonoBehaviour
 
     public void ApplyAreaDamage(float duration)
     {
+        ShowPowerUpVisual(PowerUpType.AreaDamage);
         float radiusMultAugment = 0.2f * AugmentHandler.Instance.GetAugmentById(7).purchased;
         StartCoroutine(AreaDamageRoutine(duration, areaBuff + radiusMultAugment));
     }
@@ -450,6 +454,7 @@ public abstract class Person : MonoBehaviour
 
     public void ApplyLifeSteal(float duration)
     {
+        ShowPowerUpVisual(PowerUpType.LifeSteal);
         float lifeStealMult = 0.5f * AugmentHandler.Instance.GetAugmentById(8).purchased;
         StartCoroutine(LifeStealRoutine(duration + lifeStealMult));
     }
@@ -459,6 +464,29 @@ public abstract class Person : MonoBehaviour
         HasLifeSteal = true;
         yield return new WaitForSeconds(duration);
         HasLifeSteal = false;
+    }
+
+    private void ShowPowerUpVisual(PowerUpType powerUpType)
+    {
+        KeywordDatabase db = GameManager.Instance.database;
+        GameObject prefab = db.GetPrefabByPowerUpType(powerUpType);
+        if (prefab == null) return;
+        GameObject instance = Instantiate(prefab, transform.position + Vector3.up * 2f, Quaternion.identity);
+        instance.transform.SetParent(transform);
+        Collider col = instance.GetComponent<Collider>();
+        if (col != null) col.enabled = false;
+        Rigidbody instanceRb = instance.GetComponent<Rigidbody>();
+        if (instanceRb != null)
+        {
+            instanceRb.isKinematic = true;
+            instanceRb.useGravity = false;
+        }
+        Throwable throwable = instance.GetComponent<Throwable>();
+        if (throwable != null)
+        {
+            throwable.OnThrown();
+        }
+        Destroy(instance, 1f);
     }
 
     public void GetStats(
