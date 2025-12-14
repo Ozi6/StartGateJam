@@ -317,11 +317,22 @@ public abstract class Person : MonoBehaviour
         return finalDamage;
     }
 
+    [SerializeField] protected ParticleSystem hurtParticleSystem;
+
     public virtual void TakeDamage(float dmg)
     {
         if (IsInvulnerable) return;
+
         dmg *= damageTakenMultiplier;
-        health -= Mathf.RoundToInt(dmg);
+
+        int delta = Mathf.RoundToInt(dmg);
+        if (delta > 0 && hurtParticleSystem != null)
+        {
+            hurtParticleSystem.Play();
+        }
+
+        health -= delta;
+
         if (health > maxHealth)
         {
             health = maxHealth;
