@@ -10,10 +10,15 @@ public class MainMenu : MonoBehaviour
     public GameObject Panel3;
     [SerializeField] private int sceneIndex;
 
+    public void Awake()
+    {
+        AudioManager.Instance.PlayMusic(1);
+    }
     public void StartGame()
     {
+        AudioManager.Instance.StopMusic();
         SceneManager.LoadScene(sceneIndex);
-        AudioManager.Instance.PlayMusic(1);
+        
     }
     public void OpenPanel2()
     {
