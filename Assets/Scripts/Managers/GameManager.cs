@@ -96,6 +96,7 @@ public class GameManager : Singleton<GameManager>
                 inputManager.typerEnable = false;
                 uiManager.ShowShopUI(true);
                 UpdateUnitCountDisplay();
+                inputManager.goldPowerSummonedCount = 0;
                 break;
             case GameState.Deployment:
                 uiManager.ShowShopUI(false);

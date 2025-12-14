@@ -42,7 +42,7 @@ public static class PowerUpEffectProcessor
         }
         else if (type == PowerUpType.EnemyGold)
         {
-            person.isEnemyGolded = true;
+            person.EnemyGolded++;
         }
     }
 }

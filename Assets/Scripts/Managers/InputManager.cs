@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class InputManager : MonoBehaviour
@@ -6,6 +7,7 @@ public class InputManager : MonoBehaviour
     private KeywordDatabase database;
     private GameManager gameManager;
     public bool typerEnable;
+    public int goldPowerSummonedCount = 0;
 
     private string currentBubbleText = "";
     private string heldKeyword = "";
@@ -103,6 +105,21 @@ public class InputManager : MonoBehaviour
     {
         if (database.HasPair(heldKeyword, secondKeyword))
         {
+            PowerUpType ans = database.GetPowerUp(heldKeyword, secondKeyword);
+
+            if (ans == PowerUpType.EnemyGold)
+            {
+                if (goldPowerSummonedCount < 1 + AugmentHandler.Instance.GetAugmentById(6).purchased)
+                {
+                    goldPowerSummonedCount++;
+                }
+                else
+                {
+                    uiManager.ResetSpells();
+                    heldKeyword = "";
+                    return;
+                }
+            }
             GameObject prefab = database.GetPrefab(heldKeyword, secondKeyword);
 
             if (prefab != null)
