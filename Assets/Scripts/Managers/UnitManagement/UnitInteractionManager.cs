@@ -242,6 +242,7 @@ public class UnitInteractionManager : MonoBehaviour
         Person p = unitObj.GetComponent<Person>();
         if (p != null)
         {
+            AudioManager.Instance.PlaySFX("Gold Sound");
             marketLogic.SellUnit(p);
             int refundAmount = p.GivenGold;
             if (p.isNew)
