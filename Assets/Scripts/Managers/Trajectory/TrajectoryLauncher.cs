@@ -16,6 +16,7 @@ public class TrajectoryLauncher : MonoBehaviour
     [Header("References")]
     [SerializeField] private Transform firePoint;
     [SerializeField] private Transform arrowVisual;
+    [SerializeField] private GameObject trueVisual;
     [SerializeField] private int linePoints = 30;
     [SerializeField] private float timeStep = 0.1f;
 
@@ -44,10 +45,10 @@ public class TrajectoryLauncher : MonoBehaviour
 
     private void Update()
     {
-        if (GameManager.Instance.CurrentState == GameState.Shopping && arrowVisual.gameObject.activeSelf)
-            arrowVisual.gameObject.SetActive(false);
-        else if (GameManager.Instance.CurrentState == GameState.Deployment && !arrowVisual.gameObject.activeSelf)
-            arrowVisual.gameObject.SetActive(true);
+        if (GameManager.Instance.CurrentState == GameState.Shopping && trueVisual.activeSelf)
+            trueVisual.gameObject.SetActive(false);
+        else if (GameManager.Instance.CurrentState == GameState.Deployment && !trueVisual.activeSelf)
+            trueVisual.gameObject.SetActive(true);
         HandleRotation();
         HandleShooting();
     }

@@ -1661,6 +1661,7 @@ MonoBehaviour:
   maxChargeTime: 2
   firePoint: {fileID: 2100038589}
   arrowVisual: {fileID: 588683024}
+  trueVisual: {fileID: 919990677}
   linePoints: 30
   timeStep: 0.1
   groundLayer:
@@ -2546,6 +2547,11 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!1 &919990677 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 770d9ca103e225744886be7a9343a4ed, type: 3}
+  m_PrefabInstance: {fileID: 1220577271}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &936546212
 GameObject:
   m_ObjectHideFlags: 0
