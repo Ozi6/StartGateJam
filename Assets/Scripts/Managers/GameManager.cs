@@ -59,7 +59,7 @@ public class GameManager : Singleton<GameManager>
                 if (currentWaveIndex < waveConfigs.Count)
                 {
                     CurrentWaveConfig = waveConfigs[currentWaveIndex];
-                    SetState(GameState.Shopping);
+                    SetState(GameState.Augmentation);
                     UpdateUnitCountDisplay();
                 }
                 else
@@ -68,13 +68,6 @@ public class GameManager : Singleton<GameManager>
                     Debug.Log("All waves completed! You win!");
                     // Optionally set to a Win state or something
                 }
-            }
-            if (enemyTeam.Count == 0)
-            {
-                RestoreTeamFromSnapshot();
-
-                // Move to augmentation instead of shopping
-                SetState(GameState.Augmentation);
             }
 
         }

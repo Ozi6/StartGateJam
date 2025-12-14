@@ -172,6 +172,7 @@ public class UIManager : MonoBehaviour
                 GameManager.Instance.currentGold -= oldPerson.upgradeCost;
                 GameManager.Instance.playersTeam.Remove(oldPerson);
 
+                upgradedPerson.isFriendly = true;
                 GameManager.Instance.playersTeam.Add(upgradedPerson);
 
                 Debug.Log($"Upgraded {currentTag} to {upgradedTag}");
