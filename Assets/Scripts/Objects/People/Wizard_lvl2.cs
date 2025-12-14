@@ -41,7 +41,20 @@ public class Wizard_lvl2 : Person
 
     protected override void AttackSound()
     {
-        AudioManager.Instance.PlaySFXAtPoint("fireball", gameObject.transform.position);
+        int roll = Random.Range(0, 2); // 0, 1 or 2
+
+        switch (roll)
+        {
+            case 0:
+                AudioManager.Instance.PlaySFXAtPoint("Wizard Attack 1", transform.position);
+                break;
+            case 1:
+                AudioManager.Instance.PlaySFXAtPoint("Wizard Attack 2", transform.position);
+                break;
+            case 2:
+                AudioManager.Instance.PlaySFXAtPoint("Wizard Attack 3", transform.position);
+                break;
+        }
     }
 
     protected override void Die()

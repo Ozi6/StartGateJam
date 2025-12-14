@@ -229,7 +229,6 @@ public class GameManager : Singleton<GameManager>
             case GameState.Deployment:
                 break;
             case GameState.Combat:
-                AudioManager.Instance.PlaySFX("alkis_ambians");
                 if (currentThrowableHeld != null)
                 {
                     Destroy(currentThrowableHeld);
