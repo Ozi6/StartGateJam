@@ -44,6 +44,10 @@ public class TrajectoryLauncher : MonoBehaviour
 
     private void Update()
     {
+        if (GameManager.Instance.CurrentState == GameState.Shopping && arrowVisual.gameObject.activeSelf)
+            arrowVisual.gameObject.SetActive(false);
+        else if (GameManager.Instance.CurrentState == GameState.Deployment && !arrowVisual.gameObject.activeSelf)
+            arrowVisual.gameObject.SetActive(true);
         HandleRotation();
         HandleShooting();
     }

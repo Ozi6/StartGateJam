@@ -528,7 +528,7 @@ MonoBehaviour:
   health: 150
   moveSpeed: 27
   damage: 40
-  attackRange: 2
+  attackRange: 2.2
   attackSpeed: 0.4
   damageArea: 0
   isFriendly: 0
@@ -570,7 +570,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 1.7, y: 1.7, z: 2.5}
-  m_Center: {x: 0, y: 0.2, z: -0.4}
+  m_Center: {x: 0, y: 0.3, z: -0.4}
 --- !u!4 &6397045597993401260 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -7236869174330588065, guid: 52b9ccce8dbc0734093b0daa130f8272, type: 3}
