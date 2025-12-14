@@ -49,6 +49,14 @@ public class InputManager : MonoBehaviour
                 gameManager.playerAnimator.SetBool("IsWriting", true);
             currentBubbleText += normalizedChar;
 
+            if (currentBubbleText.Length > 14)
+            {
+                currentBubbleText = "";
+                uiManager.UpdateSpeechBubble("");
+                gameManager.playerAnimator.SetBool("IsWriting", false);
+                return;
+            }
+
             uiManager.UpdateSpeechBubble(currentBubbleText);
 
             if (database != null && database.IsValid(currentBubbleText))
