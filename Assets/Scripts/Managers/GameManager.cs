@@ -60,6 +60,7 @@ public class GameManager : Singleton<GameManager>
                 if (currentWaveIndex < waveConfigs.Count)
                 {
                     CurrentWaveConfig = waveConfigs[currentWaveIndex];
+                    Debug.Log("Right now it is "+ currentWaveIndex);
                     SetState(GameState.Augmentation);
                     UpdateUnitCountDisplay();
                 }

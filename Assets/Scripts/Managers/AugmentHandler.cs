@@ -48,7 +48,7 @@ public class AugmentHandler : Singleton<AugmentHandler>
             "Haste power-up multiplier is increased by +0.5.", 15f, true, iconDB.GetIcon(1)));
 
         AddAugment(new Augment(2, "Fortified Shield",
-            "Shield power-up duration and cooldown are increased by +0.5 seconds.", 15f, true, iconDB.GetIcon(2)));
+            "Shield power-up duration increased by +0.5 seconds.", 15f, true, iconDB.GetIcon(2)));
 
         AddAugment(new Augment(3, "Overdrive Rush",
             "Rush power-up effect is increased to 3x.", 5f, false, iconDB.GetIcon(3)));
