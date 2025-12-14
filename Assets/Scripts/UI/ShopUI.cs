@@ -61,7 +61,11 @@ public class ShopUI : MonoBehaviour
 
     public void OnDeploymentButtonClicked()
     {
-        EventSystem.current.SetSelectedGameObject(null);
-        GameManager.Instance.SetState(GameState.Deployment);
+        if(GameManager.Instance.playersTeam.Count > 0)
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+            GameManager.Instance.SetState(GameState.Deployment);
+
+        }
     }
 }

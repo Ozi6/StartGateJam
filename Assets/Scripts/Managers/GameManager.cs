@@ -54,6 +54,7 @@ public class GameManager : Singleton<GameManager>
 
     void Update()
     {
+        gold.text = currentGold.ToString();
         if (CurrentState != GameState.Combat || isEnding)
             return;
 
@@ -84,7 +85,7 @@ public class GameManager : Singleton<GameManager>
             StartCoroutine(EndGameAfterAnimation(GameResult.Lose));
         }
 
-        gold.text = currentGold.ToString();
+        
     }
 
 
