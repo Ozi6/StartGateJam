@@ -38,25 +38,25 @@ MonoBehaviour:
     powerUpType: 0
   - first: impetus
     second: velox
-    prefab: {fileID: 2122588547838145858, guid: 207a8394fb2243947b8a28e5ebbc4df1, type: 3}
+    prefab: {fileID: 2122588547838145858, guid: 0b9041ee3b5c5a649a8e70722689c20b, type: 3}
     powerUpType: 1
   - first: furor
     second: celer
-    prefab: {fileID: 2122588547838145858, guid: 207a8394fb2243947b8a28e5ebbc4df1, type: 3}
+    prefab: {fileID: 2122588547838145858, guid: a4b9614519c7dae4eb3cf86c88820ffa, type: 3}
     powerUpType: 2
   - first: cruor
     second: bellum
-    prefab: {fileID: 2122588547838145858, guid: 207a8394fb2243947b8a28e5ebbc4df1, type: 3}
+    prefab: {fileID: 2122588547838145858, guid: dd032b2606d877b428b8ee48bd3e80f2, type: 3}
     powerUpType: 3
   - first: lucrum
     second: mortis
-    prefab: {fileID: 2122588547838145858, guid: 207a8394fb2243947b8a28e5ebbc4df1, type: 3}
+    prefab: {fileID: 2122588547838145858, guid: 8c22b836786821d4dbd41f7b6d42b3e6, type: 3}
     powerUpType: 4
   - first: orbis
     second: exitium
-    prefab: {fileID: 2122588547838145858, guid: 207a8394fb2243947b8a28e5ebbc4df1, type: 3}
+    prefab: {fileID: 2122588547838145858, guid: 6abdeeb535d30bc408d23ba62c86daca, type: 3}
     powerUpType: 5
   - first: vita
     second: furto
-    prefab: {fileID: 2122588547838145858, guid: 207a8394fb2243947b8a28e5ebbc4df1, type: 3}
+    prefab: {fileID: 2122588547838145858, guid: b548f29201d6eb344b6165f0878b1945, type: 3}
     powerUpType: 6

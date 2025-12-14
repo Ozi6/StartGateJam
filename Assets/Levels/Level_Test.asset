@@ -12,9 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7203d8cb9abd804bac2d8954ef794b1, type: 3}
   m_Name: Level_Test
   m_EditorClassIdentifier: 
-  giantAmount: 0
-  vikingAmount: 0
+  giantAmount: 1
+  vikingAmount: 1
   scoutAmount: 1
   wizardAmount: 0
   archerAmount: 1
+  giantAmountLvl2: 0
+  vikingAmountLvl2: 0
+  scoutAmountLvl2: 0
+  wizardAmountLvl2: 0
+  archerAmountLvl2: 0
   maxPlaceableUnits: 7

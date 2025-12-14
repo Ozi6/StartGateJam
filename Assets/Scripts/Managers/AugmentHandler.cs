@@ -4,6 +4,7 @@ using UnityEngine;
 public class AugmentHandler : Singleton<AugmentHandler>
 {
     public AugmentIconDatabase iconDB;
+    protected override bool Persistent => false;
     [System.Serializable]
     public class Augment
     {
@@ -47,7 +48,7 @@ public class AugmentHandler : Singleton<AugmentHandler>
             "Haste power-up multiplier is increased by +0.5.", 15f, true, iconDB.GetIcon(1)));
 
         AddAugment(new Augment(2, "Fortified Shield",
-            "Shield power-up duration and cooldown are increased by +0.5 seconds.", 15f, true, iconDB.GetIcon(2)));
+            "Shield power-up duration increased by +0.5 seconds.", 15f, true, iconDB.GetIcon(2)));
 
         AddAugment(new Augment(3, "Overdrive Rush",
             "Rush power-up effect is increased to 3x.", 5f, false, iconDB.GetIcon(3)));
@@ -86,48 +87,24 @@ public class AugmentHandler : Singleton<AugmentHandler>
 
         foreach (var augment in allAugments)
         {
-            if (augment.repeatable || augment.purchased == 0)
-                pool.Add(augment);
+            if (!augment.repeatable && augment.purchased > 0)
+                continue;
+            pool.Add(augment);
         }
 
-        return GetWeightedSelection(pool, count);
-    }
+        List<Augment> selected = new();
+        int maxCount = Mathf.Min(count, pool.Count);
 
-    private List<Augment> GetWeightedSelection(List<Augment> pool, int count)
-    {
-        List<Augment> result = new();
-        List<Augment> tempPool = new(pool);
-
-        for (int i = 0; i < count && tempPool.Count > 0; i++)
+        for (int i = 0; i < maxCount; i++)
         {
-            Augment chosen = GetWeightedRandom(tempPool);
-            result.Add(chosen);
-
-            if (!chosen.repeatable)
-                tempPool.Remove(chosen);
+            int index = Random.Range(0, pool.Count);
+            selected.Add(pool[index]);
+            pool.RemoveAt(index);
         }
 
-        return result;
+        return selected;
     }
 
-    private Augment GetWeightedRandom(List<Augment> pool)
-    {
-        float totalWeight = 0f;
-        foreach (var augment in pool)
-            totalWeight += augment.chance;
-
-        float roll = Random.Range(0f, totalWeight);
-        float cumulative = 0f;
-
-        foreach (var augment in pool)
-        {
-            cumulative += augment.chance;
-            if (roll <= cumulative)
-                return augment;
-        }
-
-        return pool[^1];
-    }
 
     public void PurchaseAugment(int augmentId)
     {

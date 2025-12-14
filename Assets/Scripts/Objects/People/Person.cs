@@ -18,6 +18,17 @@ public abstract class Person : MonoBehaviour
     [SerializeField] protected string poolTag;
     [SerializeField] protected float areaBuff;
     [SerializeField] protected float turnSpeed = 10f;
+    [SerializeField] public int upgradeCost;
+    public bool isNew = false;
+    // --- WALK SFX ADDITIONS ---
+    [Header("Walk SFX")]
+    [SerializeField] protected float walkSFXInterval = 0.4f; // Time between walk sounds
+    private float walkSFXTimer = 0f;
+    // -------------------------
+    [Header("Ground Detection")]
+    [SerializeField] protected float groundRaycastDistance = 10f;
+    [SerializeField] protected LayerMask groundLayer;
+    [SerializeField] protected float groundOffset = 0.1f; // Small offset above ground
     // ---------- POWER-UP STATES ----------
     public bool IsInvulnerable { get; private set; }
     public bool CanMove { get; private set; } = true;
@@ -25,7 +36,7 @@ public abstract class Person : MonoBehaviour
     public bool HasLifeSteal { get; private set; }
     private float damageMultiplier = 1f;
     private float damageTakenMultiplier = 1f;
-    public bool isEnemyGolded = false;
+    public int EnemyGolded = 0;
     private float deploymentSpeed = 70;
     public bool IsFriendly => isFriendly;
     public int Health => health;
@@ -43,6 +54,12 @@ public abstract class Person : MonoBehaviour
     protected float lastAttackTime = -Mathf.Infinity;
     public Vector3 targetPosition;
     [SerializeField] HealthBar healthBar;
+    [SerializeField] protected Animator animator;
+    [SerializeField] ParticleSystem sandEffect;
+    // ---------- NEW: ATTACK DURATION ----------
+    [Header("Attack Settings")]
+    [SerializeField] protected float attackDuration = 0.5f; // Duration of the attack action (adjust as needed)
+    protected bool isAttacking = false;
 
     public void OnObjectSpawn()
     {
@@ -51,7 +68,7 @@ public abstract class Person : MonoBehaviour
 
     public void OnObjectReturn()
     {
-
+        UnitRegistrar.UnregisterUnit(this);
     }
 
     protected virtual void Awake()
@@ -69,23 +86,27 @@ public abstract class Person : MonoBehaviour
 
     protected virtual void Update()
     {
+        bool isMoving = false; // Flag to check if the unit is moving this frame
         if (GameManager.Instance.CurrentState == GameState.Deployment)
         {
-            if (isWaiting && Vector3.Distance(transform.position, targetPosition) > 0.01f)
+            if (Vector3.Distance(transform.position, targetPosition) > 0.01f && !isFriendly)
+            {
                 GoToPointDesignatedVer(targetPosition);
+                isMoving = true;
+            }
         }
         else if (GameManager.Instance.CurrentState == GameState.Combat)
         {
             if (TargetEntity != null && TargetEntity.gameObject.activeSelf)
             {
-                Engage();
+                isMoving = Engage(); // Engage returns true if movement occurred
             }
             else
             {
                 TargetEntity = TeamTargetManager.Instance.GetNewTarget(this);
                 if (TargetEntity != null && TargetEntity.gameObject.activeSelf)
                 {
-                    Engage();
+                    isMoving = Engage(); // Engage returns true if movement occurred
                 }
                 else
                 {
@@ -93,14 +114,47 @@ public abstract class Person : MonoBehaviour
                 }
             }
         }
+        // Handle Walk SFX
+        if (isMoving)
+        {
+            walkSFXTimer += Time.deltaTime;
+            if (walkSFXTimer >= walkSFXInterval)
+            {
+                PlayWalkSFX();
+                walkSFXTimer = 0f;
+            }
+        }
+        else
+        {
+            walkSFXTimer = 0f; // Reset timer when stopped
+        }
+        // Always lock to ground
+        LockToGround();
     }
 
     protected abstract void OnDestroy();
 
+    protected void LockToGround()
+    {
+        RaycastHit hit;
+        Vector3 rayStart = transform.position + Vector3.up * 5f; // Start raycast from above
+        if (Physics.Raycast(rayStart, Vector3.down, out hit, groundRaycastDistance, groundLayer))
+        {
+            float targetY = hit.point.y + groundOffset;
+            Vector3 pos = transform.position;
+            pos.y = targetY;
+            transform.position = pos;
+        }
+    }
+
     protected void GoToPointDesignatedVer(Vector3 point)
     {
         FacePosition(point);
-        Vector3 newPos = Vector3.MoveTowards(transform.position, point, deploymentSpeed * Time.deltaTime);
+        if (!sandEffect.isPlaying) sandEffect.Play();
+        // Only move in XZ plane
+        Vector3 currentPos = transform.position;
+        Vector3 targetPos = new Vector3(point.x, currentPos.y, point.z);
+        Vector3 newPos = Vector3.MoveTowards(currentPos, targetPos, deploymentSpeed * Time.deltaTime);
         rb.MovePosition(newPos);
     }
 
@@ -108,13 +162,18 @@ public abstract class Person : MonoBehaviour
     {
         if (!CanMove) return;
         FacePosition(point);
-        Vector3 newPos = Vector3.MoveTowards(transform.position, point, moveSpeed * Time.deltaTime);
+        if (!sandEffect.isPlaying) sandEffect.Play();
+        // Only move in XZ plane
+        Vector3 currentPos = transform.position;
+        Vector3 targetPos = new Vector3(point.x, currentPos.y, point.z);
+        Vector3 newPos = Vector3.MoveTowards(currentPos, targetPos, moveSpeed * Time.deltaTime);
         rb.MovePosition(newPos);
     }
 
     protected void StopMoving()
     {
         rb.linearVelocity = Vector3.zero;
+        sandEffect.Stop();
     }
 
     public void BeginDeployment(Vector3 designated)
@@ -125,23 +184,26 @@ public abstract class Person : MonoBehaviour
     public void SetFriendly(bool friendly)
     {
         isFriendly = friendly;
-        if (healthBar != null)
-        {
-            healthBar.SetHealthBarColor(friendly);
-        }
+        healthBar.SetHealthBarColor(friendly);
     }
 
     protected IEnumerator MoveToDesignated(Vector3 designated)
     {
-        while (Vector3.Distance(transform.position, designated) > 0.01f)
+        while (Vector2.Distance(
+            new Vector2(transform.position.x, transform.position.z),
+            new Vector2(designated.x, designated.z)
+        ) > 0.01f)
         {
             GoToPointDesignatedVer(designated);
-            yield return null;
+            yield return new WaitForFixedUpdate();
         }
-        while (Vector3.Distance(transform.position, targetPosition) > 0.01f)
+        while (Vector2.Distance(
+            new Vector2(transform.position.x, transform.position.z),
+            new Vector2(targetPosition.x, targetPosition.z)
+        ) > 0.01f)
         {
             GoToPointDesignatedVer(targetPosition);
-            yield return null;
+            yield return new WaitForFixedUpdate();
         }
         StopMoving();
         isWaiting = true;
@@ -161,39 +223,72 @@ public abstract class Person : MonoBehaviour
         //rb.AddForce(pushDir.normalized * pushStrength, ForceMode.Acceleration);
     }
 
-    protected virtual void Engage()
+    // Changed return type to bool to indicate if movement happened
+    protected virtual bool Engage()
     {
-        if (TargetEntity == null || !TargetEntity.gameObject.activeSelf) return;
+        if (TargetEntity == null || !TargetEntity.gameObject.activeSelf) return false;
         FacePosition(TargetEntity.transform.position);
+
+        if (isAttacking)
+        {
+            StopMoving();
+            return false; // No movement while attacking
+        }
+
         float distance = Vector3.Distance(transform.position, TargetEntity.transform.position);
         if (distance > attackRange)
         {
             GoToPoint(TargetEntity.transform.position);
+            return true;
         }
         else
         {
             StopMoving();
-            if (Time.time >= lastAttackTime + attackSpeed)
+            if (Time.time >= lastAttackTime + (1 / attackSpeed))
             {
-                Attack();
+                StartCoroutine(PerformAttack());
                 lastAttackTime = Time.time;
             }
+            return false;
         }
     }
 
-    protected virtual void Attack()
+    protected virtual IEnumerator PerformAttack()
     {
-        if (TargetEntity == null || !TargetEntity.gameObject.activeSelf)
-            return;
-        float finalDamage = CalculateDamage();
-        if (HasAreaDamage && damageArea > 0f)
+        isAttacking = true;
+        if (animator != null)
+            animator.SetBool("Attacking", true);
+
+        yield return new WaitForSeconds(attackDuration / 2f);
+
+        if (TargetEntity != null && TargetEntity.gameObject.activeSelf)
         {
-            ApplyAreaDamage(TargetEntity.transform.position, finalDamage);
+            float finalDamage = CalculateDamage();
+            if (HasAreaDamage && damageArea > 0f)
+            {
+                ApplyAreaDamage(TargetEntity.transform.position, finalDamage);
+            }
+            else
+            {
+                TargetEntity.TakeDamage(finalDamage);
+            }
+            AttackSound();
         }
-        else
-        {
-            TargetEntity.TakeDamage(finalDamage);
-        }
+
+        // Wait for the remaining duration to complete the attack
+        yield return new WaitForSeconds(attackDuration / 2f);
+
+        if (animator != null)
+            animator.SetBool("Attacking", false);
+        isAttacking = false;
+    }
+
+    protected virtual void AttackSound()
+    {
+    }
+
+    protected virtual void PlayWalkSFX()
+    {
     }
 
     protected virtual void ApplyAreaDamage(Vector3 center, float dmg)
@@ -222,11 +317,22 @@ public abstract class Person : MonoBehaviour
         return finalDamage;
     }
 
+    [SerializeField] protected ParticleSystem hurtParticleSystem;
+
     public virtual void TakeDamage(float dmg)
     {
         if (IsInvulnerable) return;
+
         dmg *= damageTakenMultiplier;
-        health -= Mathf.RoundToInt(dmg);
+
+        int delta = Mathf.RoundToInt(dmg);
+        if (delta > 0 && hurtParticleSystem != null)
+        {
+            hurtParticleSystem.Play();
+        }
+
+        health -= delta;
+
         if (health > maxHealth)
         {
             health = maxHealth;
@@ -239,8 +345,13 @@ public abstract class Person : MonoBehaviour
 
     protected virtual void Die()
     {
+        if (!this.isFriendly)
+        {
+            int goldAmount = givenGold + EnemyGolded;
+            GameManager.Instance.currentGold += goldAmount;
+            Debug.Log("Enemy died and dropped " + givenGold + "base" + EnemyGolded + " buffed golds");
+        }
         UnitRegistrar.UnregisterUnit(this);
-        GameManager.Instance.currentGold += isEnemyGolded ? givenGold + 1 : givenGold;
     }
 
     protected void FacePosition(Vector3 position)
@@ -258,6 +369,7 @@ public abstract class Person : MonoBehaviour
     // ----------- COROUTINES --------------
     public void ApplyShield(float duration)
     {
+        ShowPowerUpVisual(PowerUpType.Shield);
         float augmentalLag = 0.5f * AugmentHandler.Instance.GetAugmentById(1).purchased;
         StartCoroutine(ShieldRoutine(duration + augmentalLag));
     }
@@ -273,6 +385,7 @@ public abstract class Person : MonoBehaviour
 
     public void ApplyRush(float multiplier, float duration)
     {
+        ShowPowerUpVisual(PowerUpType.Rush);
         if (AugmentHandler.Instance.GetAugmentById(3).purchased > 0)
         {
             multiplier = 3f;
@@ -289,19 +402,21 @@ public abstract class Person : MonoBehaviour
 
     public void ApplyHaste(float multiplier, float duration)
     {
+        ShowPowerUpVisual(PowerUpType.Haste);
         float augmentalMult = 0.5f * AugmentHandler.Instance.GetAugmentById(1).purchased;
         StartCoroutine(HasteRoutine(multiplier + augmentalMult, duration));
     }
 
     private IEnumerator HasteRoutine(float multiplier, float duration)
     {
-        attackSpeed /= multiplier; // faster attacks
+        attackSpeed *= multiplier; // faster attacks
         yield return new WaitForSeconds(duration);
-        attackSpeed *= multiplier;
+        attackSpeed /= multiplier;
     }
 
     public void ApplyRage(float dmgMult, float takenMult, float duration)
     {
+        ShowPowerUpVisual(PowerUpType.Rage);
         if (AugmentHandler.Instance.GetAugmentById(4).purchased > 0)
         {
             takenMult = 1.25f;
@@ -324,6 +439,7 @@ public abstract class Person : MonoBehaviour
 
     public void ApplyAreaDamage(float duration)
     {
+        ShowPowerUpVisual(PowerUpType.AreaDamage);
         float radiusMultAugment = 0.2f * AugmentHandler.Instance.GetAugmentById(7).purchased;
         StartCoroutine(AreaDamageRoutine(duration, areaBuff + radiusMultAugment));
     }
@@ -339,6 +455,7 @@ public abstract class Person : MonoBehaviour
 
     public void ApplyLifeSteal(float duration)
     {
+        ShowPowerUpVisual(PowerUpType.LifeSteal);
         float lifeStealMult = 0.5f * AugmentHandler.Instance.GetAugmentById(8).purchased;
         StartCoroutine(LifeStealRoutine(duration + lifeStealMult));
     }
@@ -348,5 +465,58 @@ public abstract class Person : MonoBehaviour
         HasLifeSteal = true;
         yield return new WaitForSeconds(duration);
         HasLifeSteal = false;
+    }
+
+    private void ShowPowerUpVisual(PowerUpType powerUpType)
+    {
+        KeywordDatabase db = GameManager.Instance.database;
+        GameObject prefab = db.GetPrefabByPowerUpType(powerUpType);
+        if (prefab == null) return;
+        GameObject instance = Instantiate(prefab, transform.position + Vector3.up * 2f, Quaternion.identity);
+        instance.transform.SetParent(transform);
+        Collider col = instance.GetComponent<Collider>();
+        if (col != null) col.enabled = false;
+        Rigidbody instanceRb = instance.GetComponent<Rigidbody>();
+        if (instanceRb != null)
+        {
+            instanceRb.isKinematic = true;
+            instanceRb.useGravity = false;
+        }
+        Throwable throwable = instance.GetComponent<Throwable>();
+        if (throwable != null)
+        {
+            throwable.OnThrown();
+        }
+        Destroy(instance, 1f);
+    }
+
+    public void GetStats(
+        out int maxHp,
+        out int hp,
+        out float moveSpd,
+        out float dmg,
+        out float atkRange,
+        out float atkSpd,
+        out float dmgArea,
+        out float dmgMult,
+        out float dmgTakenMult,
+        out bool invulnerable,
+        out bool canMove,
+        out bool areaDamage,
+        out bool lifeSteal)
+    {
+        maxHp = maxHealth;
+        hp = health;
+        moveSpd = moveSpeed;
+        dmg = damage;
+        atkRange = attackRange;
+        atkSpd = attackSpeed;
+        dmgArea = damageArea;
+        dmgMult = damageMultiplier;
+        dmgTakenMult = damageTakenMultiplier;
+        invulnerable = IsInvulnerable;
+        canMove = CanMove;
+        areaDamage = HasAreaDamage;
+        lifeSteal = HasLifeSteal;
     }
 }

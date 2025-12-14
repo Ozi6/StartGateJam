@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7203d8cb9abd804bac2d8954ef794b1, type: 3}
+  m_Name: level 8
+  m_EditorClassIdentifier: 
+  giantAmount: 2
+  vikingAmount: 2
+  scoutAmount: 2
+  wizardAmount: 1
+  archerAmount: 0
+  giantAmountLvl2: 2
+  vikingAmountLvl2: 3
+  scoutAmountLvl2: 3
+  wizardAmountLvl2: 4
+  archerAmountLvl2: 6
+  maxPlaceableUnits: 28

@@ -67,7 +67,7 @@ public class BuyButton : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
             iconImage.sprite = unitIcon;
 
         if (priceText != null)
-            priceText.text = $"${unitPrice}";
+            priceText.text = $"  {unitPrice}";
 
         if (nameText != null && string.IsNullOrEmpty(nameText.text))
             nameText.text = unitTag;

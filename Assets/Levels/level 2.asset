@@ -12,9 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7203d8cb9abd804bac2d8954ef794b1, type: 3}
   m_Name: level 2
   m_EditorClassIdentifier: 
-  giantAmount: 0
-  vikingAmount: 2
+  giantAmount: 2
+  vikingAmount: 3
   scoutAmount: 2
-  wizardAmount: 3
-  archerAmount: 1
-  maxPlaceableUnits: 7
+  wizardAmount: 1
+  archerAmount: 3
+  giantAmountLvl2: 0
+  vikingAmountLvl2: 0
+  scoutAmountLvl2: 0
+  wizardAmountLvl2: 0
+  archerAmountLvl2: 0
+  maxPlaceableUnits: 13

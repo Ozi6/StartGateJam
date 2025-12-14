@@ -16,6 +16,7 @@ public class TrajectoryLauncher : MonoBehaviour
     [Header("References")]
     [SerializeField] private Transform firePoint;
     [SerializeField] private Transform arrowVisual;
+    [SerializeField] private GameObject trueVisual;
     [SerializeField] private int linePoints = 30;
     [SerializeField] private float timeStep = 0.1f;
 
@@ -44,6 +45,10 @@ public class TrajectoryLauncher : MonoBehaviour
 
     private void Update()
     {
+        if (GameManager.Instance.CurrentState == GameState.Shopping && trueVisual.activeSelf)
+            trueVisual.gameObject.SetActive(false);
+        else if (GameManager.Instance.CurrentState == GameState.Deployment && !trueVisual.activeSelf)
+            trueVisual.gameObject.SetActive(true);
         HandleRotation();
         HandleShooting();
     }
@@ -147,6 +152,7 @@ public class TrajectoryLauncher : MonoBehaviour
 
     private void ThrowObject(float force)
     {
+        
         GameObject held = GameManager.Instance.currentThrowableHeld;
         if (held != null)
         {
@@ -159,6 +165,7 @@ public class TrajectoryLauncher : MonoBehaviour
                 rb.useGravity = true;
                 rb.linearVelocity = GetLaunchVelocity(force);
                 rb.angularVelocity = Vector3.zero;
+                AudioManager.Instance.PlaySFX("Main Character Throw");
             }
             Throwable throwable = held.GetComponent<Throwable>();
             if (throwable != null)

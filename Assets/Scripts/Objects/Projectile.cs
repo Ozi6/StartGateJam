@@ -1,3 +1,5 @@
+using NUnit.Framework;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Projectile : MonoBehaviour
@@ -6,6 +8,8 @@ public class Projectile : MonoBehaviour
     private float damage;
     private bool isFriendly;
     private float speed;
+
+    [SerializeField] private List<GameObject> impactVFXPrefabs;
 
     public void SetTarget(Person targetEntity, float dmg, bool friendly, float projSpeed)
     {
@@ -23,12 +27,36 @@ public class Projectile : MonoBehaviour
             return;
         }
 
-        transform.position = Vector3.MoveTowards(transform.position, target.transform.position, speed * Time.deltaTime);
+        Vector3 direction = target.transform.position - transform.position;
+        transform.up = direction;
 
-        if (Vector3.Distance(transform.position, target.transform.position) < 0.1f)
+        transform.position = Vector3.MoveTowards(
+            transform.position,
+            target.transform.position,
+            speed * Time.deltaTime
+        );
+
+        if (direction.sqrMagnitude < 0.01f)
         {
-            target.TakeDamage(damage);
-            Destroy(gameObject);
+            Impact();
         }
+    }
+    private void Impact()
+    {
+        target.TakeDamage(damage);
+
+        if (impactVFXPrefabs != null && impactVFXPrefabs.Count > 0)
+        {
+            GameObject prefab = impactVFXPrefabs[Random.Range(0, impactVFXPrefabs.Count)];
+            GameObject vfxGO = Instantiate(
+                prefab,
+                transform.position,
+                Quaternion.LookRotation(-transform.forward)
+            );
+
+            ParticleSystem ps = vfxGO.GetComponent<ParticleSystem>();
+            Destroy(vfxGO, ps.main.duration + ps.main.startLifetime.constantMax);
+        }
+        Destroy(gameObject);
     }
 }

@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using System.Collections;
 using UnityEngine;
 
@@ -10,7 +9,7 @@ public class EnemySpawner : MonoBehaviour
     public Transform enemyWaitPos;
 
     [Header("Spawn Settings")]
-    public float spawnInterval = .25f;
+    public float spawnInterval = .75f;
     public float unitSpacing = 1.5f;
 
     private const string giantTag = "Giant";
@@ -18,6 +17,12 @@ public class EnemySpawner : MonoBehaviour
     private const string scoutTag = "Scout";
     private const string wizardTag = "Wizard";
     private const string archerTag = "Archer";
+    private const string giantTag2 = "Giant_lvl2";
+    private const string vikingTag2 = "Viking_lvl2";
+    private const string scoutTag2 = "Scout_lvl2";
+    private const string wizardTag2 = "Wizard_lvl2";
+    private const string archerTag2 = "Archer_lvl2";
+
     private const float intraBatchDelay = 0.2f;
 
     public void SpawnWave(WaveConfig config)
@@ -29,75 +34,88 @@ public class EnemySpawner : MonoBehaviour
     {
         if (config == null) yield break;
 
-        int total = config.giantAmount + config.vikingAmount + config.scoutAmount +
-                    config.wizardAmount + config.archerAmount;
-        if (total == 0) yield break;
+        int grandTotal =
+            config.giantAmount + config.giantAmountLvl2 +
+            config.vikingAmount + config.vikingAmountLvl2 +
+            config.scoutAmount + config.scoutAmountLvl2 +
+            config.wizardAmount + config.wizardAmountLvl2 +
+            config.archerAmount + config.archerAmountLvl2;
 
-        bool first = true;
+        if (grandTotal == 0) yield break;
 
-        IEnumerator SpawnIfNotEmpty(string tag, int amount)
+        bool firstGroup = true;
+
+        IEnumerator ProcessUnitGroup(string tag1, int count1, string tag2, int count2)
         {
-            if (amount > 0)
+            int groupTotal = count1 + count2;
+            if (groupTotal > 0)
             {
-                if (!first)
+                if (!firstGroup)
                 {
                     GameManager.Instance.MoveAllWaitingForward();
                     yield return new WaitForSeconds(spawnInterval);
                 }
-                first = false;
-                yield return SpawnUnitTypeInLine(tag, amount, unitSpacing);
+                firstGroup = false;
+                yield return SpawnMixedLine(tag1, count1, tag2, count2, unitSpacing);
             }
         }
 
-        yield return SpawnIfNotEmpty(giantTag, config.giantAmount);
-        yield return SpawnIfNotEmpty(vikingTag, config.vikingAmount);
-        yield return SpawnIfNotEmpty(scoutTag, config.scoutAmount);
-        yield return SpawnIfNotEmpty(wizardTag, config.wizardAmount);
-        yield return SpawnIfNotEmpty(archerTag, config.archerAmount);
+        yield return ProcessUnitGroup(giantTag, config.giantAmount, giantTag2, config.giantAmountLvl2);
+        yield return ProcessUnitGroup(vikingTag, config.vikingAmount, vikingTag2, config.vikingAmountLvl2);
+        yield return ProcessUnitGroup(scoutTag, config.scoutAmount, scoutTag2, config.scoutAmountLvl2);
+        yield return ProcessUnitGroup(wizardTag, config.wizardAmount, wizardTag2, config.wizardAmountLvl2);
+        yield return ProcessUnitGroup(archerTag, config.archerAmount, archerTag2, config.archerAmountLvl2);
 
         GameManager.Instance.SetState(GameState.Combat);
     }
 
-    private IEnumerator SpawnUnitTypeInLine(string tag, int count, float spacing)
+    private IEnumerator SpawnMixedLine(string tag1, int count1, string tag2, int count2, float spacing)
     {
-        if (count == 0 || string.IsNullOrEmpty(tag)) yield break;
+        int totalCount = count1 + count2;
+        if (totalCount == 0) yield break;
 
-        int maxBatch = tag == giantTag ? 1 : 3;
-        int spawned = 0;
+        bool isGiant = (tag1 == giantTag || tag2 == giantTag2);
+        int maxBatch = isGiant ? 1 : 3;
 
+        int spawnedSoFar = 0;
         Vector3 center = enemyWaitPos.position;
         Vector3 designated = enemyGoDesignatedPointPos.position;
 
-        while (spawned < count)
+        while (spawnedSoFar < totalCount)
         {
-            int thisBatch = Mathf.Min(maxBatch, count - spawned);
-            for (int j = 0; j < thisBatch; j++)
+            int remaining = totalCount - spawnedSoFar;
+            int thisBatchSize = Mathf.Min(maxBatch, remaining);
+
+            for (int j = 0; j < thisBatchSize; j++)
             {
-                int index = spawned + j;
+                int currentIndex = spawnedSoFar + j;
+                string currentTag = (currentIndex < count1) ? tag1 : tag2;
+
                 Vector3 pos = enemySpawnPos.position;
+                GameObject instance = ObjectPooler.Instance.SpawnFromPool(currentTag, pos, Quaternion.identity);
 
-                GameObject instance = ObjectPooler.Instance.SpawnFromPool(tag, pos, Quaternion.identity);
-                if (instance == null) continue;
-
-                Person person = instance.GetComponent<Person>();
-                if (person != null)
+                if (instance != null)
                 {
-                    GameManager.Instance.AddEnemy(person);
-                    person.targetPosition = CalculateWaitPos(index, count, center, spacing);
-                    person.BeginDeployment(designated);
+                    Person person = instance.GetComponent<Person>();
+                    if (person != null)
+                    {
+                        GameManager.Instance.AddEnemy(person);
+                        person.targetPosition = CalculateWaitPos(currentIndex, totalCount, center, spacing);
+                        person.BeginDeployment(designated);
+                    }
                 }
 
-                if (j < thisBatch - 1) yield return new WaitForSeconds(intraBatchDelay);
+                if (j < thisBatchSize - 1) yield return new WaitForSeconds(intraBatchDelay);
             }
 
-            spawned += thisBatch;
-            if (spawned < count) yield return new WaitForSeconds(spawnInterval);
+            spawnedSoFar += thisBatchSize;
+            if (spawnedSoFar < totalCount) yield return new WaitForSeconds(spawnInterval);
         }
     }
 
     private Vector3 CalculateWaitPos(int index, int total, Vector3 center, float spacing)
     {
-        float startX = -(total - 1f) * spacing / 2f;
-        return center + new Vector3(startX + index * spacing, 0f, 0f);
+        float startZ = -(total - 1f) * spacing / 2f;
+        return center + new Vector3(0f, 0f, startZ + index * spacing);
     }
 }
