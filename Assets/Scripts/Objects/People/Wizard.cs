@@ -4,7 +4,7 @@ using UnityEngine;
 public class Wizard : Person
 {
     [SerializeField] private GameObject projectilePrefab;
-    [SerializeField] private float projectileSpeed = 10f;
+    [SerializeField] private float projectileSpeed = 20f;
 
     protected override void Start()
     {
@@ -38,6 +38,12 @@ public class Wizard : Person
             animator.SetBool("Attacking", false);
         isAttacking = false;
     }
+
+    protected override void AttackSound()
+    {
+        AudioManager.Instance.PlaySFXAtPoint("fireball", gameObject.transform.position);
+    }
+
     protected override void Die()
     {
         ObjectPooler.Instance.ReturnToPool(gameObject, "Wizard");

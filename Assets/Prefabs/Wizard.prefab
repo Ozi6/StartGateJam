@@ -687,7 +687,7 @@ MonoBehaviour:
   health: 100
   moveSpeed: 21
   damage: 70
-  attackRange: 7
+  attackRange: 10
   attackSpeed: 0.3
   damageArea: 0
   isFriendly: 0
@@ -711,7 +711,7 @@ MonoBehaviour:
   sandEffect: {fileID: 7447301991115203381}
   attackDuration: 0.5
   hurtParticleSystem: {fileID: 5516973374982798528}
-  projectilePrefab: {fileID: 1787679769064025735}
+  projectilePrefab: {fileID: 7821942044189215701, guid: 980848fd3ff61b74ba481ff64befdbdb, type: 3}
   projectileSpeed: 10
 --- !u!65 &-2315081938963421467
 BoxCollider:

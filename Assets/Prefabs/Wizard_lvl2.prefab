@@ -695,7 +695,7 @@ MonoBehaviour:
   health: 125
   moveSpeed: 21
   damage: 90
-  attackRange: 10
+  attackRange: 12
   attackSpeed: 0.4
   damageArea: 0
   isFriendly: 0
@@ -719,6 +719,8 @@ MonoBehaviour:
   sandEffect: {fileID: 8533103006963857827, guid: fdb830a91941b9347914ed8abf85b7da, type: 3}
   attackDuration: 0.5
   hurtParticleSystem: {fileID: 285810683563581130}
+  projectilePrefab: {fileID: 0}
+  projectileSpeed: 20
 --- !u!4 &5578681255024646662 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 26c07fea030995146aa69ee2ee2fe6e5, type: 3}
