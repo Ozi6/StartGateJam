@@ -576,9 +576,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 225
   health: 225
-  moveSpeed: 120
+  moveSpeed: 36
   damage: 60
-  attackRange: 20
+  attackRange: 2
   attackSpeed: 0.4
   damageArea: 0
   isFriendly: 0
@@ -587,7 +587,7 @@ MonoBehaviour:
   poolTag: 
   areaBuff: 0
   turnSpeed: 10
-  upgradeCost: 0
+  upgradeCost: 15
   walkSFXInterval: 0.4
   groundRaycastDistance: 10
   groundLayer:

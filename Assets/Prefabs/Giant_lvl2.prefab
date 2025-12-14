@@ -509,11 +509,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 115c44341e70e6c48a61138b9154dc05, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 900
-  health: 900
+  maxHealth: 600
+  health: 600
   moveSpeed: 20
   damage: 25
-  attackRange: 15
+  attackRange: 1.5
   attackSpeed: 0.3
   damageArea: 0
   isFriendly: 0

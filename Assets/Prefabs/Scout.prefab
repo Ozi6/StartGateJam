@@ -537,7 +537,7 @@ MonoBehaviour:
   poolTag: 
   areaBuff: 1.2
   turnSpeed: 10
-  upgradeCost: 0
+  upgradeCost: 15
   walkSFXInterval: 0.4
   groundRaycastDistance: 10
   groundLayer:

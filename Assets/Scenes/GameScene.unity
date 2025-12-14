@@ -9913,7 +9913,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7756924921306888391, guid: 747d89e48a2b08147bc8d4614adc5905, type: 3}
       propertyPath: m_Layer
-      value: 3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7780776697941062646, guid: 747d89e48a2b08147bc8d4614adc5905, type: 3}
       propertyPath: m_Layer
@@ -11050,16 +11050,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playersTeam: []
   enemyTeam: []
-  currentGold: 100
+  currentGold: 150
   currentThrowableHeld: {fileID: 0}
   gold: {fileID: 1284959984}
-  enemySpawner: {fileID: 0}
-  inputManager: {fileID: 0}
-  uiManager: {fileID: 0}
+  enemySpawner: {fileID: 227887714}
+  inputManager: {fileID: 25516658}
+  uiManager: {fileID: 2002568306}
   database: {fileID: 11400000, guid: 15c9fff425083194e8d93cfd807d21dd, type: 2}
   waveConfigs:
-  - {fileID: 11400000, guid: 9b4f94f58c8919244937782a971dad0c, type: 2}
-  - {fileID: 11400000, guid: 55dcbd226435e1d4190e48c0e14cc121, type: 2}
+  - {fileID: 11400000, guid: 2eaff564c77333b49b53a64736070357, type: 2}
+  - {fileID: 11400000, guid: 72c172c6130606843b8952a1f9f6cab9, type: 2}
+  - {fileID: 11400000, guid: 1fccb37b2e2894e419d9b76538ef9908, type: 2}
+  - {fileID: 11400000, guid: c2842fcd5061b8b4dbddc8e1e105fe4e, type: 2}
+  - {fileID: 11400000, guid: fd2e8d4545d513d409c39dfbdd9f22b9, type: 2}
   unitCountText: {fileID: 1481916117}
   rowSpacing: 1.8
 --- !u!1 &2073789605
