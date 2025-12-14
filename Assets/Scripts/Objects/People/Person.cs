@@ -195,19 +195,28 @@ public abstract class Person : MonoBehaviour
 
     protected IEnumerator MoveToDesignated(Vector3 designated)
     {
-        while (Vector3.Distance(transform.position, designated) > 0.01f)
+        while (Vector2.Distance(
+            new Vector2(transform.position.x, transform.position.z),
+            new Vector2(designated.x, designated.z)
+        ) > 0.01f)
         {
             GoToPointDesignatedVer(designated);
-            yield return null;
+            yield return new WaitForFixedUpdate();
         }
-        while (Vector3.Distance(transform.position, targetPosition) > 0.01f)
+
+        while (Vector2.Distance(
+            new Vector2(transform.position.x, transform.position.z),
+            new Vector2(targetPosition.x, targetPosition.z)
+        ) > 0.01f)
         {
             GoToPointDesignatedVer(targetPosition);
-            yield return null;
+            yield return new WaitForFixedUpdate();
         }
+
         StopMoving();
         isWaiting = true;
     }
+
 
     protected virtual void OnCollisionStay(Collision collision)
     {

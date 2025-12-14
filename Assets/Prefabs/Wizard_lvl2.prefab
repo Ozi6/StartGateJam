@@ -619,8 +619,8 @@ MonoBehaviour:
   groundRaycastDistance: 10
   groundLayer:
     serializedVersion: 2
-    m_Bits: 0
-  groundOffset: 0.1
+    m_Bits: 8
+  groundOffset: 0.3
   EnemyGolded: 0
   TargetEntity: {fileID: 0}
   targetPosition: {x: 0, y: 0, z: 0}
