@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e7203d8cb9abd804bac2d8954ef794b1, type: 3}
-  m_Name: level 4
+  m_Name: level 9
   m_EditorClassIdentifier: 
   giantAmount: 0
-  vikingAmount: 3
+  vikingAmount: 0
   scoutAmount: 2
-  wizardAmount: 3
+  wizardAmount: 0
   archerAmount: 0
-  giantAmountLvl2: 1
-  vikingAmountLvl2: 2
-  scoutAmountLvl2: 0
-  wizardAmountLvl2: 0
-  archerAmountLvl2: 4
-  maxPlaceableUnits: 15
+  giantAmountLvl2: 3
+  vikingAmountLvl2: 5
+  scoutAmountLvl2: 4
+  wizardAmountLvl2: 5
+  archerAmountLvl2: 6
+  maxPlaceableUnits: 28
