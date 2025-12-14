@@ -1,40 +1,39 @@
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.SceneManagement; // Sahne geçiþleri için kütüphane
+using UnityEngine.SceneManagement; 
 
 public class MainMenu : MonoBehaviour
 {
-    // Inspector'dan sürükleyip býrakacaðýmýz paneller
     [Header("Paneller")]
-    public GameObject Panel1;   // Ýçinde Start, Options, Quit butonlarý olan panel
-    public GameObject Panel2;   // Ses, Grafik ayarlarýnýn olduðu panel
+    public GameObject Panel1;   
+    public GameObject Panel2;   
+    public GameObject Panel3;
     [SerializeField] private int sceneIndex;
 
-    // 1. OYUNU BAÞLATMA FONKSÝYONU
     public void StartGame()
     {
             SceneManager.LoadScene(sceneIndex);
     }
-    // 2. AYARLARI AÇMA FONKSÝYONU
-    public void OpenOptions()
+    public void OpenPanel2()
     {
-        // Ana menüyü gizle, Ayarlar panelini görünür yap
         Panel1.SetActive(false);
         Panel2.SetActive(true);
+        Panel3.SetActive(false);
     }
-
-    // 3. AYARLARDAN GERÝ DÖNME FONKSÝYONU (Ayarlar paneline bir 'Geri' butonu koyacaðýz)
-    public void CloseOptions()
+    public void OpenPanel1()
     {
-        // Ayarlarý gizle, Ana menüyü tekrar aç
         Panel2.SetActive(false);
         Panel1.SetActive(true);
+        Panel3.SetActive(false);
     }
-
-    // 4. OYUNDAN ÇIKIÞ FONKSÝYONU
+    public void OpenPanel3()
+    {
+        Panel2.SetActive(false);
+        Panel1.SetActive(false);
+        Panel3.SetActive(true);
+    }
     public void QuitGame()
     {
-        Debug.Log("Oyundan Çýkýldý!"); // Sadece editörde çalýþtýðýný görmek için
         Application.Quit();
     }
 }
