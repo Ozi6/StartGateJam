@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Archer : Person
@@ -15,10 +16,13 @@ public class Archer : Person
         // Cleanup if needed
     }
 
-    protected override void Attack()
+    protected override IEnumerator PerformAttack()
     {
+        isAttacking = true;
         if (animator != null)
             animator.SetBool("Attacking", true);
+        // Wait for half the duration to simulate wind-up before launching projectile
+        yield return new WaitForSeconds(attackDuration / 2f);
         if (TargetEntity != null && projectilePrefab != null)
         {
             GameObject proj = Instantiate(projectilePrefab, transform.position + Vector3.up * 1f, Quaternion.identity);
@@ -27,11 +31,14 @@ public class Archer : Person
             {
                 float a = CalculateDamage();
                 projectileScript.SetTarget(TargetEntity, a, isFriendly, projectileSpeed);
-                if (TargetEntity.health <= a)
-                    animator.SetBool("Attacking", false);
             }
         }
         AttackSound();
+        // Wait for the remaining duration to complete the attack
+        yield return new WaitForSeconds(attackDuration / 2f);
+        if (animator != null)
+            animator.SetBool("Attacking", false);
+        isAttacking = false;
     }
 
     protected override void AttackSound()

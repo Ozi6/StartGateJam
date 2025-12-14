@@ -547,7 +547,7 @@ MonoBehaviour:
   healthBar: {fileID: 357240713805423043}
   animator: {fileID: 1925411968875983085}
   sandEffect: {fileID: 118364803328905672}
-  projectilePrefab: {fileID: 2979180512190703486, guid: 58cde33b4f117874f94cbde3cfa6fa3d, type: 3}
+  projectilePrefab: {fileID: 4744909454293342917, guid: 05333e6621cd2684484e8878d6762028, type: 3}
   projectileSpeed: 10
 --- !u!54 &8991026733861366390
 Rigidbody:

@@ -539,7 +539,7 @@ MonoBehaviour:
   healthBar: {fileID: 2939502475244333487}
   animator: {fileID: 6595790970931893635}
   sandEffect: {fileID: 328893261765646219}
-  projectilePrefab: {fileID: 0}
+  projectilePrefab: {fileID: 4744909454293342917, guid: 05333e6621cd2684484e8878d6762028, type: 3}
   projectileSpeed: 10
 --- !u!65 &8325447483701736391
 BoxCollider:

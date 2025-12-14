@@ -23,12 +23,20 @@ public class Projectile : MonoBehaviour
             return;
         }
 
-        transform.position = Vector3.MoveTowards(transform.position, target.transform.position, speed * Time.deltaTime);
+        Vector3 direction = target.transform.position - transform.position;
+        transform.up = direction;
 
-        if (Vector3.Distance(transform.position, target.transform.position) < 0.1f)
+        transform.position = Vector3.MoveTowards(
+            transform.position,
+            target.transform.position,
+            speed * Time.deltaTime
+        );
+
+        if (direction.magnitude < 0.1f)
         {
             target.TakeDamage(damage);
             Destroy(gameObject);
         }
     }
+
 }

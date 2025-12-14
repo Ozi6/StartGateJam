@@ -19,18 +19,15 @@ public abstract class Person : MonoBehaviour
     [SerializeField] protected float areaBuff;
     [SerializeField] protected float turnSpeed = 10f;
     [SerializeField] public int upgradeCost;
-
     // --- WALK SFX ADDITIONS ---
     [Header("Walk SFX")]
     [SerializeField] protected float walkSFXInterval = 0.4f; // Time between walk sounds
     private float walkSFXTimer = 0f;
     // -------------------------
-
     [Header("Ground Detection")]
     [SerializeField] protected float groundRaycastDistance = 10f;
     [SerializeField] protected LayerMask groundLayer;
     [SerializeField] protected float groundOffset = 0.1f; // Small offset above ground
-
     // ---------- POWER-UP STATES ----------
     public bool IsInvulnerable { get; private set; }
     public bool CanMove { get; private set; } = true;
@@ -58,6 +55,10 @@ public abstract class Person : MonoBehaviour
     [SerializeField] HealthBar healthBar;
     [SerializeField] protected Animator animator;
     [SerializeField] ParticleSystem sandEffect;
+    // ---------- NEW: ATTACK DURATION ----------
+    [Header("Attack Settings")]
+    [SerializeField] protected float attackDuration = 0.5f; // Duration of the attack action (adjust as needed)
+    protected bool isAttacking = false;
 
     public void OnObjectSpawn()
     {
@@ -85,7 +86,6 @@ public abstract class Person : MonoBehaviour
     protected virtual void Update()
     {
         bool isMoving = false; // Flag to check if the unit is moving this frame
-
         if (GameManager.Instance.CurrentState == GameState.Deployment)
         {
             if (isWaiting && Vector3.Distance(transform.position, targetPosition) > 0.01f)
@@ -113,7 +113,6 @@ public abstract class Person : MonoBehaviour
                 }
             }
         }
-
         // Handle Walk SFX
         if (isMoving)
         {
@@ -128,7 +127,6 @@ public abstract class Person : MonoBehaviour
         {
             walkSFXTimer = 0f; // Reset timer when stopped
         }
-
         // Always lock to ground
         LockToGround();
     }
@@ -139,7 +137,6 @@ public abstract class Person : MonoBehaviour
     {
         RaycastHit hit;
         Vector3 rayStart = transform.position + Vector3.up * 5f; // Start raycast from above
-
         if (Physics.Raycast(rayStart, Vector3.down, out hit, groundRaycastDistance, groundLayer))
         {
             float targetY = hit.point.y + groundOffset;
@@ -153,12 +150,10 @@ public abstract class Person : MonoBehaviour
     {
         FacePosition(point);
         if (!sandEffect.isPlaying) sandEffect.Play();
-
         // Only move in XZ plane
         Vector3 currentPos = transform.position;
         Vector3 targetPos = new Vector3(point.x, currentPos.y, point.z);
         Vector3 newPos = Vector3.MoveTowards(currentPos, targetPos, deploymentSpeed * Time.deltaTime);
-
         rb.MovePosition(newPos);
     }
 
@@ -167,12 +162,10 @@ public abstract class Person : MonoBehaviour
         if (!CanMove) return;
         FacePosition(point);
         if (!sandEffect.isPlaying) sandEffect.Play();
-
         // Only move in XZ plane
         Vector3 currentPos = transform.position;
         Vector3 targetPos = new Vector3(point.x, currentPos.y, point.z);
         Vector3 newPos = Vector3.MoveTowards(currentPos, targetPos, moveSpeed * Time.deltaTime);
-
         rb.MovePosition(newPos);
     }
 
@@ -203,7 +196,6 @@ public abstract class Person : MonoBehaviour
             GoToPointDesignatedVer(designated);
             yield return new WaitForFixedUpdate();
         }
-
         while (Vector2.Distance(
             new Vector2(transform.position.x, transform.position.z),
             new Vector2(targetPosition.x, targetPosition.z)
@@ -212,11 +204,9 @@ public abstract class Person : MonoBehaviour
             GoToPointDesignatedVer(targetPosition);
             yield return new WaitForFixedUpdate();
         }
-
         StopMoving();
         isWaiting = true;
     }
-
 
     protected virtual void OnCollisionStay(Collision collision)
     {
@@ -237,6 +227,13 @@ public abstract class Person : MonoBehaviour
     {
         if (TargetEntity == null || !TargetEntity.gameObject.activeSelf) return false;
         FacePosition(TargetEntity.transform.position);
+
+        if (isAttacking)
+        {
+            StopMoving();
+            return false; // No movement while attacking
+        }
+
         float distance = Vector3.Distance(transform.position, TargetEntity.transform.position);
         if (distance > attackRange)
         {
@@ -248,41 +245,50 @@ public abstract class Person : MonoBehaviour
             StopMoving();
             if (Time.time >= lastAttackTime + (1 / attackSpeed))
             {
-                Attack();
+                StartCoroutine(PerformAttack());
                 lastAttackTime = Time.time;
             }
             return false; // Unit is stationary (attacking or idle)
         }
     }
 
-    protected virtual void Attack()
+    protected virtual IEnumerator PerformAttack()
     {
-        if (TargetEntity == null || !TargetEntity.gameObject.activeSelf)
-            return;
+        isAttacking = true;
         if (animator != null)
             animator.SetBool("Attacking", true);
-        float finalDamage = CalculateDamage();
-        if (HasAreaDamage && damageArea > 0f)
+
+        // Wait for half the duration to simulate wind-up before applying damage
+        yield return new WaitForSeconds(attackDuration / 2f);
+
+        if (TargetEntity != null && TargetEntity.gameObject.activeSelf)
         {
-            ApplyAreaDamage(TargetEntity.transform.position, finalDamage);
+            float finalDamage = CalculateDamage();
+            if (HasAreaDamage && damageArea > 0f)
+            {
+                ApplyAreaDamage(TargetEntity.transform.position, finalDamage);
+            }
+            else
+            {
+                TargetEntity.TakeDamage(finalDamage);
+            }
+            AttackSound();
         }
-        else
-        {
-            TargetEntity.TakeDamage(finalDamage);
-            if (TargetEntity.health <= finalDamage)
-                animator.SetBool("Attacking", false);
-        }
-        AttackSound();
+
+        // Wait for the remaining duration to complete the attack
+        yield return new WaitForSeconds(attackDuration / 2f);
+
+        if (animator != null)
+            animator.SetBool("Attacking", false);
+        isAttacking = false;
     }
 
     protected virtual void AttackSound()
     {
-
     }
 
     protected virtual void PlayWalkSFX()
     {
-
     }
 
     protected virtual void ApplyAreaDamage(Vector3 center, float dmg)
