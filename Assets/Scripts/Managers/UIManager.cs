@@ -120,22 +120,48 @@ public class UIManager : MonoBehaviour
                 $"Range: {atkRange}\n" +
                 $"Move Speed: {moveSpd}";
         }
-        if (person.upgradeCost != 0)
-        {
-            unitStatsText.text +=
-                $"Upgrade Cost: {person.upgradeCost}";
-        }
+        TMP_Text buttonText = upgradeButton.GetComponentInChildren<TMP_Text>();
 
-        if (upgradeButton != null && person.upgradeCost <= GameManager.Instance.currentGold)
+        // ALREADY UPGRADED
+        if (person.upgradeCost == 0)
         {
             upgradeButton.onClick.RemoveAllListeners();
+            upgradeButton.interactable = false;
+
+            if (buttonText != null)
+                buttonText.text = "UPGRADED";
+        }
+        // CAN UPGRADE
+        else if (person.upgradeCost <= GameManager.Instance.currentGold)
+        {
+            upgradeButton.interactable = true;
+
+            if (buttonText != null)
+                buttonText.text = "UPGRADE";
+
+            upgradeButton.onClick.RemoveAllListeners();
             upgradeButton.onClick.AddListener(() => UpgradeUnit(unit));
+        }
+        // NOT ENOUGH GOLD
+        else
+        {
+            upgradeButton.onClick.RemoveAllListeners();
+            upgradeButton.interactable = false;
+
+            if (buttonText != null)
+                buttonText.text = "NOT ENOUGH GOLD";
         }
 
         if (!isRightPanelOpen)
         {
             isRightPanelOpen = true;
-            StartCoroutine(SlidePanel(rightSidePanel.GetComponent<RectTransform>(), rightPanelClosedPos, rightPanelOpenPos));
+            StartCoroutine(
+                SlidePanel(
+                    rightSidePanel.GetComponent<RectTransform>(),
+                    rightPanelClosedPos,
+                    rightPanelOpenPos
+                )
+            );
         }
     }
 
