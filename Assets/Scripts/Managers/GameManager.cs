@@ -224,6 +224,7 @@ public class GameManager : Singleton<GameManager>
                 break;
             case GameState.Combat:
                 AudioManager.Instance.PlaySFX("alkis_ambians");
+                currentThrowableHeld = null;
                 break;
             case GameState.Augmentation:
                 uiManager.HideAugmentSelection();
