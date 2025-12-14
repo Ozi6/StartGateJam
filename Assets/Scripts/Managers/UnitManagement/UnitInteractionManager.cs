@@ -5,13 +5,14 @@ public class UnitInteractionManager : MonoBehaviour
 {
     public LayerMask groundLayer;
     public LayerMask unitLayer;
+    public Collider spawnArea; // The collider defining the spawn/placement area (e.g., a plane with a BoxCollider)
 
     // Tracking drag vs click
     private GameObject potentialDragUnit; // Unit we clicked on, but haven't dragged yet
-    private GameObject draggingUnit;      // Unit we are actively moving
-    private Vector3 clickOrigin;          // Mouse pos when we first clicked
-    private float dragThreshold = 10f;    // Pixels mouse must move to count as a drag
-
+    private GameObject draggingUnit; // Unit we are actively moving
+    private Vector3 clickOrigin; // Mouse pos when we first clicked
+    private Vector3 originalPosition; // Original position before dragging (for existing units)
+    private float dragThreshold = 10f; // Pixels mouse must move to count as a drag
     private bool isDraggingFromShop = false;
     private string currentUnitTag;
     private int currentUnitPrice = 0;
@@ -19,9 +20,9 @@ public class UnitInteractionManager : MonoBehaviour
     [Header("Visual Feedback")]
     [SerializeField] private Color validPlacementColor = Color.green;
     [SerializeField] private Color invalidPlacementColor = Color.red;
-
     private Renderer unitRenderer;
     private Color originalColor;
+
     private MarketLogic marketLogic;
     private float unitBottomOffset = 0f;
 
@@ -69,7 +70,6 @@ public class UnitInteractionManager : MonoBehaviour
                 // We pressed down and up without moving much -> It's a CLICK
                 HandleClickSelection();
             }
-
             // Cleanup
             potentialDragUnit = null;
         }
@@ -96,7 +96,6 @@ public class UnitInteractionManager : MonoBehaviour
             currentUnitPrice = price;
             Vector3 spawnPos = GetMouseWorldPos();
             draggingUnit = ObjectPooler.Instance.SpawnFromPool(unitTag, spawnPos);
-
             if (draggingUnit != null)
             {
                 isDraggingFromShop = true;
@@ -132,11 +131,10 @@ public class UnitInteractionManager : MonoBehaviour
     {
         // Threshold passed, convert potential unit to dragging unit
         draggingUnit = potentialDragUnit;
+        originalPosition = draggingUnit.transform.position;
         isDraggingFromShop = false;
-
         SetupVisuals(draggingUnit);
         CalculateBottomOffset();
-
         // Close UI if we start moving a unit
         if (UIManager.Instance) UIManager.Instance.CloseUpgradePanel();
     }
@@ -155,16 +153,19 @@ public class UnitInteractionManager : MonoBehaviour
         Vector3 pos = GetMouseWorldPos();
         draggingUnit.transform.position = pos;
 
-        if (isDraggingFromShop && unitRenderer != null)
+        if (unitRenderer != null)
         {
             bool isOverUI = IsPointerOverUI();
-            unitRenderer.material.color = isOverUI ? invalidPlacementColor : validPlacementColor;
+            bool isWithinArea = IsWithinSpawnArea(pos);
+            unitRenderer.material.color = (isOverUI || !isWithinArea) ? invalidPlacementColor : validPlacementColor;
         }
     }
 
     private void HandleDrop()
     {
+        Vector3 dropPos = draggingUnit.transform.position;
         bool isOverUI = IsPointerOverUI();
+        bool isWithinArea = IsWithinSpawnArea(dropPos);
 
         if (unitRenderer != null)
         {
@@ -173,7 +174,7 @@ public class UnitInteractionManager : MonoBehaviour
 
         if (isOverUI)
         {
-            // Dropped on UI
+            // Dropped on UI -> Sell or cancel
             if (!isDraggingFromShop)
             {
                 SellUnit(draggingUnit);
@@ -185,9 +186,9 @@ public class UnitInteractionManager : MonoBehaviour
                 ObjectPooler.Instance.ReturnToPool(draggingUnit, currentUnitTag);
             }
         }
-        else
+        else if (isWithinArea)
         {
-            // Dropped on Game Area
+            // Valid drop on game area within spawn zone
             if (isDraggingFromShop)
             {
                 GameManager.Instance.currentGold -= currentUnitPrice;
@@ -197,9 +198,21 @@ public class UnitInteractionManager : MonoBehaviour
                     person.SetFriendly(true);
                     person.OnObjectSpawn(); // This will register the unit via UnitRegistrar (prevents duplicates)
                 }
-
                 // Immediately select the newly bought unit? (Optional)
                 // if(UIManager.Instance) UIManager.Instance.OpenUpgradePanel(draggingUnit);
+            }
+            // For existing units, position is already set
+        }
+        else
+        {
+            // Invalid drop (not in spawn area)
+            if (isDraggingFromShop)
+            {
+                ObjectPooler.Instance.ReturnToPool(draggingUnit, currentUnitTag);
+            }
+            else
+            {
+                draggingUnit.transform.position = originalPosition;
             }
         }
 
@@ -271,5 +284,14 @@ public class UnitInteractionManager : MonoBehaviour
     private bool IsPointerOverUI()
     {
         return EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
+    }
+
+    private bool IsWithinSpawnArea(Vector3 position)
+    {
+        if (spawnArea == null) return true; // Allow anywhere if no spawn area set
+
+        Bounds bounds = spawnArea.bounds;
+        return position.x >= bounds.min.x && position.x <= bounds.max.x &&
+               position.z >= bounds.min.z && position.z <= bounds.max.z;
     }
 }
