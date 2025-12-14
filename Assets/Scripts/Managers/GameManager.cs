@@ -98,7 +98,7 @@ public class GameManager : Singleton<GameManager>
         isEnding = true;
 
         GameResultHolder.Result = result;
-
+        AudioManager.Instance.StopMusic();
         if (result == GameResult.Win)
         {
             playerAnimator.SetTrigger("GameWin");
