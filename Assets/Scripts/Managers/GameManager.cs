@@ -4,6 +4,7 @@ using TMPro;
 
 public class GameManager : Singleton<GameManager>
 {
+    protected override bool Persistent => false;
     public GameState CurrentState { get; private set; }
     public List<Person> playersTeam = new List<Person>();
     public List<Person> enemyTeam = new List<Person>();

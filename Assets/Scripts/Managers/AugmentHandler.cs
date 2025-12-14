@@ -4,6 +4,7 @@ using UnityEngine;
 public class AugmentHandler : Singleton<AugmentHandler>
 {
     public AugmentIconDatabase iconDB;
+    protected override bool Persistent => false;
     [System.Serializable]
     public class Augment
     {

@@ -5,6 +5,7 @@ public class TeamTargetManager : Singleton<TeamTargetManager>
 {
     public Dictionary<Person, float> playersTargetDictionary = new Dictionary<Person, float>();
     public Dictionary<Person, float> enemiesTargetDictionary = new Dictionary<Person, float>();
+    protected override bool Persistent => false;
     void Start()
     {
         // Initialization moved to AssignTargets to ensure teams are populated

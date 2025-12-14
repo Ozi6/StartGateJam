@@ -21,6 +21,8 @@ public class AudioManager : Singleton<AudioManager>
 
     private Dictionary<string, AudioClip> sfxDictionary = new Dictionary<string, AudioClip>();
 
+    protected override bool Persistent => false;
+
     protected override void OnAwake()
     {
         if (musicSource == null)
