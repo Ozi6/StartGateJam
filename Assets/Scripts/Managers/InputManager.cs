@@ -173,6 +173,7 @@ public class InputManager : MonoBehaviour
                 if (throwable != null)
                 {
                     throwable.powerUpType = database.GetPowerUp(heldKeyword, secondKeyword);
+                    AudioManager.Instance.PlaySFX("Correct Spell sound");
                 }
             }
             uiManager.DisplayAndHideSecondKeyword(secondKeyword, 0.5f);
@@ -180,6 +181,7 @@ public class InputManager : MonoBehaviour
         }
         else
         {
+            AudioManager.Instance.PlaySFX("Incorrect spell");
             heldKeyword = secondKeyword;
             uiManager.DisplayKeyword(heldKeyword);
         }
