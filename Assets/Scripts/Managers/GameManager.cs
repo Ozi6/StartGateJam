@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System.Text.RegularExpressions;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -20,6 +21,7 @@ public class GameManager : Singleton<GameManager>
     [Header("General Settings")]
     [SerializeField] private List<WaveConfig> waveConfigs = new List<WaveConfig>();
     [SerializeField] private TMP_Text unitCountText;
+    [SerializeField] private TMP_Text levelText;
     public WaveConfig CurrentWaveConfig { get; private set; }
     private int currentWaveIndex = 0;
     public float rowSpacing = 3f;
@@ -114,11 +116,74 @@ public class GameManager : Singleton<GameManager>
                 uiManager.ResetSpells();
                 uiManager.UpdateSpeechBubble("");
                 inputManager.typerEnable = false;
+                IncrementLevel();
                 uiManager.ShowShopUI(false);
                 uiManager.ShowAugmentSelection();
                 break;
 
         }
+    }
+
+    private void IncrementLevel()
+    {
+        string text = levelText.text;
+
+        int lastSpace = text.LastIndexOf(' ');
+        if (lastSpace == -1) return;
+
+        string prefix = text.Substring(0, lastSpace + 1);
+        string roman = text.Substring(lastSpace + 1);
+
+        int value = RomanToInt(roman);
+        value++;
+
+        levelText.text = prefix + IntToRoman(value);
+    }
+
+    private int RomanToInt(string roman)
+    {
+        int total = 0;
+        int prev = 0;
+
+        foreach (char c in roman)
+        {
+            int value = c switch
+            {
+                'I' => 1,
+                'V' => 5,
+                'X' => 10,
+                'L' => 50,
+                'C' => 100,
+                'D' => 500,
+                _ => 0
+            };
+
+            total += value > prev ? value - 2 * prev : value;
+            prev = value;
+        }
+
+        return total;
+    }
+
+    private string IntToRoman(int number)
+    {
+        (int, string)[] map =
+        {
+        (500,"D"), (400,"CD"),
+        (100,"C"), (90,"XC"), (50,"L"), (40,"XL"),
+        (10,"X"), (9,"IX"), (5,"V"), (4,"IV"), (1,"I")
+    };
+
+        string result = "";
+        foreach (var (value, symbol) in map)
+        {
+            while (number >= value)
+            {
+                result += symbol;
+                number -= value;
+            }
+        }
+        return result;
     }
 
     private void ExitState(GameState state)
