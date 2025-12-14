@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,7 +22,6 @@ public class UIManager : MonoBehaviour
 
     [Header("Upgrade UI (Right Panel)")]
     public GameObject rightSidePanel;
-    public TMP_Text unitStatsText;
     public Button upgradeButton;
     private Vector2 rightPanelClosedPos;
     private Vector2 rightPanelOpenPos;
@@ -110,34 +109,108 @@ public class UIManager : MonoBehaviour
             out bool lifeSteal
         );
 
-        if (unitStatsText != null)
+        if (rightSidePanel != null)
         {
-            unitStatsText.text =
-                $"Unit: {unit.tag}\n" +
-                $"HP: {hp}/{maxHp}\n" +
-                $"Damage: {dmg} (x{dmgMult})\n" +
-                $"Attack Speed: {atkSpd}\n" +
-                $"Range: {atkRange}\n" +
-                $"Move Speed: {moveSpd}";
-        }
-        if (person.upgradeCost != 0)
-        {
-            unitStatsText.text +=
-                $"Upgrade Cost: {person.upgradeCost}";
+            Transform menu = rightSidePanel.transform;
+
+            menu.Find("Stats_Unit").GetComponent<TMP_Text>().text =
+                $"{unit.tag}";
+
+            menu.Find("Stats_Health").GetComponent<TMP_Text>().text =
+                $"{maxHp}";
+
+            menu.Find("Stats_Attack").GetComponent<TMP_Text>().text =
+                $"{dmg}";
+
+            menu.Find("Stats_AttackSpeed").GetComponent<TMP_Text>().text =
+                $"{atkSpd}";
+
+            menu.Find("Stats_Range").GetComponent<TMP_Text>().text =
+                $"{atkRange}";
+
+            menu.Find("Stats_MovementSpeed").GetComponent<TMP_Text>().text =
+                $"{moveSpd}";
+
+            // === UPGRADE COST + ICON ===
+            TMP_Text upgradeCostText =
+                menu.Find("stats_upgrade_cost").GetComponent<TMP_Text>();
+
+            Image upgradeCostIcon =
+                menu.Find("Stats_UpgradeIcon").GetComponent<Image>();
+
+            upgradeCostText.text = $"{person.upgradeCost}";
+
+            // ALREADY UPGRADED → hide cost & icon
+            if (person.upgradeCost == 0)
+            {
+                upgradeCostText.gameObject.SetActive(false);
+                upgradeCostIcon.gameObject.SetActive(false);
+            }
+            else
+            {
+                upgradeCostText.gameObject.SetActive(true);
+                upgradeCostIcon.gameObject.SetActive(true);
+
+                // NOT ENOUGH GOLD → red
+                if (person.upgradeCost > GameManager.Instance.currentGold)
+                {
+                    upgradeCostText.color = Color.red;
+                }
+                else
+                {
+                    // Enough gold → normal color
+                    upgradeCostText.color = Color.black;
+                }
+            }
         }
 
-        if (upgradeButton != null && person.upgradeCost <= GameManager.Instance.currentGold)
+        TMP_Text buttonText = upgradeButton.GetComponentInChildren<TMP_Text>();
+
+        // === BUTTON LOGIC ===
+
+        // ALREADY UPGRADED
+        if (person.upgradeCost == 0)
         {
             upgradeButton.onClick.RemoveAllListeners();
+            upgradeButton.interactable = false;
+
+            if (buttonText != null)
+                buttonText.text = "UPGRADED";
+        }
+        // CAN UPGRADE
+        else if (person.upgradeCost <= GameManager.Instance.currentGold)
+        {
+            upgradeButton.interactable = true;
+
+            if (buttonText != null)
+                buttonText.text = "UPGRADE";
+
+            upgradeButton.onClick.RemoveAllListeners();
             upgradeButton.onClick.AddListener(() => UpgradeUnit(unit));
+        }
+        // NOT ENOUGH GOLD
+        else
+        {
+            upgradeButton.onClick.RemoveAllListeners();
+            upgradeButton.interactable = false;
+
+            if (buttonText != null)
+                buttonText.text = "NOT ENOUGH GOLD";
         }
 
         if (!isRightPanelOpen)
         {
             isRightPanelOpen = true;
-            StartCoroutine(SlidePanel(rightSidePanel.GetComponent<RectTransform>(), rightPanelClosedPos, rightPanelOpenPos));
+            StartCoroutine(
+                SlidePanel(
+                    rightSidePanel.GetComponent<RectTransform>(),
+                    rightPanelClosedPos,
+                    rightPanelOpenPos
+                )
+            );
         }
     }
+
 
     private void UpgradeUnit(GameObject unit)
     {
@@ -172,6 +245,7 @@ public class UIManager : MonoBehaviour
                 GameManager.Instance.currentGold -= oldPerson.upgradeCost;
                 GameManager.Instance.playersTeam.Remove(oldPerson);
 
+                upgradedPerson.isFriendly = true;
                 GameManager.Instance.playersTeam.Add(upgradedPerson);
 
                 Debug.Log($"Upgraded {currentTag} to {upgradedTag}");

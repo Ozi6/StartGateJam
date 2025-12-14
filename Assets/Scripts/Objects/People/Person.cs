@@ -26,7 +26,7 @@ public abstract class Person : MonoBehaviour
     public bool HasLifeSteal { get; private set; }
     private float damageMultiplier = 1f;
     private float damageTakenMultiplier = 1f;
-    public bool isEnemyGolded = false;
+    public int EnemyGolded = 0;
     private float deploymentSpeed = 70;
     public bool IsFriendly => isFriendly;
     public int Health => health;
@@ -247,13 +247,15 @@ public abstract class Person : MonoBehaviour
 
     protected virtual void Die()
     {
-        UnitRegistrar.UnregisterUnit(this);
-
         if (!this.isFriendly)
         {
-            int goldAmount = isEnemyGolded ? givenGold + 1 : givenGold;
+            int goldAmount = givenGold + EnemyGolded;
             GameManager.Instance.currentGold += goldAmount;
+            Debug.Log("Enemy died and dropped " + givenGold + "base" + EnemyGolded + " buffed golds");
         }
+        UnitRegistrar.UnregisterUnit(this);
+
+
     }
 
     protected void FacePosition(Vector3 position)

@@ -4,6 +4,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(RectTransform))]
+[RequireComponent(typeof(Button))]
 public class UIButtonAnimator : MonoBehaviour,
     IPointerEnterHandler,
     IPointerExitHandler
@@ -22,21 +23,33 @@ public class UIButtonAnimator : MonoBehaviour,
     [SerializeField] private Color hoverBorderColor = Color.yellow;
 
     private RectTransform rectTransform;
+    private Button button;
     private Vector3 originalScale;
 
     private bool isHovering;
     private Coroutine hoverCoroutine;
 
+    // =============================
+    // UNITY LIFECYCLE
+    // =============================
     void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
+        button = GetComponent<Button>();
         originalScale = rectTransform.localScale;
     }
 
     void OnEnable()
     {
+        ResetVisuals();
+
         rectTransform.localScale = Vector3.zero;
         StartCoroutine(AnimateEntrance(entranceDelay));
+    }
+
+    void OnDisable()
+    {
+        ResetVisuals();
     }
 
     // =============================
@@ -69,7 +82,12 @@ public class UIButtonAnimator : MonoBehaviour,
     // =============================
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (isHovering) return;
+        if (!button.interactable)
+            return;
+
+        if (isHovering)
+            return;
+
         isHovering = true;
 
         if (hoverCoroutine != null)
@@ -80,7 +98,12 @@ public class UIButtonAnimator : MonoBehaviour,
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (!isHovering) return;
+        if (!button.interactable)
+            return;
+
+        if (!isHovering)
+            return;
+
         isHovering = false;
 
         if (hoverCoroutine != null)
@@ -89,9 +112,6 @@ public class UIButtonAnimator : MonoBehaviour,
         hoverCoroutine = StartCoroutine(AnimateHover(false));
     }
 
-    // =============================
-    // HOVER ANIMATION
-    // =============================
     private IEnumerator AnimateHover(bool hover)
     {
         Vector3 targetScale = hover ? originalScale * hoverScale : originalScale;
@@ -124,8 +144,31 @@ public class UIButtonAnimator : MonoBehaviour,
         if (borderHighlight != null)
         {
             borderHighlight.color = targetColor;
+
             if (!hover)
                 borderHighlight.gameObject.SetActive(false);
         }
+    }
+
+    private void ResetVisuals()
+    {
+        isHovering = false;
+
+        if (hoverCoroutine != null)
+        {
+            StopCoroutine(hoverCoroutine);
+            hoverCoroutine = null;
+        }
+
+        rectTransform.localScale = originalScale;
+
+        if (borderHighlight != null)
+        {
+            borderHighlight.color = normalBorderColor;
+            borderHighlight.gameObject.SetActive(false);
+        }
+
+        if (glowEffect != null)
+            glowEffect.SetActive(false);
     }
 }
