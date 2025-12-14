@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using System.Collections;
 using UnityEngine;
 
@@ -10,7 +9,7 @@ public class EnemySpawner : MonoBehaviour
     public Transform enemyWaitPos;
 
     [Header("Spawn Settings")]
-    public float spawnInterval = .25f;
+    public float spawnInterval = .75f;
     public float unitSpacing = 1.5f;
 
     private const string giantTag = "Giant";

@@ -88,7 +88,7 @@ public abstract class Person : MonoBehaviour
         bool isMoving = false; // Flag to check if the unit is moving this frame
         if (GameManager.Instance.CurrentState == GameState.Deployment)
         {
-            if (isWaiting && Vector3.Distance(transform.position, targetPosition) > 0.01f)
+            if (Vector3.Distance(transform.position, targetPosition) > 0.01f && !isFriendly)
             {
                 GoToPointDesignatedVer(targetPosition);
                 isMoving = true;
