@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.EventSystems;
+using TMPro;
 
 public class ShopUI : MonoBehaviour
 {
@@ -8,9 +9,17 @@ public class ShopUI : MonoBehaviour
     [SerializeField] private float animationSpeed = 5f;
     [SerializeField] private float hiddenOffset = 500f;
 
+    [Header("Warning Text")]
+    [SerializeField] private TMP_Text text;
+    [SerializeField] private Color alarmColor = Color.red;
+    [SerializeField] private float alarmInterval = 0.15f;
+    [SerializeField] private int alarmFlashes = 4;
+
     private Vector2 hiddenPos;
     private Vector2 visiblePos;
     private Coroutine currentRoutine;
+    private Coroutine alarmRoutine;
+    private Color originalTextColor;
 
     private void Awake()
     {
@@ -18,6 +27,9 @@ public class ShopUI : MonoBehaviour
         hiddenPos = visiblePos + Vector2.down * hiddenOffset;
 
         shopPanel.anchoredPosition = hiddenPos;
+
+        if (text != null)
+            originalTextColor = text.color;
     }
 
     public void ToggleShop(bool show)
@@ -59,9 +71,48 @@ public class ShopUI : MonoBehaviour
         shopPanel.anchoredPosition = target;
     }
 
+    // =============================
+    // DEPLOY BUTTON
+    // =============================
     public void OnDeploymentButtonClicked()
     {
-        EventSystem.current.SetSelectedGameObject(null);
-        GameManager.Instance.SetState(GameState.Deployment);
+        if (GameManager.Instance.playersTeam.Count > 0)
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+            GameManager.Instance.SetState(GameState.Deployment);
+        }
+        else
+        {
+            TriggerAlarm();
+        }
+    }
+
+    // =============================
+    // TEXT ALARM
+    // =============================
+    private void TriggerAlarm()
+    {
+        if (text == null)
+            return;
+
+        if (alarmRoutine != null)
+            StopCoroutine(alarmRoutine);
+
+        alarmRoutine = StartCoroutine(AlarmRoutine());
+    }
+
+    private IEnumerator AlarmRoutine()
+    {
+        for (int i = 0; i < alarmFlashes; i++)
+        {
+            text.color = alarmColor;
+            yield return new WaitForSeconds(alarmInterval);
+
+            text.color = originalTextColor;
+            yield return new WaitForSeconds(alarmInterval);
+        }
+
+        text.color = originalTextColor;
+        alarmRoutine = null;
     }
 }

@@ -54,6 +54,7 @@ public class GameManager : Singleton<GameManager>
 
     void Update()
     {
+        gold.text = currentGold.ToString();
         if (CurrentState != GameState.Combat || isEnding)
             return;
 
@@ -84,7 +85,7 @@ public class GameManager : Singleton<GameManager>
             StartCoroutine(EndGameAfterAnimation(GameResult.Lose));
         }
 
-        gold.text = currentGold.ToString();
+        
     }
 
 
@@ -223,6 +224,7 @@ public class GameManager : Singleton<GameManager>
                 break;
             case GameState.Combat:
                 AudioManager.Instance.PlaySFX("alkis_ambians");
+                currentThrowableHeld = null;
                 break;
             case GameState.Augmentation:
                 uiManager.HideAugmentSelection();
