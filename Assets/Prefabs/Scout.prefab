@@ -617,8 +617,8 @@ MonoBehaviour:
   maxHealth: 150
   health: 150
   moveSpeed: 27
-  damage: 30
-  attackRange: 2.2
+  damage: 35
+  attackRange: 5
   attackSpeed: 0.4
   damageArea: 0
   isFriendly: 0
@@ -628,6 +628,7 @@ MonoBehaviour:
   areaBuff: 1.2
   turnSpeed: 10
   upgradeCost: 15
+  isNew: 0
   walkSFXInterval: 0.4
   groundRaycastDistance: 10
   groundLayer:

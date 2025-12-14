@@ -10,7 +10,7 @@ public class MarketLogic
         {"Viking", 5 },
         {"Giant", 20},
         {"Scout", 15},
-        {"Wizard", 50 }
+        {"Wizard", 30 }
     } ;
 
     public bool BuyUnit()
