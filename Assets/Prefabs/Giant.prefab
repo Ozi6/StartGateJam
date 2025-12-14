@@ -370,6 +370,77 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.0009443797, y: 0.020722475, z: 0.0004146304}
     m_Extent: {x: 0.0156186, y: 0.015168097, z: 0.013912609}
   m_DirtyAABB: 0
+--- !u!1001 &2582082086010172251
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 7472346164148283287}
+    m_Modifications:
+    - target: {fileID: 2228491276685905226, guid: fdb830a91941b9347914ed8abf85b7da, type: 3}
+      propertyPath: m_Name
+      value: SandKickupEffect
+      objectReference: {fileID: 0}
+    - target: {fileID: 4797794295781912565, guid: fdb830a91941b9347914ed8abf85b7da, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4797794295781912565, guid: fdb830a91941b9347914ed8abf85b7da, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4797794295781912565, guid: fdb830a91941b9347914ed8abf85b7da, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4797794295781912565, guid: fdb830a91941b9347914ed8abf85b7da, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4797794295781912565, guid: fdb830a91941b9347914ed8abf85b7da, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4797794295781912565, guid: fdb830a91941b9347914ed8abf85b7da, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4797794295781912565, guid: fdb830a91941b9347914ed8abf85b7da, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4797794295781912565, guid: fdb830a91941b9347914ed8abf85b7da, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 4797794295781912565, guid: fdb830a91941b9347914ed8abf85b7da, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4797794295781912565, guid: fdb830a91941b9347914ed8abf85b7da, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8533103006963857827, guid: fdb830a91941b9347914ed8abf85b7da, type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: fdb830a91941b9347914ed8abf85b7da, type: 3}
+--- !u!198 &6178602253032409848 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 8533103006963857827, guid: fdb830a91941b9347914ed8abf85b7da, type: 3}
+  m_PrefabInstance: {fileID: 2582082086010172251}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7007695045829647534 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4797794295781912565, guid: fdb830a91941b9347914ed8abf85b7da, type: 3}
+  m_PrefabInstance: {fileID: 2582082086010172251}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6933751507786580092
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -435,6 +506,9 @@ PrefabInstance:
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: cbd309e20f27abe439dd988302078f42, type: 3}
       insertIndex: 0
+      addedObject: {fileID: 7007695045829647534}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: cbd309e20f27abe439dd988302078f42, type: 3}
+      insertIndex: 1
       addedObject: {fileID: 287144538059711936}
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: cbd309e20f27abe439dd988302078f42, type: 3}
       insertIndex: -1
@@ -538,6 +612,7 @@ MonoBehaviour:
   targetPosition: {x: 0, y: 0, z: 0}
   healthBar: {fileID: 2797007033078659663}
   animator: {fileID: 3554246015625362925}
+  sandEffect: {fileID: 6178602253032409848}
 --- !u!65 &-6065967765348272629
 BoxCollider:
   m_ObjectHideFlags: 0

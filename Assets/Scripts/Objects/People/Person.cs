@@ -45,6 +45,8 @@ public abstract class Person : MonoBehaviour
     public Vector3 targetPosition;
     [SerializeField] HealthBar healthBar;
     [SerializeField] protected Animator animator;
+    // In your player movement script
+    [SerializeField] ParticleSystem sandEffect;
 
     public void OnObjectSpawn()
     {
@@ -102,6 +104,7 @@ public abstract class Person : MonoBehaviour
     protected void GoToPointDesignatedVer(Vector3 point)
     {
         FacePosition(point);
+        if (!sandEffect.isPlaying) sandEffect.Play();
         Vector3 newPos = Vector3.MoveTowards(transform.position, point, deploymentSpeed * Time.deltaTime);
         rb.MovePosition(newPos);
     }
@@ -110,6 +113,7 @@ public abstract class Person : MonoBehaviour
     {
         if (!CanMove) return;
         FacePosition(point);
+        if (!sandEffect.isPlaying) sandEffect.Play();
         Vector3 newPos = Vector3.MoveTowards(transform.position, point, moveSpeed * Time.deltaTime);
         rb.MovePosition(newPos);
     }
@@ -117,6 +121,7 @@ public abstract class Person : MonoBehaviour
     protected void StopMoving()
     {
         rb.linearVelocity = Vector3.zero;
+        sandEffect.Stop();
     }
 
     public void BeginDeployment(Vector3 designated)
