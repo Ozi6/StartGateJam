@@ -2,6 +2,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System.Text.RegularExpressions;
+using UnityEngine.SceneManagement;
+using System.Collections;
+using UnityEngine.UIElements;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -51,36 +54,59 @@ public class GameManager : Singleton<GameManager>
 
     void Update()
     {
-        if (CurrentState == GameState.Combat)
+        if (CurrentState != GameState.Combat || isEnding)
+            return;
+
+        CleanupNullUnits();
+        CleanupNullEnemies();
+
+        if (enemyTeam.Count == 0)
         {
-            CleanupNullUnits();
-            CleanupNullEnemies();
-            if (enemyTeam.Count == 0)
+            RestoreTeamFromSnapshot();
+            currentWaveIndex++;
+
+            if (currentWaveIndex < waveConfigs.Count)
             {
-                RestoreTeamFromSnapshot();
-                currentWaveIndex++;
-                if (currentWaveIndex < waveConfigs.Count)
-                {
-                    CurrentWaveConfig = waveConfigs[currentWaveIndex];
-                    Debug.Log("Right now it is "+ currentWaveIndex);
-                    SetState(GameState.Augmentation);
-                    UpdateUnitCountDisplay();
-                }
-                else
-                {
-                    Debug.Log("All waves completed! You win!");
-                    playerAnimator.SetTrigger("GameWin");
-                }
+                CurrentWaveConfig = waveConfigs[currentWaveIndex];
+                Debug.Log("Right now it is " + currentWaveIndex);
+                SetState(GameState.Augmentation);
+                UpdateUnitCountDisplay();
             }
-            else if (playersTeam.Count == 0)
+            else
             {
-                Debug.Log("Game Over! You lose!");
-                playerAnimator.SetTrigger("GameOver");
-                // Handle lose condition, perhaps set state
+                Debug.Log("All waves completed! You win!");
+                StartCoroutine(EndGameAfterAnimation(GameResult.Win));
             }
         }
+        else if (playersTeam.Count == 0)
+        {
+            Debug.Log("Game Over! You lose!");
+            StartCoroutine(EndGameAfterAnimation(GameResult.Lose));
+        }
+
         gold.text = currentGold.ToString();
     }
+
+
+    private bool isEnding = false;
+
+    private IEnumerator EndGameAfterAnimation(GameResult result)
+    {
+        if (isEnding) yield break;
+        isEnding = true;
+
+        GameResultHolder.Result = result;
+
+        if (result == GameResult.Win)
+            playerAnimator.SetTrigger("GameWin");
+        else
+            playerAnimator.SetTrigger("GameOver");
+
+        yield return new WaitForSeconds(3.5f);
+
+        SceneManager.LoadScene("EndScreen");
+    }
+
 
     public void SetState(GameState newState)
     {
