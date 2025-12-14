@@ -92,7 +92,7 @@ MonoBehaviour:
   person: {fileID: 0}
   fillImage: {fileID: 8778064302947254806}
   canvas: {fileID: 2982769105671182477}
-  offset: {x: 0, y: 2, z: 0}
+  offset: {x: 0, y: 4, z: 0}
   hideWhenFull: 1
   friendlyColor: {r: 0, g: 1, b: 0, a: 1}
   enemyColor: {r: 1, g: 0, b: 0, a: 1}
@@ -452,6 +452,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: d5754b2f18eea404d81d4c12f77cba17, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d5754b2f18eea404d81d4c12f77cba17, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d5754b2f18eea404d81d4c12f77cba17, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d5754b2f18eea404d81d4c12f77cba17, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

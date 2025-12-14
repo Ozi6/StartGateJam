@@ -290,7 +290,7 @@ MonoBehaviour:
   person: {fileID: 0}
   fillImage: {fileID: 6004556525135054549}
   canvas: {fileID: 1303945186760379631}
-  offset: {x: 0, y: 2, z: 0}
+  offset: {x: 0, y: 5, z: 0}
   hideWhenFull: 1
   friendlyColor: {r: 0, g: 1, b: 0, a: 1}
   enemyColor: {r: 1, g: 0, b: 0, a: 1}
