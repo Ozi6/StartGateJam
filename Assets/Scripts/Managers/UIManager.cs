@@ -359,11 +359,13 @@ public class UIManager : MonoBehaviour
         if (textObject != null) textObject.gameObject.SetActive(visible);
     }
 
+    [SerializeField] Transform bubbleLoc;
+
     public void UpdateSpeechBubble(string text)
     {
         if (speechBubbleInstance == null)
         {
-            speechBubbleInstance = Instantiate(speechBubblePrefab, canvas.transform);
+            speechBubbleInstance = Instantiate(speechBubblePrefab, bubbleLoc);
             bubbleText = speechBubbleInstance.GetComponentInChildren<TMP_Text>();
         }
         speechBubbleInstance.SetActive(!string.IsNullOrEmpty(text));

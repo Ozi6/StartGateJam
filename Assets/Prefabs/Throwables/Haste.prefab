@@ -199,7 +199,9 @@ PrefabInstance:
       value: Haste
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 65702495048144492, guid: b0267e113de31e54dbb8e7fe14020968, type: 3}
+    - {fileID: -8700617353114198275, guid: b0267e113de31e54dbb8e7fe14020968, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b0267e113de31e54dbb8e7fe14020968, type: 3}
