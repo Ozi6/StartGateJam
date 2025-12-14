@@ -152,6 +152,7 @@ public class TrajectoryLauncher : MonoBehaviour
 
     private void ThrowObject(float force)
     {
+        AudioManager.Instance.PlaySFX("Main Character Throw");
         GameObject held = GameManager.Instance.currentThrowableHeld;
         if (held != null)
         {
