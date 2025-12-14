@@ -82,6 +82,7 @@ public class UIButtonAnimator : MonoBehaviour,
     // =============================
     public void OnPointerEnter(PointerEventData eventData)
     {
+        AudioManager.Instance.PlaySFX("buttonHover");
         if (!button.interactable)
             return;
 
@@ -92,7 +93,7 @@ public class UIButtonAnimator : MonoBehaviour,
 
         if (hoverCoroutine != null)
             StopCoroutine(hoverCoroutine);
-
+ 
         hoverCoroutine = StartCoroutine(AnimateHover(true));
     }
 

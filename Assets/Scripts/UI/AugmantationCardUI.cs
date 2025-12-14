@@ -123,7 +123,7 @@ private IEnumerator AnimateEntrance(float delay)
         {
             StopCoroutine(hoverCoroutine);
         }
-
+        AudioManager.Instance.PlaySFX("pageturn-102978");
         hoverCoroutine = StartCoroutine(AnimateHover(true));
     }
 
