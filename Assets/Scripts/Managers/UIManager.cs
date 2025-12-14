@@ -241,6 +241,7 @@ public class UIManager : MonoBehaviour
             Person upgradedPerson = upgradedUnitGO.GetComponent<Person>();
             if (upgradedPerson != null)
             {
+                AudioManager.Instance.PlaySFX("Upgrade");
                 // Remove old unit from playersTeam
                 GameManager.Instance.currentGold -= oldPerson.upgradeCost;
                 GameManager.Instance.playersTeam.Remove(oldPerson);

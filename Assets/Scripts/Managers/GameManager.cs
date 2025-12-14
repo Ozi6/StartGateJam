@@ -53,8 +53,27 @@ public class GameManager : Singleton<GameManager>
         UpdateUnitCountDisplay();
     }
 
+    private void ReturnToMainMenu()
+    {
+        if (isEnding) return;
+
+        isEnding = true;
+
+        Time.timeScale = 1f;
+
+        AudioManager.Instance.StopMusic();
+        SceneManager.LoadScene("MainMenu");
+    }
+
+
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            ReturnToMainMenu();
+            return;
+        }
+
         gold.text = currentGold.ToString();
         if (CurrentState != GameState.Combat || isEnding)
             return;
