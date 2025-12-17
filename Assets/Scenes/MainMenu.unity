@@ -1387,8 +1387,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 181843535}
         m_TargetAssemblyTypeName: AudioManager, Assembly-CSharp
-        m_MethodName: SetMasterVolume
-        m_Mode: 4
+        m_MethodName: 
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -1396,7 +1396,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 2
+        m_CallState: 0
 --- !u!114 &286564207
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4432,8 +4432,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 181843535}
         m_TargetAssemblyTypeName: AudioManager, Assembly-CSharp
-        m_MethodName: SetMusicVolume
-        m_Mode: 4
+        m_MethodName: 
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -4441,7 +4441,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 2
+        m_CallState: 0
 --- !u!1 &1222956560
 GameObject:
   m_ObjectHideFlags: 0
@@ -5371,8 +5371,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 181843535}
         m_TargetAssemblyTypeName: AudioManager, Assembly-CSharp
-        m_MethodName: SetSFXVolume
-        m_Mode: 4
+        m_MethodName: 
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -5380,7 +5380,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 2
+        m_CallState: 0
 --- !u!114 &1439464472
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5390,7 +5390,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1439464469}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 088b2862f65d65b4ea72e1972c304568, type: 3}
+  m_Script: {fileID: 11500000, guid: ba181485a3f3efb4eb8f4a054c14034e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   slider: {fileID: 1439464471}
